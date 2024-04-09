@@ -1,4 +1,4 @@
-module changeme
+module aggo
 
 go 1.21
 
