@@ -1,0 +1,6 @@
+{
+    "name": "go-app",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspace"
+}

@@ -1,0 +1,4 @@
+ARG GO_VERSION=1.22
+FROM golang:${GO_VERSION}
+
+WORKDIR /workspace

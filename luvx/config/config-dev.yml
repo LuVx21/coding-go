@@ -1,0 +1,25 @@
+log:
+  logDir: ./.logs/
+  mainLog: main-%Y-%m-%d.log
+  errorLog: error-%Y-%m-%d.log
+
+mysql:
+  host: 127.0.0.1:3306
+  username: root
+  password: 1121
+  dbname: boot
+
+redis:
+  host: 127.0.0.1:6379
+  username: xx
+  password: xx
+  timeout: 200
+  maxActive: 30
+  maxIdle: 30
+
+mongodb:
+  database: boot
+
+server:
+  port: ":8090"
+  debug: true

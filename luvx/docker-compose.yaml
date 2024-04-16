@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  go_app:
+    image: luvx/go_app:latest
+    container_name: go_app
+    networks:
+      - net_common
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+#    command: ["sleep", "infinity"]
+
+networks:
+  net_common:
+    external: true
