@@ -16,7 +16,7 @@ func config(configName string) Config {
     viper.SetConfigType("yml")
     viper.AddConfigPath("./config")
     viper.AddConfigPath("$GOPATH/config")
-    viper.AddConfigPath("$HOME/OneDrive/Code/gist/Go/gists/config")
+    viper.AddConfigPath("$HOME/OneDrive/Code/coding-go/luvx/config")
     err := viper.ReadInConfig()
     if err != nil {
         panic(err)

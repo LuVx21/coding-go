@@ -2,7 +2,7 @@ module github.com/luvx21/coding-go/coding-usage
 
 go 1.22.1
 
-// replace github.com/luvx21/coding-go/coding-common => ../coding-common
+//replace github.com/luvx21/coding-go/coding-common => ../coding-common
 
 require (
 	github.com/IBM/sarama v1.43.1
@@ -23,12 +23,13 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/levigross/grequests v0.0.0-20231203190023-9c307ef1f48d
 	github.com/linxGnu/grocksdb v1.8.14
-	github.com/luvx21/coding-go/coding-common v0.0.0-20240415131924-f8fd524ded9a
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240416152149-9553292fdc67
 	github.com/panjf2000/ants/v2 v2.9.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
 	github.com/redis/go-redis/v9 v9.5.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.39.0
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/sirupsen/logrus v1.9.3
@@ -132,7 +133,6 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect

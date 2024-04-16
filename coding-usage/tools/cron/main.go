@@ -3,12 +3,31 @@ package main
 import (
     "fmt"
     "github.com/google/uuid"
+    "github.com/robfig/cron/v3"
     "time"
 
     "github.com/go-co-op/gocron/v2"
 )
 
 func main() {
+    m0()
+}
+
+func m0() {
+    c := cron.New(cron.WithSeconds())
+    defer c.Stop()
+
+    // 每5秒执行一次
+    _, _ = c.AddFunc("@every 5s", func() { fmt.Printf("每5秒, %s\n", time.Now().Format("15:04:05")) })
+    // 每10秒执行一次
+    _, _ = c.AddFunc("@every 10s", func() { fmt.Printf("每10秒, %s\n", time.Now().Format("15:04:05")) })
+    _, _ = c.AddFunc("0 0/1 * * * *", func() { fmt.Printf("每1分, %s\n", time.Now().Format("15:04:05")) })
+    go c.Start()
+
+    select {}
+}
+
+func m1() {
     s, _ := gocron.NewScheduler()
     defer func() { _ = s.Shutdown() }()
 
@@ -53,5 +72,5 @@ func main() {
     case <-time.After(time.Minute):
     }
 
-    _ = s.Shutdown()
+    //_ = s.Shutdown()
 }
