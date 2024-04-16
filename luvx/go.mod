@@ -2,7 +2,7 @@ module luvx
 
 go 1.22.1
 
-//replace luvx.org/go/coding-common => ../../../coding-go/coding-common
+//replace github.com/luvx21/coding-go/coding-common => ../coding-go/coding-common
 
 require (
 	github.com/IBM/sarama v1.43.0
@@ -20,12 +20,14 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
+	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/json-iterator/go v1.1.12
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/levigross/grequests v0.0.0-20231203190023-9c307ef1f48d
 	github.com/linxGnu/grocksdb v1.8.12
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240415131924-f8fd524ded9a
 	github.com/panjf2000/ants/v2 v2.9.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
@@ -46,7 +48,6 @@ require (
 	google.golang.org/grpc v1.63.2
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.9
-	//luvx.org/go/coding-common v0.0.0
 	modernc.org/sqlite v1.29.6
 )
 
@@ -58,8 +59,10 @@ require (
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
 	go.opentelemetry.io/otel/metric v1.21.0 // indirect

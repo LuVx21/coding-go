@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "luvx.org/go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/common"
     "reflect"
 )
 

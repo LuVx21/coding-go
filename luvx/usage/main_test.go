@@ -1,7 +1,7 @@
 package main
 
 import (
-    cc "luvx.org/go/coding-common/aaa"
+    cc "github.com/luvx21/coding-go/coding-common/aaa"
     "testing"
 )
 
