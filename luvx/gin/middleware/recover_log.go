@@ -1,7 +1,7 @@
 package middleware
 
 import (
-    "luvx/api/logs"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "luvx/gin/common/responsex"
 
     "github.com/gin-gonic/gin"

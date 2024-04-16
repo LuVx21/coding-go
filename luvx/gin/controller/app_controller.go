@@ -3,8 +3,8 @@ package controller
 import (
     "context"
     "github.com/gin-gonic/gin"
+    "github.com/luvx21/coding-go/coding-common/common"
     "go.mongodb.org/mongo-driver/bson"
-    "luvx/common"
     "luvx/gin/db"
     "luvx/gin/model"
     "luvx/gin/service"

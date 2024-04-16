@@ -8,9 +8,8 @@ import (
     "database/sql"
     "errors"
     "fmt"
+    lcommon "github.com/luvx21/coding-go/coding-common/common"
     "golang.org/x/crypto/pbkdf2"
-    lcommon "luvx/common"
-    "luvx/gin/common"
     "luvx/gin/db"
     _ "modernc.org/sqlite"
     "os/exec"
@@ -32,7 +31,7 @@ func GetCookieStrByHost(hosts ...string) string {
 
 func GetCookieByHost(hosts ...string) map[string]string {
     if client == nil {
-        home, _ := common.Dir()
+        home, _ := lcommon.Dir()
         client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
     }
 

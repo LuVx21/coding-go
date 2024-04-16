@@ -1,18 +1,69 @@
 package common
 
-type Pair[T1, T2 any] struct {
-    K T1 `json:"key"`
-    V T2 `json:"value"`
+import (
+    "fmt"
+    log "github.com/sirupsen/logrus"
+    "sync"
+    "time"
+)
+
+func IfThen[T any](expr bool, a T, b T) T {
+    if expr {
+        return a
+    }
+    return b
 }
 
-func NewPair[T1, T2 any](k T1, v T2) Pair[T1, T2] {
-    return Pair[T1, T2]{k, v}
+// IfThenGet 使用时不简洁
+func IfThenGet[T any](expr bool, a func() T, b func() T) T {
+    if expr {
+        return a()
+    }
+    return b()
 }
 
-func (p Pair[T1, T2]) Key() T1 {
-    return p.K
+// RunCatching 捕捉异常,避免异常退出
+func RunCatching(fn func()) {
+    func() {
+        defer func() {
+            if r := recover(); r != nil {
+                log.Print(r)
+            }
+        }()
+        fn()
+    }()
 }
 
-func (p Pair[T1, T2]) Value() T2 {
-    return p.V
+func CatchingWithRoutine(fn func()) {
+    go RunCatching(fn)
+}
+
+func RunInRoutine(wg *sync.WaitGroup, f func()) {
+    wg.Add(1)
+    go func() {
+        defer wg.Done()
+        f()
+    }()
+}
+
+func RunWithTime[R any](name string, f func() R) R {
+    defer TrackTime(name, time.Now())
+    return f()
+}
+
+func RunWithTime2[R1 any, R2 any](name string, f func() (R1, R2)) (R1, R2) {
+    defer TrackTime(name, time.Now())
+    return f()
+}
+
+func TrackTime(name string, start time.Time) {
+    elapsed := time.Since(start)
+    log.Infoln(name, "执行时间:", elapsed)
+}
+
+func TrackTime1(name string) func() {
+    start := time.Now()
+    return func() {
+        fmt.Printf("%s 执行时间: %v\n", name, time.Since(start))
+    }
 }

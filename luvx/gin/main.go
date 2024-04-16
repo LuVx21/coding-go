@@ -3,7 +3,7 @@ package gin
 import (
     "fmt"
     "github.com/gin-gonic/gin"
-    "luvx/api/logs"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "luvx/config"
     _ "luvx/gin/db"
     "luvx/gin/middleware"

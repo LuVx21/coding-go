@@ -2,7 +2,7 @@ package middleware
 
 import (
     "fmt"
-    "luvx/api/logs"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "time"
 
     "github.com/gin-gonic/gin"

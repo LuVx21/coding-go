@@ -18,6 +18,7 @@ redis:
   maxIdle: 30
 
 mongodb:
+  uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
   database: boot
 
 server:

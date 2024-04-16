@@ -3,7 +3,7 @@ package db
 import (
     "database/sql"
     "fmt"
-    "luvx/gin/common"
+    "github.com/luvx21/coding-go/coding-common/common"
     _ "modernc.org/sqlite"
 )
 
