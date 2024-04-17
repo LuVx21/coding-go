@@ -47,7 +47,7 @@ func Test_01(t *testing.T) {
         },
     )
 
-    iterator.forEachRemaining(func(item Item) {
+    iterator.ForEachRemaining(func(item Item) {
         logs.Log.Printf("next:%v", item)
     })
 }

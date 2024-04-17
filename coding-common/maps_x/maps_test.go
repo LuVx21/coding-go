@@ -1,9 +1,20 @@
-package maps
+package maps_x
 
 import (
     "fmt"
     "testing"
 )
+
+func Test_RemoveIf(t *testing.T) {
+    m := map[string]interface{}{
+        "a": "aa",
+        "b": "bb",
+    }
+    RemoveIf(m, func(k string, v interface{}) bool {
+        return k == "a"
+    })
+    fmt.Println(m)
+}
 
 func Test_01(t *testing.T) {
     m := make(map[string]interface{})

@@ -15,7 +15,7 @@ require (
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly v1.2.0
-	github.com/golang/protobuf v1.5.3
+	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/jedib0t/go-pretty/v6 v6.5.8
@@ -25,6 +25,7 @@ require (
 	github.com/linxGnu/grocksdb v1.8.14
 	github.com/luvx21/coding-go/coding-common v0.0.0-20240416152149-9553292fdc67
 	github.com/panjf2000/ants/v2 v2.9.1
+	github.com/parnurzeal/gorequest v0.3.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
@@ -40,8 +41,8 @@ require (
 	go-micro.dev/v4 v4.10.2
 	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/time v0.5.0
-	google.golang.org/grpc v1.53.0
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/grpc v1.63.2
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
@@ -73,6 +74,7 @@ require (
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.5.0 // indirect
+	github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5 // indirect
 	github.com/evanphx/json-patch/v5 v5.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -121,6 +123,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
+	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
@@ -157,14 +160,14 @@ require (
 	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
-	golang.org/x/oauth2 v0.16.0 // indirect
+	golang.org/x/oauth2 v0.17.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/term v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
+	google.golang.org/appengine v1.6.8 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )

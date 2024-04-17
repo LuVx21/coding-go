@@ -4,12 +4,22 @@ import (
     "fmt"
     "github.com/go-resty/resty/v2"
     "github.com/levigross/grequests"
+    "github.com/parnurzeal/gorequest"
     "github.com/valyala/fasthttp"
     "log"
     "os"
     "testing"
     "time"
 )
+
+func Test00(t *testing.T) {
+    request := gorequest.New()
+    _, body, _ := request.Get("https://httpbin.org/get").
+        //RedirectPolicy(redirectPolicyFunc).
+        Set("Accept", "application/json").
+        End()
+    fmt.Println(body)
+}
 
 func Test01(t *testing.T) {
     resp, err := grequests.Get("https://httpbin.org/get", nil)
@@ -71,15 +81,16 @@ func Test_03(t *testing.T) {
     }
 
     req := fasthttp.AcquireRequest()
+    defer fasthttp.ReleaseRequest(req)
     req.SetRequestURI("https://httpbin.org/get")
     req.Header.SetMethod(fasthttp.MethodGet)
     resp := fasthttp.AcquireResponse()
+    defer fasthttp.ReleaseResponse(resp)
     err := client.Do(req, resp)
-    fasthttp.ReleaseRequest(req)
+
     if err == nil {
         fmt.Printf("DEBUG Response: %s\n", resp.Body())
     } else {
         _, _ = fmt.Fprintf(os.Stderr, "ERR Connection error: %v\n", err)
     }
-    fasthttp.ReleaseResponse(resp)
 }

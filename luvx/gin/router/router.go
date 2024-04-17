@@ -17,4 +17,5 @@ func Register(r *gin.Engine) {
 
     RegisterApp(r)
     RegisterUser(r)
+    RegisterBili(r)
 }

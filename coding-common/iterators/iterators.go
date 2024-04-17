@@ -91,7 +91,7 @@ func (it *CursorIterator[ITEM, ID]) roll() {
     }
 }
 
-func (it *CursorIterator[ITEM, ID]) forEachRemaining(f func(ITEM)) {
+func (it *CursorIterator[ITEM, ID]) ForEachRemaining(f func(ITEM)) {
     for it.HasNext() {
         f(it.Next())
     }

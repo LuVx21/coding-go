@@ -4,6 +4,7 @@ import (
     "fmt"
     "gorm.io/driver/mysql"
     "gorm.io/gorm"
+    "gorm.io/gorm/logger"
     "gorm.io/gorm/schema"
     "luvx/config"
 )
@@ -19,6 +20,7 @@ func init() {
     MySQLClient, err = gorm.Open(mysql.New(mysql.Config{
         DSN: dsn,
     }), &gorm.Config{
+        Logger: logger.Default.LogMode(logger.Info),
         NamingStrategy: schema.NamingStrategy{
             //TablePrefix:   "t_", // 表名前缀
             SingularTable: true, // 使用单数表名

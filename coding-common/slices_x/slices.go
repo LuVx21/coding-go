@@ -1,4 +1,4 @@
-package slices
+package slices_x
 
 import (
     "github.com/luvx21/coding-go/coding-common/common"
