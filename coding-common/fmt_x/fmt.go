@@ -1,17 +1,18 @@
 package fmt_x
 
 import (
-    "time"
+    "github.com/jedib0t/go-pretty/v6/table"
+    "os"
 )
 
-func TimeNowDate() string {
-    return time.Now().Format("2006-01-02")
-}
+var tt = table.NewWriter()
 
-func TimeNowDateSecond() string {
-    return time.Now().Format("2006-01-02")
-}
-
-func TimeNow() string {
-    return time.Now().Format("2006-01-02 15:04:05.999999")
+func Println(header []interface{}, rows ...[]interface{}) {
+    tt.SetOutputMirror(os.Stdout)
+    tt.SetAutoIndex(true)
+    tt.AppendHeader(header)
+    for _, row := range rows {
+        tt.AppendRow(row)
+    }
+    tt.Render()
 }

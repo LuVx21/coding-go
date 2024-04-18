@@ -9,7 +9,7 @@ import (
 // ToMap 结构体转为Map[string]interface{}
 func ToMap(in interface{}, tagName string) (map[string]interface{}, error) {
     v := reflect.ValueOf(in)
-    if v.Kind() == reflect.Ptr {
+    if v.Kind() == reflect.Pointer {
         v = v.Elem()
     } else if v.Kind() != reflect.Struct {
         return nil, fmt.Errorf("只能为结构体或其指针; 类型: %T", v)
@@ -21,7 +21,7 @@ func ToMap(in interface{}, tagName string) (map[string]interface{}, error) {
     for i := 0; i < v.NumField(); i++ {
         vf := v.Field(i)
         field := t.Field(i)
-        if vf.Kind() == reflect.Ptr {
+        if vf.Kind() == reflect.Pointer {
             vf = vf.Elem()
         }
         if tagValue := field.Tag.Get(tagName); tagValue != "" {
@@ -40,7 +40,7 @@ func ToMap(in interface{}, tagName string) (map[string]interface{}, error) {
 // ToSingleMap 将结构体转为单层map
 func ToSingleMap(in interface{}, tag string) (map[string]interface{}, error) {
     v := reflect.ValueOf(in)
-    if v.Kind() == reflect.Ptr {
+    if v.Kind() == reflect.Pointer {
         v = v.Elem()
     } else if v.Kind() != reflect.Struct {
         return nil, fmt.Errorf("只能为结构体或其指针; 类型: %T", v)
@@ -53,7 +53,7 @@ func ToSingleMap(in interface{}, tag string) (map[string]interface{}, error) {
     for len(queue) > 0 {
         e := queue[0]
         v := reflect.ValueOf(e.K)
-        if v.Kind() == reflect.Ptr {
+        if v.Kind() == reflect.Pointer {
             v = v.Elem()
         }
         queue = queue[1:]
@@ -63,7 +63,7 @@ func ToSingleMap(in interface{}, tag string) (map[string]interface{}, error) {
             kind := field.Kind()
             ti := t.Field(i)
             tagName := ti.Tag.Get(tag)
-            if kind == reflect.Ptr {
+            if kind == reflect.Pointer {
                 field = field.Elem()
                 if field.Kind() == reflect.Struct {
                     queue = append(queue, common.NewPair(field.Interface(), tagName+"."))
