@@ -10,4 +10,7 @@ func RegisterBili(r *gin.Engine) {
     {
         user.GET("/pull/season", controller.PullSeason)
     }
+    {
+        user.GET("/pull/up/video", controller.PullUpVideo)
+    }
 }

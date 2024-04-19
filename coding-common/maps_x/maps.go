@@ -1,6 +1,23 @@
 package maps_x
 
-import "github.com/luvx21/coding-go/coding-common/reflects"
+import (
+    "fmt"
+    "github.com/luvx21/coding-go/coding-common/reflects"
+    "golang.org/x/exp/maps"
+)
+
+func Join[M ~map[K]V, K comparable, V any](m M, kvLink, eLink string) string {
+    var result string
+    keys := maps.Keys(m)
+    for i, k := range keys {
+        v := m[k]
+        result += fmt.Sprintf("%v%s%v", k, kvLink, v)
+        if i < len(keys)-1 {
+            result += eLink
+        }
+    }
+    return result
+}
 
 func RemoveIf[M ~map[K]V, K comparable, V any](m M, f func(K, V) bool) {
     for k, v := range m {

@@ -13,7 +13,7 @@ type response struct {
     Code    int         `json:"code"`
     Message string      `json:"message"`
     Data    interface{} `json:"data"`
-    TraceId string      `json:"traceid"`
+    TraceId string      `json:"traceId"`
 }
 
 func NoMethod(ctx *gin.Context) {

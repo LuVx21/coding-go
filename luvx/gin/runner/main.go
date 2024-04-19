@@ -18,7 +18,7 @@ func exec() {
 
     _, _ = s.NewJob(
         gocron.CronJob(
-            "0 1/10 * * * *",
+            "0 7/10 * * * *",
             true,
         ),
         gocron.NewTask(

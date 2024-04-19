@@ -1,11 +1,13 @@
 package common_kv
 
 import (
+    "github.com/luvx21/coding-go/coding-common/common"
     "luvx/gin/dao/common_kv"
     "luvx/gin/model"
 )
 
 type CommonKVBizType int32
+type KeyWithType = common.Pair[string, int]
 
 const (
     UNKNOWN CommonKVBizType = iota

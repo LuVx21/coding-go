@@ -50,4 +50,6 @@ func RegisterApp(r *gin.Engine) {
             c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         }
     })
+
+    r.GET("/redirect", controller.Redirect)
 }

@@ -1,14 +1,23 @@
-FROM golang:1.22-alpine3.19 as builder
-#FROM golang:1.22 as builder
+# ARG IMAGE=golang:1.22
+ARG IMAGE=golang:1.22-alpine3.19
+FROM ${IMAGE} as pkg
+
+WORKDIR /pkg
+COPY go.mod ./
+RUN go mod download && go mod verify
+
+# -------------------------------------------
+
+FROM pkg as builder
 
 WORKDIR /build
 
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
-
 COPY . .
+RUN go mod download && go mod verify
 # RUN go build -v -o . ./... # 所有main
 RUN go build -v -o luvx main.go
+
+# -------------------------------------------
 
 FROM alpine:3.19
 #FROM debian:bookworm

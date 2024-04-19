@@ -5,6 +5,15 @@ import (
     "testing"
 )
 
+func Test_Join(t *testing.T) {
+    m := map[string]interface{}{
+        "a": "aa",
+        "b": "bb",
+    }
+    join := Join(m, "=", ";")
+    fmt.Println(join)
+}
+
 func Test_RemoveIf(t *testing.T) {
     m := map[string]interface{}{
         "a": "aa",

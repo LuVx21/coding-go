@@ -5,9 +5,9 @@ import (
     "encoding/json"
     "fmt"
     "github.com/gocolly/colly"
-    "github.com/luvx21/coding-go/coding-common/fmt_x"
     "github.com/luvx21/coding-go/coding-common/ids"
     "github.com/luvx21/coding-go/coding-common/maps_x"
+    "github.com/luvx21/coding-go/coding-common/times_x"
     "github.com/spf13/cast"
     "go.mongodb.org/mongo-driver/bson"
     "luvx/gin/db"
@@ -26,7 +26,7 @@ func PullHotBand() {
 
         client := db.MongoDatabase.Collection("weibo_hot_band")
         bandList := ff["data"].(map[string]interface{})["band_list"].([]interface{})
-        now := fmt_x.TimeNowDate()
+        now := times_x.TimeNowDate()
         worker, _ := ids.NewSnowflakeIdWorker(0, 0)
         for i, v := range bandList {
             vv := v.(map[string]interface{})

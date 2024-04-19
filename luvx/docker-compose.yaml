@@ -10,6 +10,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8090:8090"
+    volumes:
+      - $HOME/data:/root/data
 #    command: ["sleep", "infinity"]
 
 networks:

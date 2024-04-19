@@ -17,7 +17,7 @@ func GetUserByUsername(username string) (*model.User, error) {
 func crud() {
     // 插入记录
     client := db.MySQLClient
-    client.Create(&model.User{Username: "xxx", Age: 18, Password: "xxx"})
+    client.Create(&model.User{UserName: "xxx", Age: 18, Password: "xxx"})
 
     var users []model.User
     client.Find(&users)

@@ -5,9 +5,8 @@ import (
     "os"
 )
 
-var tt = table.NewWriter()
-
 func Println(header []interface{}, rows ...[]interface{}) {
+    tt := table.NewWriter()
     tt.SetOutputMirror(os.Stdout)
     tt.SetAutoIndex(true)
     tt.AppendHeader(header)

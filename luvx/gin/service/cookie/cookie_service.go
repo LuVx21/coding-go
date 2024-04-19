@@ -1,4 +1,4 @@
-package service
+package cookie
 
 import (
     "bytes"
@@ -9,6 +9,7 @@ import (
     "errors"
     "fmt"
     lcommon "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/maps_x"
     "golang.org/x/crypto/pbkdf2"
     "luvx/gin/db"
     _ "modernc.org/sqlite"
@@ -16,17 +17,12 @@ import (
 )
 
 var (
-    passwordByte = []byte("")
     client       *sql.DB
 )
 
 func GetCookieStrByHost(hosts ...string) string {
     resultMap := GetCookieByHost(hosts...)
-    var result string
-    for k, v := range resultMap {
-        result += k + "=" + v
-    }
-    return result
+    return maps_x.Join(resultMap, "=", "; ")
 }
 
 func GetCookieByHost(hosts ...string) map[string]string {

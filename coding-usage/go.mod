@@ -7,8 +7,12 @@ go 1.22.1
 require (
 	github.com/IBM/sarama v1.43.1
 	github.com/PuerkitoBio/goquery v1.9.1
+	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/apache/pulsar-client-go v0.12.1
 	github.com/deckarep/golang-set/v2 v2.6.0
+	github.com/dgraph-io/ristretto v0.1.1
+	github.com/eko/gocache/lib/v4 v4.1.6
+	github.com/eko/gocache/store/bigcache/v4 v4.2.1
 	github.com/elastic/go-elasticsearch/v8 v8.13.1
 	github.com/emirpasic/gods v1.12.0
 	github.com/go-co-op/gocron/v2 v2.2.9
@@ -18,13 +22,16 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
+	github.com/gorilla/websocket v1.4.2
 	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/jmespath-community/go-jmespath v1.1.1
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.1.11
 	github.com/levigross/grequests v0.0.0-20231203190023-9c307ef1f48d
 	github.com/linxGnu/grocksdb v1.8.14
-	github.com/luvx21/coding-go/coding-common v0.0.0-00010101000000-000000000000
+	github.com/loov/hrtime v1.0.3
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240419095411-3585ce0bdb48
 	github.com/panjf2000/ants/v2 v2.9.1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -72,6 +79,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
@@ -94,7 +102,9 @@ require (
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible // indirect
+	github.com/golang/glog v1.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect

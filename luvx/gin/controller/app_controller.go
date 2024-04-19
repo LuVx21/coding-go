@@ -4,11 +4,13 @@ import (
     "context"
     "github.com/gin-gonic/gin"
     "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "go.mongodb.org/mongo-driver/bson"
+    "luvx/gin/common/consts"
+    "luvx/gin/common/responsex"
     "luvx/gin/db"
     "luvx/gin/model"
-    "luvx/gin/service"
-    "net/http"
+    "luvx/gin/service/cookie"
     "sync"
 )
 
@@ -59,7 +61,7 @@ func HealthyCheck(c *gin.Context) {
         return db.QueryForMap(db.SqliteClient, "select * from user where id = ?", args)
     })
     cookie := common.RunWithTime("cookie", func() map[string]string {
-        return service.GetCookieByHost(".weibo.com", "weibo.com")
+        return cookie.GetCookieByHost(".weibo.com", "weibo.com")
     })
 
     wg.Wait()
@@ -69,11 +71,23 @@ func HealthyCheck(c *gin.Context) {
     mysql := <-r0
     mongo := <-r1
     redis := <-r2
-    c.JSON(http.StatusOK, gin.H{
+    responsex.Result(c, gin.H{
         "mysql":  mysql,
         "mongo":  mongo,
         "redis":  redis,
         "sqlite": sqlite,
         "cookie": cookie,
     })
+}
+
+func Redirect(c *gin.Context) {
+    toUrl := c.Query("url")
+    logs.Log.Infoln("重定向到:", toUrl)
+
+    response, body, _ := consts.GoRequest.Get(toUrl).
+        End()
+    for k, v := range response.Header {
+        c.Header(k, v[0])
+    }
+    c.String(response.StatusCode, body)
 }

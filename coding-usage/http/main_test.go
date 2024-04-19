@@ -80,12 +80,13 @@ func Test_03(t *testing.T) {
         }).Dial,
     }
 
-    req := fasthttp.AcquireRequest()
-    defer fasthttp.ReleaseRequest(req)
+    req, resp := fasthttp.AcquireRequest(), fasthttp.AcquireResponse()
+    defer func() {
+        fasthttp.ReleaseRequest(req)
+        fasthttp.ReleaseResponse(resp)
+    }()
     req.SetRequestURI("https://httpbin.org/get")
     req.Header.SetMethod(fasthttp.MethodGet)
-    resp := fasthttp.AcquireResponse()
-    defer fasthttp.ReleaseResponse(resp)
     err := client.Do(req, resp)
 
     if err == nil {
