@@ -3,7 +3,7 @@ package db
 import (
     "fmt"
     "github.com/redis/go-redis/v9"
-    "luvx/config"
+    "luvx/gin/config"
 )
 
 func NewRedisClient() *redis.Client {

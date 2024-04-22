@@ -1,4 +1,4 @@
-package common
+package common_x
 
 type Pair[T1, T2 any] struct {
     K T1 `json:"key"`

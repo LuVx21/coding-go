@@ -6,11 +6,12 @@ import (
     "encoding/hex"
     "encoding/json"
     "fmt"
+    "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/iterators"
     "github.com/luvx21/coding-go/coding-common/jsons"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "github.com/luvx21/coding-go/coding-common/maps_x"
     "github.com/luvx21/coding-go/coding-common/nets_x"
-    "github.com/spf13/cast"
     "github.com/tidwall/gjson"
     "github.com/valyala/fasthttp"
     "go.mongodb.org/mongo-driver/bson"
@@ -52,19 +53,19 @@ func PullAll() {
         if !flag {
             continue
         }
-        PullSeasonList(cast.ToInt64(seasonId))
+        PullSeasonList(cast_x.ToInt64(seasonId))
     }
 }
 
 func PullSeasonList(seasonId int64) {
     cursor, limit := 1, 20
-    iterator := iterators.NewCursorIterator(
+    iterator := iterators.NewCursorIteratorSimple(
         cursor,
         false,
         func(_cursor int) []interface{} {
-            return funcName(seasonId, _cursor, limit)
+            return requestSeasonVideo(seasonId, _cursor, limit)
         },
-        func(items []interface{}) int {
+        func(curId int, items []interface{}) int {
             if len(items) < limit {
                 return -1
             }
@@ -91,12 +92,12 @@ func PullSeasonList(seasonId int64) {
 
         media["invalid"] = 0
         maps_x.ComputeIfPresent(media, "pubtime", func(k string, v interface{}) interface{} {
-            return time.Unix(cast.ToInt64(v), 0)
+            return time.Unix(cast_x.ToInt64(v), 0)
         })
         media["from"] = "go-season"
         upper := media["upper"].(map[string]interface{})
         maps_x.ComputeIfPresent(upper, "mid", func(k string, v interface{}) interface{} {
-            return cast.ToInt64(v)
+            return cast_x.ToInt64(v)
         })
         upper["seasonId"] = seasonId
 
@@ -107,7 +108,7 @@ func PullSeasonList(seasonId int64) {
     })
 }
 
-func funcName(seasonId int64, cursor int, limit int) []interface{} {
+func requestSeasonVideo(seasonId int64, cursor int, limit int) []interface{} {
     client := &fasthttp.Client{}
 
     req := fasthttp.AcquireRequest()
@@ -122,6 +123,7 @@ func funcName(seasonId int64, cursor int, limit int) []interface{} {
     resp := fasthttp.AcquireResponse()
     defer fasthttp.ReleaseResponse(resp)
 
+    logs.Log.Infoln("请求:", pUrl)
     _ = client.Do(req, resp)
     ff := make(map[string]interface{})
     _ = json.Unmarshal(resp.Body(), &ff)
@@ -131,18 +133,18 @@ func funcName(seasonId int64, cursor int, limit int) []interface{} {
 }
 
 func PullUpVideo(mid string) []string {
-    opts := options.FindOne().SetSort(map[string]int{"_id": -1})
+    opts := options.FindOne().SetSort(bson.M{"pubtime": -1})
     var latest bson.M
-    _ = mongoClient.FindOne(context.TODO(), nil, opts).Decode(&latest)
+    _ = mongoClient.FindOne(context.TODO(), bson.M{"upper.mid": cast_x.ToInt64(mid)}, opts).Decode(&latest)
 
     cursor, limit := 1, 30
-    iterator := iterators.NewCursorIterator[interface{}, int](
+    iterator := iterators.NewCursorIteratorSimple[interface{}, int](
         cursor,
         false,
         func(_cursor int) []interface{} {
-            return PullUpVideo1(mid, _cursor, limit)
+            return requestUpVideo(mid, _cursor, limit)
         },
-        func(items []interface{}) int {
+        func(curId int, items []interface{}) int {
             if latest == nil || len(items) < limit {
                 return -1
             }
@@ -157,7 +159,7 @@ func PullUpVideo(mid string) []string {
     iterator.ForEachRemaining(func(item interface{}) {
         video := item.(map[string]interface{})
         id := video["aid"]
-        if cast.ToInt64(id) <= cast.ToInt64(latest["_id"]) {
+        if cast_x.ToInt64(video["created"]) <= cast_x.ToInt64(latest["pubtime"])/1000 {
             return
         }
 
@@ -170,12 +172,12 @@ func PullUpVideo(mid string) []string {
         }
 
         video["invalid"] = 0
-        video["pubtime"] = time.Unix(cast.ToInt64(video["created"]), 0)
+        video["pubtime"] = time.Unix(cast_x.ToInt64(video["created"]), 0)
         video["from"] = "go-up"
         video["upper"] = map[string]interface{}{
-            "mid":      cast.ToInt64(video["mid"]),
+            "mid":      cast_x.ToInt64(video["mid"]),
             "name":     video["author"],
-            "seasonId": cast.ToInt64(video["season_id"]),
+            "seasonId": cast_x.ToInt64(video["season_id"]),
         }
 
         maps_x.RemoveIf(video, func(k string, v interface{}) bool {
@@ -183,11 +185,12 @@ func PullUpVideo(mid string) []string {
         })
         _, _ = mongoClient.InsertOne(context.TODO(), video)
         result = append(result, video["bvid"].(string))
+        logs.Log.Infoln(video["pubtime"], video["title"])
     })
     return result
 }
 
-func PullUpVideo1(mid string, cursor int, limit int) []interface{} {
+func requestUpVideo(mid string, cursor int, limit int) []interface{} {
     m := map[string]any{
         "mid":           mid,
         "ps":            limit,
@@ -213,6 +216,7 @@ func PullUpVideo1(mid string, cursor int, limit int) []interface{} {
     }
 
     cookie := cookie.GetCookieStrByHost(".bilibili.com")
+    logs.Log.Infoln("请求:", pUrl)
     _, body, _ := consts.GoRequest.Get(newUrlStr.String()).
         Set("User-Agent", consts.UserAgent).
         Set("Referer", "https://www.bilibili.com/").
@@ -296,7 +300,9 @@ func getWbiKeysCached() (string, string) {
 }
 
 func getWbiKeys() (string, string) {
-    _, json, _ := consts.GoRequest.Get("https://api.bilibili.com/x/web-interface/nav").
+    targetUrl := "https://api.bilibili.com/x/web-interface/nav"
+    logs.Log.Infoln("请求:", targetUrl)
+    _, json, _ := consts.GoRequest.Get(targetUrl).
         Set("User-Agent", consts.UserAgent).
         Set("Referer", "https://www.bilibili.com/").
         End()

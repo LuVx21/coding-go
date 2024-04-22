@@ -2,7 +2,7 @@ package structs
 
 import (
     "fmt"
-    "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     "reflect"
 )
 
@@ -47,8 +47,8 @@ func ToSingleMap(in interface{}, tag string) (map[string]interface{}, error) {
     }
 
     result := make(map[string]interface{})
-    queue := make([]common.Pair[interface{}, string], 0, 1)
-    queue = append(queue, common.NewPair(in, ""))
+    queue := make([]common_x.Pair[interface{}, string], 0, 1)
+    queue = append(queue, common_x.NewPair(in, ""))
 
     for len(queue) > 0 {
         e := queue[0]
@@ -66,11 +66,11 @@ func ToSingleMap(in interface{}, tag string) (map[string]interface{}, error) {
             if kind == reflect.Pointer {
                 field = field.Elem()
                 if field.Kind() == reflect.Struct {
-                    queue = append(queue, common.NewPair(field.Interface(), tagName+"."))
+                    queue = append(queue, common_x.NewPair(field.Interface(), tagName+"."))
                     continue
                 }
             } else if kind == reflect.Struct {
-                queue = append(queue, common.NewPair(field.Interface(), tagName+"."))
+                queue = append(queue, common_x.NewPair(field.Interface(), tagName+"."))
                 continue
             }
             if tagName != "" {

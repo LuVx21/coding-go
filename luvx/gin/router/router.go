@@ -3,6 +3,7 @@ package router
 import (
     "github.com/gin-gonic/gin"
     "luvx/gin/common/responsex"
+    "luvx/gin/router/weibo_p"
 )
 
 func Register(r *gin.Engine) {
@@ -18,4 +19,5 @@ func Register(r *gin.Engine) {
     RegisterApp(r)
     RegisterUser(r)
     RegisterBili(r)
+    weibo_p.RegisterWeibo(r)
 }

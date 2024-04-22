@@ -8,21 +8,20 @@ require (
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/eko/gocache/lib/v4 v4.1.6
 	github.com/eko/gocache/store/bigcache/v4 v4.2.1
-	github.com/fsnotify/fsnotify v1.7.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-co-op/gocron/v2 v2.2.9
+	github.com/go-co-op/gocron/v2 v2.2.10
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20240419095411-3585ce0bdb48
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240422103506-d4eb761bdb04
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/spf13/viper v1.18.2
 	github.com/tidwall/gjson v1.17.1
 	github.com/valyala/fasthttp v1.52.0
 	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
+	golang.org/x/time v0.5.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.9
 	modernc.org/sqlite v1.29.8
@@ -41,6 +40,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5 // indirect
+	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/mock v1.6.0 // indirect
@@ -66,6 +66,7 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
+	github.com/spf13/viper v1.18.2 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
@@ -111,7 +112,7 @@ require (
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
-	github.com/spf13/cast v1.6.0
+	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
@@ -119,7 +120,7 @@ require (
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
-	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
+	github.com/youmark/pkcs8 v0.0.0-20240424034433-3c2c7870ae76 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/crypto v0.22.0

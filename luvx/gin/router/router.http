@@ -1,0 +1,33 @@
+@host = localhost:8090
+
+###
+
+GET http://{{host}}
+
+###
+
+GET http://{{host}}/app/:path
+
+###
+
+GET http://{{host}}/app/healthyCheck
+
+###
+
+GET http://{{host}}/redirect?url=xxx
+
+###
+
+GET http://{{host}}/user/:username
+
+###
+
+GET http://{{host}}/bili/pull/season?seasonId=0
+
+###
+
+GET http://{{host}}/bili/pull/up/video?mid=0
+
+###
+
+GET http://{{host}}/weibo/pull/user?uid=0

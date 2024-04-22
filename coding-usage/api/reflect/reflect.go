@@ -2,12 +2,12 @@ package main
 
 import (
     "fmt"
-    "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     "reflect"
 )
 
 func main() {
-    p := common.NewPair("foo", "bar")
+    p := common_x.NewPair("foo", "bar")
     v := reflect.ValueOf(&p)
     if v.Kind() == reflect.Ptr {
         v = v.Elem()

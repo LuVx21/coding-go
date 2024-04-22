@@ -5,7 +5,7 @@ import (
     "fmt"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
-    "luvx/config"
+    "luvx/gin/config"
 )
 
 var MongoDatabase *mongo.Database

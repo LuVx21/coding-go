@@ -6,7 +6,7 @@ import (
     "gorm.io/gorm"
     "gorm.io/gorm/logger"
     "gorm.io/gorm/schema"
-    "luvx/config"
+    "luvx/gin/config"
 )
 
 var MySQLClient *gorm.DB

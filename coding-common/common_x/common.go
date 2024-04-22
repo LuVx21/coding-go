@@ -1,4 +1,4 @@
-package common
+package common_x
 
 import (
     "fmt"
@@ -24,18 +24,19 @@ func IfThenGet[T any](expr bool, a func() T, b func() T) T {
 
 // RunCatching 捕捉异常,避免异常退出
 func RunCatching(fn func()) {
-    func() {
-        defer func() {
-            if r := recover(); r != nil {
-                log.Print(r)
-            }
-        }()
+    RunCatchingReturn(func() int {
         fn()
-    }()
+        return 0
+    })
 }
 
-func CatchingWithRoutine(fn func()) {
-    go RunCatching(fn)
+func RunCatchingReturn[T any](fn func() T) T {
+    defer func() {
+        if r := recover(); r != nil {
+            log.Warn(r)
+        }
+    }()
+    return fn()
 }
 
 func RunInRoutine(wg *sync.WaitGroup, f func()) {

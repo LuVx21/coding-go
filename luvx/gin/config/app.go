@@ -1,8 +1,10 @@
 package config
 
+import "github.com/luvx21/coding-go/coding-common/logs"
+
 type Config struct {
     Server  ServerConfig
-    Log     LogConfig
+    Log     logs.LogConfig
     MySQL   MySQL
     Redis   Redis
     MongoDB MongoDB
@@ -11,12 +13,6 @@ type Config struct {
 type ServerConfig struct {
     Port  string
     Debug bool
-}
-
-type LogConfig struct {
-    LogDir   string
-    MainLog  string
-    ErrorLog string
 }
 
 type MySQL struct {

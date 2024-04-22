@@ -1,4 +1,4 @@
-package common
+package common_x
 
 import (
     "fmt"
@@ -7,11 +7,16 @@ import (
 )
 
 func Test_m1(t *testing.T) {
-    RunCatching(task)
-}
-
-func task() {
-    panic("异常")
+    RunCatching(func() {
+        //panic("异常")
+    })
+    fmt.Println("后续操作1")
+    r := RunCatchingReturn[string](func() string {
+        //panic("异常")
+        return "结果"
+    })
+    fmt.Println(r)
+    fmt.Println("后续操作2")
 }
 
 func Test_RunWithTime(t *testing.T) {

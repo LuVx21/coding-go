@@ -2,27 +2,51 @@ package cookie
 
 import (
     "bytes"
+    "context"
     "crypto/aes"
     "crypto/cipher"
     "crypto/sha1"
     "database/sql"
+    "encoding/json"
     "errors"
     "fmt"
-    lcommon "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/allegro/bigcache/v3"
+    lcommon "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/luvx21/coding-go/coding-common/maps_x"
     "golang.org/x/crypto/pbkdf2"
     "luvx/gin/db"
     _ "modernc.org/sqlite"
     "os/exec"
+    "time"
 )
 
 var (
+    passwordByte = []byte("")
     client       *sql.DB
+    cache, _     = bigcache.New(context.Background(), bigcache.DefaultConfig(60*time.Minute))
 )
 
 func GetCookieStrByHost(hosts ...string) string {
-    resultMap := GetCookieByHost(hosts...)
+    resultMap := make(map[string]string)
+    for _, host := range hosts {
+        tt := GetCookieByHostCache(host)
+        for k, v := range tt {
+            resultMap[k] = v
+        }
+    }
     return maps_x.Join(resultMap, "=", "; ")
+}
+
+func GetCookieByHostCache(host string) map[string]string {
+    b, err := cache.Get(host)
+    if b == nil || err != nil {
+        m := GetCookieByHost(host)
+        b, _ = json.Marshal(m)
+        _ = cache.Set(host, b)
+    }
+    tt := make(map[string]string)
+    _ = json.Unmarshal(b, &tt)
+    return tt
 }
 
 func GetCookieByHost(hosts ...string) map[string]string {

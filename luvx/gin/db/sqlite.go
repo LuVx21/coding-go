@@ -3,14 +3,14 @@ package db
 import (
     "database/sql"
     "fmt"
-    "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     _ "modernc.org/sqlite"
 )
 
 var SqliteClient *sql.DB
 
 func init() {
-    home, _ := common.Dir()
+    home, _ := common_x.Dir()
     dataSourceName := home + "/data/sqlite/main.db"
     SqliteClient, _ = GetDataSource(dataSourceName)
 }

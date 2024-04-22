@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "github.com/luvx21/coding-go/coding-common/common"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     "log"
     "sync"
     "testing"
@@ -72,10 +72,10 @@ func Test_02(t *testing.T) {
     r1 := make(chan string, 1)
     r2 := make(chan int, 1)
 
-    common.RunInRoutine(&wg, func() {
+    common_x.RunInRoutine(&wg, func() {
         r1 <- f1()
     })
-    common.RunInRoutine(&wg, func() {
+    common_x.RunInRoutine(&wg, func() {
         r2 <- f2()
     })
 
