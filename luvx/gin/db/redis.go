@@ -1,13 +1,13 @@
 package db
 
 import (
-    "fmt"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/redis/go-redis/v9"
     "luvx/gin/config"
 )
 
 func NewRedisClient() *redis.Client {
-    fmt.Println("初始化Redis连接...")
+    defer common_x.TrackTime("初始化Redis连接...")()
     redisConfig := config.AppConfig.Redis
     return redis.NewClient(&redis.Options{
         Addr:     redisConfig.Host,

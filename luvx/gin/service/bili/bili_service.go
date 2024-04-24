@@ -4,9 +4,10 @@ import (
     "context"
     "crypto/md5"
     "encoding/hex"
-    "encoding/json"
     "fmt"
+    "github.com/bytedance/sonic"
     "github.com/luvx21/coding-go/coding-common/cast_x"
+    "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/luvx21/coding-go/coding-common/iterators"
     "github.com/luvx21/coding-go/coding-common/jsons"
     "github.com/luvx21/coding-go/coding-common/logs"
@@ -17,6 +18,7 @@ import (
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo/options"
     "golang.org/x/exp/slices"
+    "golang.org/x/time/rate"
     "luvx/gin/common/consts"
     "luvx/gin/db"
     "luvx/gin/service/common_kv"
@@ -41,19 +43,21 @@ var (
         imgKey, subKey := getWbiKeys()
         return []byte(imgKey + "|" + subKey), nil
     })
+    rateLimiter = rate.NewLimiter(1, 1)
     mongoClient = db.MongoDatabase.Collection("bili_video")
 )
 
 func PullAll() {
-    m := common_kv.Get(common_kv.MAP, "bili_season")
-    v := m["bili_season"]
+    key := "bili_season"
+    m := common_kv.Get(common_kv.MAP, key)
+    v := m[key]
     ff := make(map[string]bool)
-    _ = json.Unmarshal([]byte(v.CommonValue), &ff)
+    _ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
     for seasonId, flag := range ff {
         if !flag {
             continue
         }
-        PullSeasonList(cast_x.ToInt64(seasonId))
+        go PullSeasonList(cast_x.ToInt64(seasonId))
     }
 }
 
@@ -124,18 +128,33 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []interface{} {
     defer fasthttp.ReleaseResponse(resp)
 
     logs.Log.Infoln("请求:", pUrl)
+    _ = rateLimiter.Wait(context.TODO())
     _ = client.Do(req, resp)
     ff := make(map[string]interface{})
-    _ = json.Unmarshal(resp.Body(), &ff)
+    _ = sonic.Unmarshal(resp.Body(), &ff)
 
     medias := ff["data"].(map[string]interface{})["medias"].([]interface{})
     return medias
 }
 
-func PullUpVideo(mid string) []string {
+func PullAllUpVideo() {
+    key := "bili_up"
+    m := common_kv.Get(common_kv.MAP, key)
+    v := m[key]
+    ff := make(map[string]bool)
+    _ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
+    for mid, flag := range ff {
+        if !flag {
+            continue
+        }
+        go PullUpVideo(cast_x.ToInt64(mid))
+    }
+}
+
+func PullUpVideo(mid int64) []string {
     opts := options.FindOne().SetSort(bson.M{"pubtime": -1})
     var latest bson.M
-    _ = mongoClient.FindOne(context.TODO(), bson.M{"upper.mid": cast_x.ToInt64(mid)}, opts).Decode(&latest)
+    _ = mongoClient.FindOne(context.TODO(), bson.M{"upper.mid": mid}, opts).Decode(&latest)
 
     cursor, limit := 1, 30
     iterator := iterators.NewCursorIteratorSimple[interface{}, int](
@@ -148,8 +167,12 @@ func PullUpVideo(mid string) []string {
             if latest == nil || len(items) < limit {
                 return -1
             }
+            last := cast_x.ToInt64(items[len(items)-1].(map[string]interface{})["created"])
+            if last <= cast_x.ToInt64(latest["pubtime"])/1000 {
+                return -1
+            }
             cursor++
-            return cursor
+            return common_x.IfThen(cursor <= 30, cursor, -1)
         },
         func(i int) bool {
             return i <= 0
@@ -190,7 +213,7 @@ func PullUpVideo(mid string) []string {
     return result
 }
 
-func requestUpVideo(mid string, cursor int, limit int) []interface{} {
+func requestUpVideo(mid int64, cursor int, limit int) []interface{} {
     m := map[string]any{
         "mid":           mid,
         "ps":            limit,
@@ -217,6 +240,7 @@ func requestUpVideo(mid string, cursor int, limit int) []interface{} {
 
     cookie := cookie.GetCookieStrByHost(".bilibili.com")
     logs.Log.Infoln("请求:", pUrl)
+    _ = rateLimiter.Wait(context.TODO())
     _, body, _ := consts.GoRequest.Get(newUrlStr.String()).
         Set("User-Agent", consts.UserAgent).
         Set("Referer", "https://www.bilibili.com/").

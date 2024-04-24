@@ -3,7 +3,6 @@ package logs
 import (
     rotatelogs "github.com/lestrrat-go/file-rotatelogs"
     prefixed "github.com/luvx12/logrus-prefixed-formatter"
-    "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/rifflock/lfshook"
     "github.com/sirupsen/logrus"
     "os"
@@ -52,8 +51,11 @@ func init() {
     }
 
     // 以下三个常量都可以使用配置
+    logPath := "./.logs/"
     logDir := os.Getenv("log_LogDir")
-    logPath := common_x.IfThen(len(logDir) == 0, "./.logs/", logDir)
+    if len(logDir) != 0 {
+        logPath = logDir
+    }
     writer, _ := rotatelogs.New(
         path.Join(logPath, "main-%Y-%m-%d.log"),
         rotatelogs.WithLinkName(path.Join(logPath, "main.log")),
@@ -80,7 +82,7 @@ func init() {
     Log.SetReportCaller(true)
     Log.SetFormatter(stdFormatter)
     Log.SetOutput(os.Stdout)
-    Log.SetLevel(logrus.DebugLevel)
+    Log.SetLevel(logrus.InfoLevel)
 
     Log.Infoln("日志文件位置:", logPath)
 }

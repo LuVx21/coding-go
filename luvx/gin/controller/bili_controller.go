@@ -21,6 +21,12 @@ func PullSeason(c *gin.Context) {
 
 func PullUpVideo(c *gin.Context) {
     mid := c.Query("mid")
-    video := bili.PullUpVideo(mid)
-    responsex.Result(c, video)
+    toInt64 := cast_x.ToInt64(mid)
+    var video []string
+    if toInt64 == 0 {
+        bili.PullAllUpVideo()
+    } else {
+        video = bili.PullUpVideo(toInt64)
+    }
+    responsex.R(c, video)
 }

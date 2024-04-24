@@ -17,18 +17,18 @@ type response struct {
 }
 
 func NoMethod(ctx *gin.Context) {
-    Result(ctx, errorx.NewCodeError(http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed)))
+    R(ctx, errorx.NewCodeError(http.StatusMethodNotAllowed))
 }
 
 func NoRoute(ctx *gin.Context) {
-    Result(ctx, errorx.NewCodeError(http.StatusNotFound, http.StatusText(http.StatusNotFound)))
+    R(ctx, errorx.NewCodeError(http.StatusNotFound))
 }
 
 func ServiceUnavailable(ctx *gin.Context) {
-    Result(ctx, errorx.NewCodeError(http.StatusServiceUnavailable, http.StatusText(http.StatusServiceUnavailable)))
+    R(ctx, errorx.NewCodeError(http.StatusServiceUnavailable))
 }
 
-func Result(ctx *gin.Context, data interface{}) {
+func R(ctx *gin.Context, data interface{}) {
     result := newResponse(ctx, data)
     result.TraceId = fmt.Sprintf("%s", ctx.Value("traceId"))
     httpStatus := http.StatusOK
@@ -40,7 +40,6 @@ func Result(ctx *gin.Context, data interface{}) {
 
 func newResponse(ctx context.Context, data interface{}) *response {
     switch value := data.(type) {
-
     case *errorx.CodeError:
         return &response{
             Code:    value.Code,

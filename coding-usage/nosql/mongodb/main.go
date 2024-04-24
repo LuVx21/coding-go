@@ -4,26 +4,40 @@ import (
     "context"
     "fmt"
     "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/event"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
     "log"
 )
 
 const (
-    uri        = ""
-    database   = "boot"
-    collection = "user"
+    uri            = ""
+    dbName         = "boot"
+    collectionName = "user"
 )
 
-func main() {
-    // 设置MongoDB连接信息
+func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
     clientOptions := options.Client().ApplyURI(uri)
+
+    // 输出查询语句
+    var logMonitor = event.CommandMonitor{
+        Started: func(ctx context.Context, event *event.CommandStartedEvent) {
+            log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
+        },
+        Succeeded: func(ctx context.Context, event *event.CommandSucceededEvent) {
+            log.Printf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)
+        },
+        Failed: func(ctx context.Context, event *event.CommandFailedEvent) {
+            log.Fatalf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)
+        },
+    }
+    clientOptions.SetMonitor(&logMonitor)
+
     client, err := mongo.Connect(context.TODO(), clientOptions)
     if err != nil {
         log.Fatal(err)
     }
 
-    // 检查是否能够连接MongoDB
     err = client.Ping(context.TODO(), nil)
     if err != nil {
         log.Fatal(err)
@@ -31,9 +45,14 @@ func main() {
 
     fmt.Println("连接到MongoDB!")
 
-    // 获取数据库和集合的句柄
-    database := client.Database(database)
-    collection := database.Collection(collection)
+    db := client.Database(dbName)
+    collection := db.Collection(collectionName)
+    return client, db, collection
+}
+
+func main() {
+    client, _, collection := connect()
+    defer client.Disconnect(context.TODO())
 
     // 插入文档
     insertResult, _ := collection.InsertOne(context.TODO(), bson.D{
@@ -60,11 +79,4 @@ func main() {
     // 删除文档
     deleteResult, _ := collection.DeleteOne(context.TODO(), filter)
     fmt.Printf("删除 %v 文档\n", deleteResult.DeletedCount)
-
-    // 断开与MongoDB的连接
-    err = client.Disconnect(context.TODO())
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println("连接关闭")
 }

@@ -4,6 +4,7 @@ import (
     "fmt"
     "github.com/luvx21/coding-go/coding-common/reflects"
     "golang.org/x/exp/maps"
+    "reflect"
 )
 
 func Join[M ~map[K]V, K comparable, V any](m M, kvLink, eLink string) string {
@@ -80,4 +81,84 @@ func ComputeIfPresent[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V)
     } else {
         return oldValue
     }
+}
+
+func GetInt[M ~map[K]any, K comparable](m M, key K, _default int) (int, error) {
+    val, err := GetByKey(m, key, reflect.Int, _default)
+    if err != nil {
+        return _default, err
+    }
+
+    return val.(int), err
+}
+
+func GetInt64[M ~map[K]any, K comparable](m M, key K, _default int64) (int64, error) {
+    val, err := GetByKey[M, K](m, key, reflect.Int64, _default)
+    if err != nil {
+        return _default, err
+    }
+
+    return val.(int64), err
+}
+
+func GetFloat[M ~map[K]any, K comparable](m M, key K, _default float64) (float64, error) {
+    val, err := GetByKey(m, key, reflect.Float64, _default)
+    if err != nil {
+        return _default, err
+    }
+
+    return val.(float64), err
+}
+
+func GetMap[M ~map[K]any, K, NK comparable, NV any](m M, key K, _default map[NK]NV) (map[NK]NV, error) {
+    val, err := GetByKey(m, key, reflect.Map, _default)
+    if err != nil {
+        return _default, err
+    }
+
+    return val.(map[NK]NV), nil
+}
+
+func GetString[M ~map[K]any, K comparable](m M, key K, _default string) (string, error) {
+    val, err := GetByKey(m, key, reflect.String, _default)
+    if err != nil {
+        return _default, err
+    }
+
+    return val.(string), err
+}
+
+func GetSlice[M ~map[K]any, K comparable, E any](m M, key K, _default []E) ([]E, error) {
+    val, err := GetByKey(m, key, reflect.Slice, _default)
+    if err != nil {
+        return _default, err
+    }
+    return val.([]E), err
+}
+
+func GetInterface[M ~map[K]any, K comparable](m M, key K, _default any) (any, error) {
+    val, ok := m[key]
+    if !ok {
+        val = _default
+    }
+
+    return val, nil
+}
+
+func GetByKey[M ~map[K]any, K comparable](m M, key K, vType reflect.Kind, _default any) (any, error) {
+    if m == nil || len(m) == 0 {
+        return _default, nil
+    }
+
+    val, ok := m[key]
+    if !ok {
+        return _default, nil
+    }
+
+    vk := reflect.ValueOf(val).Kind()
+    if vk != vType {
+        return nil, fmt.Errorf("非法值类型-> 实际:%s 预期:%s", vk.String(), vType.String())
+    }
+
+    return val, nil
 }

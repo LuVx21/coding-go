@@ -21,6 +21,9 @@ mongodb:
   uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
   database: boot
 
+turso:
+  dbname: xxx
+  token: xxx
 server:
   port: ":8090"
   debug: true

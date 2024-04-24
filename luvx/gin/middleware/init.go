@@ -5,8 +5,13 @@ import (
 )
 
 func RegisterGlobalMiddlewares(r *gin.Engine) {
-    r.Use(auth())
-    r.Use(traceId)
-    r.Use(requestLog())
-    r.Use(recoverLog())
+    middlewares := []gin.HandlerFunc{
+        auth,
+        traceId,
+        requestLog,
+        recoverLog,
+    }
+    for _, middleware := range middlewares {
+        r.Use(middleware)
+    }
 }

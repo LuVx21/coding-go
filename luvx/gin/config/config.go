@@ -18,12 +18,8 @@ func init() {
 
     configName := ""
     switch env {
-    case "test":
-        configName = "config-test"
-    case "prd":
-        configName = "config-prd"
-    //case "dev":
-    //    configName = "config-dev"
+    case "test", "prd":
+        configName = "config-" + env
     default:
         configName = "config-dev"
     }

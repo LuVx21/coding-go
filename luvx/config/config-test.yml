@@ -4,7 +4,8 @@ log:
   errorLog: error-%Y-%m-%d.log
 
 mysql:
-  host: luvx:53306
+  host: luvx
+  port: 53306
   username: root
   password: 1121
   dbname: boot
@@ -20,6 +21,10 @@ redis:
 mongodb:
   uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
   database: boot
+
+turso:
+  dbname: xxx
+  token: xxx
 
 server:
   port: ":8090"

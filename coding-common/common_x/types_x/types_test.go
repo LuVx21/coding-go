@@ -1,0 +1,33 @@
+package types_x
+
+import (
+    "fmt"
+    "github.com/bytedance/sonic"
+    "testing"
+)
+
+func Test_00(t *testing.T) {
+    _json := `
+{
+  "foo": "bar",
+  "bar": 2
+}
+`
+    m := Map[string, any]{}
+    _ = sonic.Unmarshal([]byte(_json), &m)
+    fmt.Println(m)
+
+    m.Merge(Map[string, any]{"aaa": "bbb"}, true)
+    fmt.Println(m)
+
+    nm := m.Filter(func(k string, v any) bool {
+        return k == "aaa"
+    })
+    fmt.Println(m, nm)
+}
+
+func Test_Set(t *testing.T) {
+    s := Set[string]{}
+    s.Add("foo", "bar")
+    fmt.Println(s.Contain("foo"), s.Contain("bar1"))
+}

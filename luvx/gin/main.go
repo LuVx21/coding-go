@@ -11,7 +11,7 @@ import (
 )
 
 func WebStart() {
-    logs.Log.Infoln("(*^▽^*) 启动... (〃'▽'〃)")
+    logs.Log.Infoln("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
     runner.Start()
 
     r := gin.Default()

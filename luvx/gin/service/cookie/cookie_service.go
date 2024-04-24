@@ -7,15 +7,16 @@ import (
     "crypto/cipher"
     "crypto/sha1"
     "database/sql"
-    "encoding/json"
     "errors"
     "fmt"
     "github.com/allegro/bigcache/v3"
+    "github.com/bytedance/sonic"
     lcommon "github.com/luvx21/coding-go/coding-common/common_x"
+    "github.com/luvx21/coding-go/coding-common/dbs"
     "github.com/luvx21/coding-go/coding-common/maps_x"
     "golang.org/x/crypto/pbkdf2"
+    "log"
     "luvx/gin/db"
-    _ "modernc.org/sqlite"
     "os/exec"
     "time"
 )
@@ -41,22 +42,46 @@ func GetCookieByHostCache(host string) map[string]string {
     b, err := cache.Get(host)
     if b == nil || err != nil {
         m := GetCookieByHost(host)
-        b, _ = json.Marshal(m)
+        b, _ = sonic.Marshal(m)
         _ = cache.Set(host, b)
     }
     tt := make(map[string]string)
-    _ = json.Unmarshal(b, &tt)
+    _ = sonic.Unmarshal(b, &tt)
     return tt
 }
 
 func GetCookieByHost(hosts ...string) map[string]string {
-    if client == nil {
-        home, _ := lcommon.Dir()
-        client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
+    rows, _ := readDb(hosts...)
+    result := make(map[string]string)
+    for _, row := range rows {
+        result[row["name"].(string)] = row["value"].(string)
+    }
+    return result
+}
+
+func Sync2Turso(hosts ...string) {
+    key := masterKey()
+    rowsMap, err := readDb(hosts...)
+    if err != nil {
+        log.Fatalln("读取cookie异常", err)
     }
 
-    sql := `
-select name, encrypted_value, host_key, path, creation_utc, expires_utc, is_secure, is_httponly, has_expires, is_persistent
+    rows := make([][]any, 0, len(rowsMap))
+    for _, row := range rowsMap {
+        value, _ := DecryptWithChromium(key, row["encrypted_value"].([]byte))
+        values := []any{row["host_key"], row["name"], string(value)}
+        rows = append(rows, values)
+    }
+    _, _ = db.Turso.Exec("delete from cookies;")
+    for i, row := range rows {
+        _, _ = db.Turso.Exec("insert into cookies(host_key, name, value) values(?, ?, ?)", row...)
+        fmt.Println("行:", i)
+    }
+}
+
+func readDb(hosts ...string) ([]map[string]any, error) {
+    _sql := `
+select *
 from cookies
 where true
 and host_key in (%s)
@@ -68,28 +93,26 @@ order by host_key, name
     for i := 0; i < len(hosts); i++ {
         args += lcommon.IfThen(i == 0, "", ", ") + fmt.Sprintf("'%s'", hosts[i])
     }
-    sql = fmt.Sprintf(sql, args)
+    _sql = fmt.Sprintf(_sql, args)
 
-    key := masterKey()
-
-    result := make(map[string]string)
-    rows, _ := client.Query(sql)
-    defer rows.Close()
-    for rows.Next() {
-        var (
-            name, host, path                              string
-            isSecure, isHTTPOnly, hasExpire, isPersistent int
-            createDate, expireDate                        int64
-            encryptValue                                  []byte
-        )
-        if err := rows.Scan(&name, &encryptValue, &host, &path, &createDate, &expireDate, &isSecure, &isHTTPOnly, &hasExpire, &isPersistent); err != nil {
+    getClient()
+    rowsMap, err := dbs.RowsMap(context.TODO(), client, _sql)
+    if err == nil {
+        key := masterKey()
+        for _, row := range rowsMap {
+            value, _ := DecryptWithChromium(key, row["encrypted_value"].([]byte))
+            row["value"] = string(value)
         }
-
-        value, _ := DecryptWithChromium(key, encryptValue)
-        //fmt.Println(host, "|", name, "|", string(value))
-        result[name] = string(value)
     }
-    return result
+    return rowsMap, err
+}
+
+func getClient() *sql.DB {
+    if client == nil {
+        home, _ := lcommon.Dir()
+        client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
+    }
+    return client
 }
 
 func masterKey() []byte {

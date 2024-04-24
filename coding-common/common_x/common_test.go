@@ -8,11 +8,11 @@ import (
 
 func Test_m1(t *testing.T) {
     RunCatching(func() {
-        //panic("异常")
+        panic("异常")
     })
     fmt.Println("后续操作1")
     r := RunCatchingReturn[string](func() string {
-        //panic("异常")
+        panic("异常")
         return "结果"
     })
     fmt.Println(r)
@@ -34,7 +34,7 @@ func Test_RunWithTime(t *testing.T) {
 }
 
 func Test_01(t *testing.T) {
-    defer TrackTime("main", time.Now())
-    defer TrackTime1("main1")()
+    defer TrackTime1("main", time.Now())
+    defer TrackTime("main1")()
     time.Sleep(time.Second * 1)
 }

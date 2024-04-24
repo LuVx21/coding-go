@@ -2,8 +2,8 @@ package router
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/luvx21/coding-go/coding-common/logs"
-    "luvx/gin/controller"
+    "luvx/gin/common/errorx"
+    "luvx/gin/common/responsex"
     "net/http"
 )
 
@@ -13,45 +13,17 @@ type Login struct {
 }
 
 func RegisterApp(r *gin.Engine) {
-    r.GET("/", func(c *gin.Context) {
-        logs.Log.Infoln("path:", c.Request.URL.Path)
-        c.JSON(http.StatusOK, gin.H{
-            "code": "0",
-            "msg":  "成功",
-            "data": "ok!",
-        })
-    })
-
-    app := r.Group("/app")
-    {
-        app.GET("/:path", func(c *gin.Context) {
-            path := c.Param("path")
-            a := c.Query("a")
-            b := c.DefaultQuery("b", "aaa")
-            c.JSON(http.StatusOK, gin.H{
-                "path": path,
-                "a":    a,
-                "b":    b,
-            })
-        })
-    }
-    {
-        app.GET("/healthyCheck", controller.HealthyCheck)
-    }
-
     // 绑定JSON ({"user": "foo", "password": "bar"})
     // 绑定QueryString (/login?user=foo&password=bar)
     r.GET("/login", func(c *gin.Context) {
         var login Login
         if err := c.ShouldBind(&login); err == nil {
-            c.JSON(http.StatusOK, gin.H{
+            responsex.R(c, gin.H{
                 "user":     login.User,
                 "password": login.Password,
             })
         } else {
-            c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+            responsex.R(c, errorx.NewCodeMsgError(http.StatusBadRequest, "异常"))
         }
     })
-
-    r.GET("/redirect", controller.Redirect)
 }

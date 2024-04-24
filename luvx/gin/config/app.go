@@ -8,6 +8,7 @@ type Config struct {
     MySQL   MySQL
     Redis   Redis
     MongoDB MongoDB
+    Turso   Turso
 }
 
 type ServerConfig struct {
@@ -17,6 +18,7 @@ type ServerConfig struct {
 
 type MySQL struct {
     Host     string
+    Port     int
     Username string
     Password string
     Dbname   string
@@ -34,4 +36,9 @@ type Redis struct {
 type MongoDB struct {
     Uri      string
     Database string
+}
+
+type Turso struct {
+    Dbname string
+    Token  string
 }

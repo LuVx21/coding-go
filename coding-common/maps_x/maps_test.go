@@ -2,6 +2,8 @@ package maps_x
 
 import (
     "fmt"
+    . "github.com/luvx21/coding-go/coding-common/common_x/types_x"
+    "reflect"
     "testing"
 )
 
@@ -60,4 +62,21 @@ func Test_02(t *testing.T) {
         return fmt.Sprintf("%s-%s-200", s, i)
     })
     fmt.Println(compute)
+}
+
+func TestGetByKey(t *testing.T) {
+    var i int64 = 999
+    m := Map[string]{"a": i, "m": Map[string]{"mm": "mm"}, "s": []string{"ss"}}
+
+    v, err := GetByKey(m, "a", reflect.Int64, 0)
+    fmt.Println(v, err)
+
+    v, err = GetInt64(m, "a", -1)
+    fmt.Println(v, err)
+
+    v, err = GetMap(m, "mm", map[any]any{"test": "test"})
+    fmt.Println(v, err)
+
+    v, err = GetSlice(m, "s", []string{"sss"})
+    fmt.Println(v, err)
 }

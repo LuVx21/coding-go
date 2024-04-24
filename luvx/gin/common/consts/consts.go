@@ -1,6 +1,7 @@
 package consts
 
 import (
+    "github.com/luvx21/coding-go/coding-common/ids"
     "github.com/parnurzeal/gorequest"
     "golang.org/x/time/rate"
 )
@@ -12,4 +13,5 @@ const (
 var (
     GoRequest   = gorequest.New()
     RateLimiter = rate.NewLimiter(1, 1)
+    IdWorker, _ = ids.NewSnowflakeIdWorker(0, 0)
 )

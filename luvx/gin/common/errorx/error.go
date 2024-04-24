@@ -1,5 +1,7 @@
 package errorx
 
+import "net/http"
+
 const defaultCode = 1001
 
 type CodeError struct {
@@ -7,14 +9,19 @@ type CodeError struct {
     Msg  string
 }
 
-func NewCodeError(code int, msg string) error {
+func (e *CodeError) Error() string {
+    return e.Msg
+}
+
+func NewCodeError(code int) error {
+    msg := http.StatusText(http.StatusNotFound)
+    return NewCodeMsgError(code, msg)
+}
+
+func NewCodeMsgError(code int, msg string) error {
     return &CodeError{Code: code, Msg: msg}
 }
 
 func NewDefaultError(msg string) error {
-    return NewCodeError(defaultCode, msg)
-}
-
-func (e *CodeError) Error() string {
-    return e.Msg
+    return NewCodeMsgError(defaultCode, msg)
 }

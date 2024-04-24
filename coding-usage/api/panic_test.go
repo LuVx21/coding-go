@@ -1,6 +1,7 @@
 package api
 
 import (
+    "fmt"
     "log"
     "testing"
 )
@@ -18,4 +19,18 @@ func TestPanic(t *testing.T) {
     panic("异常了")
     //}()
     log.Print("end")
+}
+
+func Test_panic_00(t *testing.T) {
+    f := func() {
+        defer func() {
+            if r := recover(); r != nil {
+                fmt.Println("异常")
+            }
+        }()
+        panic("异常")
+        fmt.Println("执行")
+    }
+    f()
+    fmt.Println("后续操作")
 }

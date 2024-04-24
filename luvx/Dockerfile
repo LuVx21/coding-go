@@ -2,7 +2,12 @@
 ARG IMAGE=golang:1.22-alpine3.19
 FROM ${IMAGE} as pkg
 
-ENV GOPROXY=https://goproxy.cn,direct
+ENV GO111MODULE=on \
+    GOPROXY=https://goproxy.cn,direct \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+# RUN apk add --no-cache gcc
 WORKDIR /pkg
 COPY go.mod ./
 RUN go mod download && go mod verify

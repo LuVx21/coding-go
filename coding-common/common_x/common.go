@@ -1,8 +1,7 @@
 package common_x
 
 import (
-    "fmt"
-    log "github.com/sirupsen/logrus"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "sync"
     "time"
 )
@@ -33,7 +32,7 @@ func RunCatching(fn func()) {
 func RunCatchingReturn[T any](fn func() T) T {
     defer func() {
         if r := recover(); r != nil {
-            log.Warn(r)
+            logs.Log.Warn(r)
         }
     }()
     return fn()
@@ -48,24 +47,24 @@ func RunInRoutine(wg *sync.WaitGroup, f func()) {
 }
 
 func RunWithTime[R any](name string, f func() R) R {
-    defer TrackTime(name, time.Now())
+    defer TrackTime1(name, time.Now())
     return f()
 }
 
 func RunWithTime2[R1 any, R2 any](name string, f func() (R1, R2)) (R1, R2) {
-    defer TrackTime(name, time.Now())
+    defer TrackTime1(name, time.Now())
     return f()
 }
 
-func TrackTime(name string, start time.Time) {
+func TrackTime1(name string, start time.Time) {
     elapsed := time.Since(start)
-    log.Infoln(name, "执行时间:", elapsed)
+    logs.Log.Infoln(name, "执行时间:", elapsed)
 }
 
-func TrackTime1(name string) func() {
+func TrackTime(name string) func() {
     start := time.Now()
     return func() {
-        fmt.Printf("%s 执行时间: %v\n", name, time.Since(start))
+        logs.Log.Infof("%s 执行时间: %v", name, time.Since(start))
     }
 }
 

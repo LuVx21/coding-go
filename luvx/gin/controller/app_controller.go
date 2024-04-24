@@ -4,7 +4,7 @@ import (
     "context"
     "github.com/gin-gonic/gin"
     "github.com/luvx21/coding-go/coding-common/common_x"
-    "github.com/luvx21/coding-go/coding-common/logs"
+    "github.com/luvx21/coding-go/coding-common/slices_x"
     "go.mongodb.org/mongo-driver/bson"
     "luvx/gin/common/consts"
     "luvx/gin/common/responsex"
@@ -63,6 +63,9 @@ func HealthyCheck(c *gin.Context) {
     cookie := common_x.RunWithTime("cookie", func() map[string]string {
         return cookie.GetCookieByHost(".weibo.com", "weibo.com")
     })
+    turso, _ := common_x.RunWithTime2("turso", func() ([]map[string]interface{}, error) {
+        return db.QueryForMap(db.Turso, "select * from user where id = ?", args)
+    })
 
     wg.Wait()
     close(r0)
@@ -71,23 +74,34 @@ func HealthyCheck(c *gin.Context) {
     mysql := <-r0
     mongo := <-r1
     redis := <-r2
-    responsex.Result(c, gin.H{
+    responsex.R(c, gin.H{
         "mysql":  mysql,
         "mongo":  mongo,
         "redis":  redis,
         "sqlite": sqlite,
         "cookie": cookie,
+        "turso":  turso,
     })
 }
 
 func Redirect(c *gin.Context) {
     toUrl := c.Query("url")
-    logs.Log.Infoln("重定向到:", toUrl)
+    //logs.Log.Infoln("重定向到:", toUrl)
 
     response, body, _ := consts.GoRequest.Get(toUrl).
         End()
-    for k, v := range response.Header {
-        c.Header(k, v[0])
+    if response != nil {
+        for k, v := range response.Header {
+            c.Header(k, v[0])
+        }
+        c.String(response.StatusCode, body)
     }
-    c.String(response.StatusCode, body)
+}
+
+func SyncCookie2Turso(c *gin.Context) {
+    _json := make(map[string]any)
+    _ = c.BindJSON(&_json)
+    hosts := slices_x.Transfer(func(a any) string { return a.(string) }, _json["hosts"].([]any)...)
+    cookie.Sync2Turso(hosts...)
+    responsex.R(c, hosts)
 }

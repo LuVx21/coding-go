@@ -2,13 +2,29 @@ package json
 
 import (
     "encoding/json"
+    "fmt"
     "github.com/jmespath-community/go-jmespath"
     "testing"
 )
 
 func Test_aa(t *testing.T) {
-    var jsondata = []byte(`{"foo": {"bar": {"baz": [0, 1, 2, 3, 4]}}}`) // your data
+    _json := `
+{
+    "foo": {
+        "bar": {
+            "baz": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ]
+        }
+    }
+}
+`
     var data interface{}
-    _ = json.Unmarshal(jsondata, &data)
-    _, _ = jmespath.Search("foo.bar.baz[2]", data)
+    _ = json.Unmarshal([]byte(_json), &data)
+    search, _ := jmespath.Search("foo.bar.baz[2]", data)
+    fmt.Println(search)
 }
