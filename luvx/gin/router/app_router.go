@@ -2,6 +2,7 @@ package router
 
 import (
     "github.com/gin-gonic/gin"
+    "github.com/luvx21/coding-go/coding-common/logs"
     "luvx/gin/controller"
     "net/http"
 )
@@ -13,6 +14,7 @@ type Login struct {
 
 func RegisterApp(r *gin.Engine) {
     r.GET("/", func(c *gin.Context) {
+        logs.Log.Infoln("path:", c.Request.URL.Path)
         c.JSON(http.StatusOK, gin.H{
             "code": "0",
             "msg":  "成功",

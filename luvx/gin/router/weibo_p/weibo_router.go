@@ -6,11 +6,7 @@ import (
 )
 
 func RegisterWeibo(r *gin.Engine) {
-    user := r.Group("/weibo")
-    {
-        user.GET("/pull/user", weibo_p.PullByUser)
-    }
-    {
-        user.GET("/pull/group", weibo_p.PullByGroup)
-    }
+    weibo := r.Group("/weibo")
+    weibo.GET("/pull/user", weibo_p.PullByUser)
+    weibo.GET("/pull/group", weibo_p.PullByGroup)
 }

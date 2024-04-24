@@ -2,13 +2,11 @@ package middleware
 
 import (
     "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
+    "github.com/luvx21/coding-go/coding-common/consts_x"
+    "luvx/gin/common/consts"
 )
 
-func traceId() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
-        traceId := uuid.New().String()
-        ctx.Set("traceId", traceId)
-        ctx.Next()
-    }
+func traceId(ctx *gin.Context) {
+    ctx.Set(consts_x.TraceId, consts.UUID())
+    ctx.Next()
 }

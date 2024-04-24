@@ -6,11 +6,7 @@ import (
 )
 
 func RegisterBili(r *gin.Engine) {
-    user := r.Group("/bili")
-    {
-        user.GET("/pull/season", controller.PullSeason)
-    }
-    {
-        user.GET("/pull/up/video", controller.PullUpVideo)
-    }
+    bili := r.Group("/bili", AddTraceId)
+    bili.GET("/pull/season", controller.PullSeason)
+    bili.GET("/pull/up/video", controller.PullUpVideo)
 }

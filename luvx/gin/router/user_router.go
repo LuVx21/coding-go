@@ -6,8 +6,6 @@ import (
 )
 
 func RegisterUser(r *gin.Engine) {
-    user := r.Group("/user")
-    {
-        user.GET("/:username", controller.GetUserByUsername)
-    }
+    user := r.Group("/user", AddTraceId)
+    user.GET("/:username", controller.GetUserByUsername)
 }

@@ -9,7 +9,7 @@ services:
     build:
       dockerfile: Dockerfile
     ports:
-      - "8090:8090"
+      - "58090:8090"
     volumes:
       - $HOME/data:/root/data
 #    command: ["sleep", "infinity"]
