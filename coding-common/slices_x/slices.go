@@ -68,3 +68,46 @@ func ClearZeroRef[S ~[]E, E any](s S) S {
     }
     return r
 }
+
+// Intersect 交集
+func Intersect[S ~[]E, E comparable](a, b S) S {
+    var r S
+    mp := make(map[E]bool, len(a))
+    for _, val := range a {
+        mp[val] = true
+    }
+    for _, val := range b {
+        if _, ok := mp[val]; ok {
+            r = append(r, val)
+        }
+    }
+    return r
+}
+
+// Diff 差集a-b
+func Diff[S ~[]E, E comparable](a, b S) S {
+    var r S
+    mp := make(map[E]struct{}, len(b))
+    for _, val := range b {
+        mp[val] = struct{}{}
+    }
+    for _, val := range a {
+        if _, ok := mp[val]; !ok {
+            r = append(r, val)
+        }
+    }
+    return r
+}
+
+//Unique 切片去重实现
+func Unique[S ~[]E, E comparable](arr S) S {
+    r := make(S, 0, len(arr))
+    mp := map[E]struct{}{}
+    for _, e := range arr {
+        if _, ok := mp[e]; !ok {
+            mp[e] = struct{}{}
+            r = append(r, e)
+        }
+    }
+    return r
+}

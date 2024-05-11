@@ -6,6 +6,7 @@ import (
     where "github.com/pywee/gobson-where"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
+    "go.mongodb.org/mongo-driver/mongo/options"
     "testing"
 )
 
@@ -22,6 +23,16 @@ func beforeAfter(caseName string) func() {
     }
 }
 
+func print(cursor *mongo.Cursor) {
+    defer cursor.Close(context.Background())
+
+    var results []bson.M
+    _ = cursor.All(context.Background(), &results)
+    for i, result := range results {
+        fmt.Println("查询结果:", i, result)
+    }
+}
+
 func Test_00(t *testing.T) {
     defer beforeAfter("Test_00")()
 
@@ -30,13 +41,7 @@ func Test_00(t *testing.T) {
 
     //filter := bson.D{{"key1", "value1"}}
     cur, _ := collection.Find(context.TODO(), filter)
-    defer cur.Close(context.Background())
-
-    var results []bson.M
-    _ = cur.All(context.Background(), &results)
-    for i, result := range results {
-        fmt.Println("查询结果:", i, result)
-    }
+    print(cur)
 
     //for cur.Next(context.Background()) {
     //    var result bson.M
@@ -51,6 +56,17 @@ func Test_distinct(t *testing.T) {
     for _, value := range distinctValues {
         fmt.Println(value)
     }
+}
+
+func Test_sort(t *testing.T) {
+    defer beforeAfter("Test_sort")()
+
+    opts := options.Find().
+        SetProjection(bson.D{{"_id", 1}}).
+        SetSort(bson.D{{Key: "age", Value: -1}, {Key: "_id", Value: -1}}).
+        SetLimit(100)
+    cursor, _ := collection.Find(context.Background(), bson.M{}, opts)
+    print(cursor)
 }
 
 func Test_01(t *testing.T) {

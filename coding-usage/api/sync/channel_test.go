@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "log"
+    "os"
     "testing"
     "time"
 )
@@ -55,4 +56,34 @@ func Test_c_01(t *testing.T) {
     for s := range r1 {
         fmt.Println(s)
     }
+}
+
+type LogEntry struct {
+    RequestID int64
+    Message   string
+    Date      time.Time
+}
+
+func Test_log_00(t *testing.T) {
+    logFile, _ := os.OpenFile("./app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+    defer logFile.Close()
+
+    elog := func(ch <-chan LogEntry) {
+        for entry := range ch {
+            sprintf := fmt.Sprintf("%+v Request ID %d: %s\n", entry.Date, entry.RequestID, entry.Message)
+            fmt.Println(sprintf)
+            //_, _ = logFile.WriteString(sprintf)
+        }
+    }
+
+    logCh := make(chan LogEntry)
+    defer close(logCh)
+    go elog(logCh)
+
+    for i := 1; i <= 10; i++ {
+        go func(requestID int64) {
+            logCh <- LogEntry{RequestID: requestID, Message: "请求消息", Date: time.Now()}
+        }(int64(i))
+    }
+    time.Sleep(time.Second * 2)
 }

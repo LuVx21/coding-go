@@ -21,12 +21,13 @@ import (
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo/options"
     "golang.org/x/exp/slices"
-    "log"
     "luvx/gin/common/consts"
     commonkvdao "luvx/gin/dao/common_kv"
     "luvx/gin/db"
+    "luvx/gin/model"
     commonkvservice "luvx/gin/service/common_kv"
     "luvx/gin/service/cookie"
+    "math"
     "regexp"
     "strings"
     "time"
@@ -43,7 +44,7 @@ func PullHotBand() {
     c := colly.NewCollector()
 
     c.OnRequest(func(r *colly.Request) {
-        logs.Log.Infoln("Visiting", r.URL.String())
+        logs.Log.Infoln("请求:", r.URL.String())
     })
 
     c.OnResponse(func(r *colly.Response) {
@@ -328,13 +329,14 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]interface{}, int64] 
     isJson := sonic.ValidString(body)
     logs.Log.Infof("请求: %s 响应:%v", pUrl, isJson)
     if !isJson {
-        log.Fatalln("请求结果非json,cookie可能过期")
+        logs.Log.Warnln("请求结果非json,cookie可能过期")
+        return NewPair[[]any, int64](nil, math.MaxInt64)
     }
     ff, _ := jsons.JsonStringToMap[string, any, JsonObject](body)
     list := ff["statuses"].([]interface{})
     maxId := cast_x.ToInt64(ff["max_id"])
 
-    return NewPair[[]interface{}, int64](list, maxId)
+    return NewPair(list, maxId)
 }
 
 func getCookie() string {
@@ -342,9 +344,12 @@ func getCookie() string {
 }
 
 func Rss(uid int64) string {
-    key := "rss_weibo_config"
-    m := commonkvservice.Get(commonkvservice.BEAN, key)
-    kv := m[key]
+    _kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (interface{}, error) {
+        key := "rss_weibo_config"
+        m := commonkvservice.Get(commonkvservice.BEAN, key)
+        return m[key], nil
+    })
+    kv := _kv.(*model.CommonKeyValue)
 
     config := rssWeiboConfig{}
     _ = jsons.JsonStringToObject(kv.CommonValue, &config)

@@ -13,6 +13,8 @@ import (
     "github.com/luvx21/coding-go/coding-common/logs"
     "github.com/luvx21/coding-go/coding-common/maps_x"
     "github.com/luvx21/coding-go/coding-common/nets_x"
+    "github.com/luvx21/coding-go/coding-common/slices_x"
+    "github.com/luvx21/coding-go/infra/nosql/mongodb"
     "github.com/tidwall/gjson"
     "github.com/valyala/fasthttp"
     "go.mongodb.org/mongo-driver/bson"
@@ -62,6 +64,13 @@ func PullAll() {
 }
 
 func PullSeasonList(seasonId int64) {
+    opts := options.Find().
+        SetProjection(bson.D{{"_id", 1}}).
+        SetSort(bson.D{{Key: "_id", Value: -1}}).
+        SetLimit(300)
+    rowsMap, _ := mongodb.RowsMap(context.Background(), mongoClient, bson.M{"upper.seasonId": seasonId}, opts)
+    ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) }, *rowsMap...)
+
     cursor, limit := 1, 20
     iterator := iterators.NewCursorIteratorSimple(
         cursor,
@@ -85,8 +94,11 @@ func PullSeasonList(seasonId int64) {
 
     iterator.ForEachRemaining(func(item interface{}) {
         media := item.(map[string]interface{})
-        id := media["id"]
+        id := cast_x.ToInt64(media["id"])
         media["_id"] = id
+        if slices.Contains(ids, id) {
+            return
+        }
         filter := bson.D{{"_id", id}}
         var result bson.M
         _ = mongoClient.FindOne(context.TODO(), filter).Decode(&result)
@@ -109,6 +121,7 @@ func PullSeasonList(seasonId int64) {
             return !slices.Contains(fields, k)
         })
         _, _ = mongoClient.InsertOne(context.TODO(), media)
+        logs.Log.Infoln(media["pubtime"], media["title"])
     })
 }
 
@@ -127,8 +140,8 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []interface{} {
     resp := fasthttp.AcquireResponse()
     defer fasthttp.ReleaseResponse(resp)
 
-    logs.Log.Infoln("请求:", pUrl)
     _ = rateLimiter.Wait(context.TODO())
+    logs.Log.Infoln("请求:", pUrl)
     _ = client.Do(req, resp)
     ff := make(map[string]interface{})
     _ = sonic.Unmarshal(resp.Body(), &ff)
@@ -172,7 +185,7 @@ func PullUpVideo(mid int64) []string {
                 return -1
             }
             cursor++
-            return common_x.IfThen(cursor <= 30, cursor, -1)
+            return common_x.IfThen(cursor <= 100, cursor, -1)
         },
         func(i int) bool {
             return i <= 0
@@ -239,8 +252,8 @@ func requestUpVideo(mid int64, cursor int, limit int) []interface{} {
     }
 
     cookie := cookie.GetCookieStrByHost(".bilibili.com")
-    logs.Log.Infoln("请求:", pUrl)
     _ = rateLimiter.Wait(context.TODO())
+    logs.Log.Infoln("请求:", pUrl)
     _, body, _ := consts.GoRequest.Get(newUrlStr.String()).
         Set("User-Agent", consts.UserAgent).
         Set("Referer", "https://www.bilibili.com/").

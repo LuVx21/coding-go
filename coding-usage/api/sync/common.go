@@ -11,3 +11,6 @@ func Task() {
     time.Sleep(time.Second * 3)
     log.Print("task done")
 }
+
+func main() {
+}

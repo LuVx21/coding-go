@@ -6,7 +6,10 @@ import (
     "luvx/gin/common/consts"
     "luvx/gin/common/responsex"
     "luvx/gin/controller"
+    "luvx/gin/controller/rss_p"
+    "luvx/gin/controller/useful_c"
     "luvx/gin/controller/weibo_p"
+    rssService "luvx/gin/service/rss"
 )
 
 // AddTraceId TODO 不太正确
@@ -41,6 +44,9 @@ func Register0(r *gin.Engine) {
     app := r.Group("/app")
     app.GET("/healthyCheck", controller.HealthyCheck)
     app.POST("/syncCookie2Turso", controller.SyncCookie2Turso)
+
+    useful := app.Group("/useful")
+    useful.POST("/compare", useful_c.Compare)
 }
 
 func RegisterUser(r *gin.Engine) {
@@ -60,4 +66,8 @@ func RegisterWeibo(r *gin.Engine) {
     weibo.GET("/pull/user", weibo_p.PullByUser)
     weibo.GET("/rss/:uid", weibo_p.Rss)
     weibo.GET("/rss/delete/:id", weibo_p.DeleteById)
+
+    _rss := r.Group("/rss")
+    _rss.GET("/feed/:spiderKey", rss_p.Rss)
+    _rss.GET("/delete/:id", rssService.DeleteById)
 }

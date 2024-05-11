@@ -14,7 +14,7 @@ func IfThen[T any](expr bool, a T, b T) T {
 }
 
 // IfThenGet 使用时不简洁
-func IfThenGet[T any](expr bool, a func() T, b func() T) T {
+func IfThenGet[T any](expr bool, a, b func() T) T {
     if expr {
         return a()
     }

@@ -3,11 +3,11 @@ package libsql
 import "fmt"
 
 const (
-    db    = ""
+    Db    = "main-luvx21"
     Token = ""
     url   = "libsql://%s.turso.io"
 )
 
 var (
-    Url = fmt.Sprintf(url, db)
+    Url = fmt.Sprintf(url, Db)
 )

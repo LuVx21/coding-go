@@ -5,6 +5,7 @@ import (
     "github.com/google/uuid"
     "github.com/luvx21/coding-go/coding-common/logs"
     "luvx/gin/service"
+    "luvx/gin/service/bili"
     "luvx/gin/service/rss"
     "luvx/gin/service/weibo_p"
     "time"
@@ -13,7 +14,7 @@ import (
 var (
     beforeListener = gocron.BeforeJobRuns(
         func(jobID uuid.UUID, jobName string) {
-            logs.Log.Infoln("任务:", jobName, "开始")
+            //logs.Log.Infoln("任务:", jobName, "开始")
         },
     )
     afterListener = gocron.AfterJobRuns(
@@ -44,6 +45,7 @@ func callRunnerRegister(s gocron.Scheduler) {
     var runners []*service.Runner
     runners = append(runners, weibo_p.RunnerRegister()...)
     runners = append(runners, rss.RunnerRegister()...)
+    runners = append(runners, bili.RunnerRegister()...)
     for _, r := range runners {
         _, _ = s.NewJob(
             gocron.CronJob(r.Crontab, true),

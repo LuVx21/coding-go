@@ -4,6 +4,7 @@ import (
     "context"
     "github.com/gin-gonic/gin"
     "github.com/luvx21/coding-go/coding-common/common_x"
+    "github.com/luvx21/coding-go/coding-common/dbs"
     "github.com/luvx21/coding-go/coding-common/slices_x"
     "go.mongodb.org/mongo-driver/bson"
     "luvx/gin/common/consts"
@@ -57,14 +58,14 @@ func HealthyCheck(c *gin.Context) {
     common_x.RunInRoutine(&wg, func() { r1 <- f1() })
     common_x.RunInRoutine(&wg, func() { r2 <- f2() })
 
-    sqlite, _ := common_x.RunWithTime2("sqlite", func() ([]map[string]interface{}, error) {
-        return db.QueryForMap(db.SqliteClient, "select * from user where id = ?", args)
+    sqlite, _ := common_x.RunWithTime2("sqlite", func() ([]map[string]any, error) {
+        return dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args)
     })
     cookie := common_x.RunWithTime("cookie", func() map[string]string {
         return cookie.GetCookieByHost(".weibo.com", "weibo.com")
     })
-    turso, _ := common_x.RunWithTime2("turso", func() ([]map[string]interface{}, error) {
-        return db.QueryForMap(db.Turso, "select * from user where id = ?", args)
+    turso, _ := common_x.RunWithTime2("turso", func() ([]map[string]any, error) {
+        return dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args)
     })
 
     wg.Wait()

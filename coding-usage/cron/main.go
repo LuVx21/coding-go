@@ -31,6 +31,19 @@ func m1() {
     s, _ := gocron.NewScheduler()
     defer func() { _ = s.Shutdown() }()
 
+    beforeListener := gocron.BeforeJobRuns(
+        func(jobID uuid.UUID, jobName string) {
+        },
+    )
+    afterListener := gocron.AfterJobRuns(
+        func(jobID uuid.UUID, jobName string) {
+            fmt.Println("执行任务完成-> id:", jobID, "任务名称:", jobName)
+        },
+    )
+    withError := gocron.AfterJobRunsWithError(
+        func(jobID uuid.UUID, jobName string, err error) {
+        },
+    )
     _, _ = s.NewJob(
         //gocron.DurationJob(
         //    10*time.Second,
@@ -47,21 +60,7 @@ func m1() {
             1,
         ),
         gocron.WithName("测试任务"),
-        gocron.WithEventListeners(
-            gocron.BeforeJobRuns(
-                func(jobID uuid.UUID, jobName string) {
-                },
-            ),
-            gocron.AfterJobRuns(
-                func(jobID uuid.UUID, jobName string) {
-                    fmt.Println("执行任务完成-> id:", jobID, "任务名称:", jobName)
-                },
-            ),
-            gocron.AfterJobRunsWithError(
-                func(jobID uuid.UUID, jobName string, err error) {
-                },
-            ),
-        ),
+        gocron.WithEventListeners(beforeListener, afterListener, withError),
     )
     //fmt.Println(j.ID())
 

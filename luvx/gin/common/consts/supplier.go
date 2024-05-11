@@ -17,6 +17,8 @@ import (
 var (
     rateLimiterMu  sync.Mutex
     rateLimiterMap = Map[string, *rate.Limiter]{}
+    onceMu         sync.Mutex
+    onceMap        = Map[string, *sync.Once]{}
 )
 
 func NewLoadableCache[T any](loadFunc gocache.LoadFunction[T]) *gocache.LoadableCache[T] {
@@ -40,6 +42,18 @@ func GetRateLimiter(_url string) *rate.Limiter {
     if limiter == nil {
         limiter = rate.NewLimiter(1, 1)
         rateLimiterMap[parse.Host] = limiter
+    }
+    return limiter
+}
+
+func GetOnce(k string) *sync.Once {
+    onceMu.Lock()
+    defer onceMu.Unlock()
+
+    limiter := onceMap[k]
+    if limiter == nil {
+        var once sync.Once
+        onceMap[k] = &once
     }
     return limiter
 }

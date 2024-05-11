@@ -1,8 +1,8 @@
 package soup
 
 import (
+    "encoding/json"
     "github.com/PuerkitoBio/goquery"
-    "github.com/bytedance/sonic"
     "github.com/luvx21/coding-go/coding-common/func_x"
     "github.com/tidwall/gjson"
     "slices"
@@ -89,7 +89,7 @@ func Of(_json string) SpiderParam {
             ContentNextPageUrlPostProcessor: func_x.Identity[string](),
         },
     }
-    _ = sonic.Unmarshal([]byte(_json), &r)
+    _ = json.Unmarshal([]byte(_json), &r)
 
     a := gjson.Get(_json, "index.indexItemListPostProcessor").String()
     a2 := gjson.Get(_json, "index.indexNextPageUrlPostProcessor").String()

@@ -12,9 +12,8 @@ import (
 )
 
 func Test_00(t *testing.T) {
-    dbName := "main.db"
     home, _ := common_x.Dir()
-    dbPath := filepath.Join(home+"/data/sqlite/libsql", dbName)
+    dbPath := filepath.Join(home+"/data/sqlite/libsql", llibsql.Db)
 
     connector, _ := libsql.NewEmbeddedReplicaConnector(dbPath, llibsql.Url,
         libsql.WithAuthToken(llibsql.Token), libsql.WithSyncInterval(time.Second*10),

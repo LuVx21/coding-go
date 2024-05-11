@@ -3,7 +3,7 @@ package db
 import (
     "database/sql"
     "github.com/luvx21/coding-go/coding-common/common_x"
-    "github.com/luvx21/coding-go/coding-common/dbs"
+    "luvx/gin/common/consts"
     _ "modernc.org/sqlite"
     // _ "github.com/mattn/go-sqlite3"
 )
@@ -23,15 +23,11 @@ func init() {
 
 func GetDataSource(dataSourceName string) (*sql.DB, error) {
     defer common_x.TrackTime("初始化Sqlite连接..." + dataSourceName)()
-    return sql.Open(driverName, dataSourceName)
-}
 
-func QueryForMap(db *sql.DB, sql string, args ...interface{}) ([]map[string]interface{}, error) {
-    rows, err := db.Query(sql, args...)
-    defer rows.Close()
-    if err != nil {
-        return nil, err
-    }
-
-    return dbs.ParseRows(rows), nil
+    var r *sql.DB
+    var err error
+    consts.GetOnce("cookie_db_" + dataSourceName).Do(func() {
+        r, err = sql.Open(driverName, dataSourceName)
+    })
+    return r, err
 }

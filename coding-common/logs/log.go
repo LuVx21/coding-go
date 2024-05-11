@@ -59,14 +59,14 @@ func init() {
     writer, _ := rotatelogs.New(
         path.Join(logPath, "main-%Y-%m-%d.log"),
         rotatelogs.WithLinkName(path.Join(logPath, "main.log")),
-        rotatelogs.WithMaxAge(time.Duration(168)*time.Second),
-        rotatelogs.WithRotationTime(time.Duration(24)*time.Second),
+        rotatelogs.WithMaxAge(time.Duration(168)*time.Hour),
+        rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
     )
     writer1, _ := rotatelogs.New(
         path.Join(logPath, "error-%Y-%m-%d.log"),
         rotatelogs.WithLinkName(path.Join(logPath, "error.log")),
-        rotatelogs.WithMaxAge(time.Duration(168)*time.Second),
-        rotatelogs.WithRotationTime(time.Duration(24)*time.Second),
+        rotatelogs.WithMaxAge(time.Duration(168)*time.Hour),
+        rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
     )
 
     lfHook := lfshook.NewHook(lfshook.WriterMap{

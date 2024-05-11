@@ -8,7 +8,6 @@ import (
     "github.com/luvx21/coding-go/coding-common/retry"
     "github.com/luvx21/coding-go/coding-common/slices_x"
     "github.com/luvx21/coding-go/coding-common/strings_x"
-    "log"
     "luvx/gin/common/consts"
     "net/url"
     "slices"
@@ -24,8 +23,9 @@ func (param SpiderParam) content(title, _url string) PageContent {
     for i := 0; !strings_x.IsBlank(pageUrl); i++ {
         unescape, _ := url.QueryUnescape(pageUrl)
         logs.Log.Infof("解析内容页: No.%d %s-%s", i+1, title, unescape)
-        doc := request("解析内容页重试", pageUrl)
-        if doc == nil {
+        doc, err := request("解析内容页重试", pageUrl)
+        if err != nil {
+            logs.Log.Error(err)
             break
         }
         if i == 0 {
@@ -82,11 +82,15 @@ func (param SpiderParam) content(title, _url string) PageContent {
 func (param SpiderParam) Visit() []PageContent {
     result := make([]PageContent, 0, 10)
 
-    url := param.StartUrl
-    pageUrl := url
+    _url := param.StartUrl
+    pageUrl := _url
     for i := 0; i < param.Index.PageCount && len(pageUrl) > 0; i++ {
         logs.Log.Infoln("解析目录页:", pageUrl)
-        doc := request("解析目录页重试", pageUrl)
+        doc, err := request("解析目录页重试", pageUrl)
+        if err != nil {
+            logs.Log.Error(err)
+            break
+        }
         temp1 := make([]*goquery.Selection, 0, 10)
         doc.Find(param.Index.IndexItemListRule).Each(func(i int, s *goquery.Selection) {
             temp1 = append(temp1, s)
@@ -119,7 +123,7 @@ func (param SpiderParam) Visit() []PageContent {
         if rule.Valid() {
             value := getValue1(doc.Selection, rule)
             if len(value) > 0 {
-                domain := urlAddDomain(url, value)
+                domain := urlAddDomain(_url, value)
                 uu := param.Index.IndexNextPageUrlPostProcessor(domain)
                 if pageUrl != uu {
                     pageUrl = uu
@@ -131,7 +135,7 @@ func (param SpiderParam) Visit() []PageContent {
     return result
 }
 
-func request(name, pageUrl string) *goquery.Document {
+func request(name, pageUrl string) (*goquery.Document, error) {
     f := func() *goquery.Document {
         limiter := consts.GetRateLimiter(pageUrl)
         _ = limiter.Wait(context.Background())
@@ -141,11 +145,7 @@ func request(name, pageUrl string) *goquery.Document {
         }
         return dd
     }
-    doc, err := retry.SupplyWithRetry(name, f, 5, 5*time.Second)
-    if err != nil {
-        log.Fatalln(err.Error())
-    }
-    return doc
+    return retry.SupplyWithRetry(name, f, 5, 5*time.Second)
 }
 
 func getValueListAfterSelect(element *goquery.Selection, rule QueryRule) []string {

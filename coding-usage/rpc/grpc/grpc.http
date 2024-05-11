@@ -1,0 +1,19 @@
+@host = localhost:50051
+
+### Request with body
+GRPC grpc://{{host}}/proto.Greeter/SayHello
+
+{
+  "name": "开始"
+}
+
+### Server streaming
+GRPC grpc://{{host}}/proto.Greeter/LotsOfReplies
+
+{
+  "name": "HTTP Client with gRPC many times"
+}
+
+### Request with metadata
+GRPC grpc://{{host}}/grpcbin.GRPCBin/HeadersUnary
+X-My-Metadata: Request from HTTP Client

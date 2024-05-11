@@ -22,10 +22,14 @@ func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
     // 输出查询语句
     var logMonitor = event.CommandMonitor{
         Started: func(ctx context.Context, event *event.CommandStartedEvent) {
+            if event.CommandName != "ping" {
             log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
+            }
         },
         Succeeded: func(ctx context.Context, event *event.CommandSucceededEvent) {
+            if event.CommandName != "ping" {
             log.Printf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)
+            }
         },
         Failed: func(ctx context.Context, event *event.CommandFailedEvent) {
             log.Fatalf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)

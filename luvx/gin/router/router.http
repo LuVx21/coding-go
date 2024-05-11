@@ -1,4 +1,4 @@
-@host = localhost:8090
+@host = localhost:58090
 
 ###
 GET http://{{host}}
@@ -45,3 +45,20 @@ GET http://{{host}}/weibo/rss/:uid
 
 ###
 GET http://{{host}}/weibo/rss/delete/:id
+
+### useful
+POST http://{{host}}/app/useful/compare
+Content-Type: application/json
+
+{
+    "left": [
+        1,
+        2,
+        3
+    ],
+    "right": [
+        2,
+        3,
+        4
+    ]
+}
