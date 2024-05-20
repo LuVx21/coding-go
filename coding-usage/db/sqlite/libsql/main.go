@@ -1,10 +1,13 @@
 package libsql
 
-import "fmt"
+import (
+    "fmt"
+    "github.com/luvx21/coding-go/coding-usage/db"
+)
 
-const (
+var (
     Db    = "main-luvx21"
-    Token = ""
+    Token = db.Token
     url   = "libsql://%s.turso.io"
 )
 

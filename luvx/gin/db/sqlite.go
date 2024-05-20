@@ -22,12 +22,9 @@ func init() {
 }
 
 func GetDataSource(dataSourceName string) (*sql.DB, error) {
-    defer common_x.TrackTime("初始化Sqlite连接..." + dataSourceName)()
-
-    var r *sql.DB
-    var err error
-    consts.GetOnce("cookie_db_" + dataSourceName).Do(func() {
-        r, err = sql.Open(driverName, dataSourceName)
+    _kv, err, _ := consts.SfGroup.Do(dataSourceName, func() (interface{}, error) {
+        defer common_x.TrackTime("初始化Sqlite连接..." + dataSourceName)()
+        return sql.Open(driverName, dataSourceName)
     })
-    return r, err
+    return _kv.(*sql.DB), err
 }

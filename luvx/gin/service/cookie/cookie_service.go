@@ -27,6 +27,10 @@ var (
     cache, _     = bigcache.New(context.Background(), bigcache.DefaultConfig(60*time.Minute))
 )
 
+func ClearCache() error {
+    return cache.Reset()
+}
+
 func GetCookieStrByHost(hosts ...string) string {
     resultMap := make(map[string]string)
     for _, host := range hosts {

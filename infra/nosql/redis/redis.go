@@ -1,34 +1,27 @@
-package main
+package redis
 
 import (
     "context"
-    "github.com/redis/go-redis/v9"
     "time"
 
-    red "github.com/redis/go-redis/v9"
+    "github.com/redis/go-redis/v9"
 )
 
 type Client struct {
-    conn *red.Client
+    conn *redis.Client
 }
 
-type Options = redis.Options
-
-func New(options *Options) *Client {
+func New(options *redis.Options) *Client {
     return &Client{
-        conn: red.NewClient(options),
+        conn: redis.NewClient(options),
     }
 }
 
-var (
-    _ Cmdable = (*Client)(nil)
-)
-
-func (client *Client) Command() (map[string]*CommandInfo, error) {
+func (client *Client) Command() (map[string]*redis.CommandInfo, error) {
     return client.CommandCtx(context.Background())
 }
 
-func (client *Client) CommandCtx(ctx context.Context) (map[string]*CommandInfo, error) {
+func (client *Client) CommandCtx(ctx context.Context) (map[string]*redis.CommandInfo, error) {
     return client.conn.Command(ctx).Result()
 }
 
@@ -256,27 +249,27 @@ func (client *Client) RestoreReplaceCtx(ctx context.Context, key string, ttl tim
     return client.conn.RestoreReplace(ctx, key, ttl, value).Result()
 }
 
-func (client *Client) Sort(key string, sort *Sort) ([]string, error) {
+func (client *Client) Sort(key string, sort *redis.Sort) ([]string, error) {
     return client.SortCtx(context.Background(), key, sort)
 }
 
-func (client *Client) SortCtx(ctx context.Context, key string, sort *Sort) ([]string, error) {
+func (client *Client) SortCtx(ctx context.Context, key string, sort *redis.Sort) ([]string, error) {
     return client.conn.Sort(ctx, key, sort).Result()
 }
 
-func (client *Client) SortStore(key, store string, sort *Sort) (int64, error) {
+func (client *Client) SortStore(key, store string, sort *redis.Sort) (int64, error) {
     return client.SortStoreCtx(context.Background(), key, store, sort)
 }
 
-func (client *Client) SortStoreCtx(ctx context.Context, key, store string, sort *Sort) (int64, error) {
+func (client *Client) SortStoreCtx(ctx context.Context, key, store string, sort *redis.Sort) (int64, error) {
     return client.conn.SortStore(ctx, key, store, sort).Result()
 }
 
-func (client *Client) SortInterfaces(key string, sort *Sort) ([]interface{}, error) {
+func (client *Client) SortInterfaces(key string, sort *redis.Sort) ([]interface{}, error) {
     return client.SortInterfacesCtx(context.Background(), key, sort)
 }
 
-func (client *Client) SortInterfacesCtx(ctx context.Context, key string, sort *Sort) ([]interface{}, error) {
+func (client *Client) SortInterfacesCtx(ctx context.Context, key string, sort *redis.Sort) ([]interface{}, error) {
     return client.conn.SortInterfaces(ctx, key, sort).Result()
 }
 
@@ -424,11 +417,11 @@ func (client *Client) SetCtx(ctx context.Context, key string, value interface{},
     return client.conn.Set(ctx, key, value, expiration).Result()
 }
 
-func (client *Client) SetArgs(key string, value interface{}, a SetArgs) (string, error) {
+func (client *Client) SetArgs(key string, value interface{}, a redis.SetArgs) (string, error) {
     return client.SetArgsCtx(context.Background(), key, value, a)
 }
 
-func (client *Client) SetArgsCtx(ctx context.Context, key string, value interface{}, a SetArgs) (string, error) {
+func (client *Client) SetArgsCtx(ctx context.Context, key string, value interface{}, a redis.SetArgs) (string, error) {
     return client.conn.SetArgs(ctx, key, value, a).Result()
 }
 
@@ -437,7 +430,7 @@ func (client *Client) SetEX(key string, value interface{}, expiration time.Durat
 }
 
 func (client *Client) SetExCtx(ctx context.Context, key string, value interface{}, expiration time.Duration) (string, error) {
-    return client.conn.SetEx(ctx, key, value, expiration).Result(), nil
+    return client.conn.SetEx(ctx, key, value, expiration).Result()
 }
 
 func (client *Client) SetNX(key string, value interface{}, expiration time.Duration) (bool, error) {
@@ -496,11 +489,11 @@ func (client *Client) SetBitCtx(ctx context.Context, key string, offset int64, v
     return client.conn.SetBit(ctx, key, offset, value).Result()
 }
 
-func (client *Client) BitCount(key string, bitCount *BitCount) (int64, error) {
+func (client *Client) BitCount(key string, bitCount *redis.BitCount) (int64, error) {
     return client.BitCountCtx(context.Background(), key, bitCount)
 }
 
-func (client *Client) BitCountCtx(ctx context.Context, key string, bitCount *BitCount) (int64, error) {
+func (client *Client) BitCountCtx(ctx context.Context, key string, bitCount *redis.BitCount) (int64, error) {
     return client.conn.BitCount(ctx, key, bitCount).Result()
 }
 
@@ -696,13 +689,13 @@ func (client *Client) HValsCtx(ctx context.Context, key string) ([]string, error
     return client.conn.HVals(ctx, key).Result()
 }
 
-func (client *Client) HRandField(key string, count int, withValues bool) ([]string, error) {
-    return client.HRandFieldCtx(context.Background(), key, count, withValues)
-}
+//func (client *Client) HRandField(key string, count int, withValues bool) ([]string, error) {
+//    return client.HRandFieldCtx(context.Background(), key, count, withValues)
+//}
 
-func (client *Client) HRandFieldCtx(ctx context.Context, key string, count int, withValues bool) ([]string, error) {
-    return client.conn.HRandField(ctx, key, count, withValues).Result()
-}
+//func (client *Client) HRandFieldCtx(ctx context.Context, key string, count int, withValues bool) ([]string, error) {
+//    return client.conn.HRandField(ctx, key, count, withValues).Result()
+//}
 
 func (client *Client) BLPop(timeout time.Duration, keys ...string) ([]string, error) {
     return client.BLPopCtx(context.Background(), timeout, keys...)
@@ -784,19 +777,19 @@ func (client *Client) LPopCountCtx(ctx context.Context, key string, count int) (
     return client.conn.LPopCount(ctx, key, count).Result()
 }
 
-func (client *Client) LPos(key string, value string, args LPosArgs) (int64, error) {
+func (client *Client) LPos(key string, value string, args redis.LPosArgs) (int64, error) {
     return client.LPosCtx(context.Background(), key, value, args)
 }
 
-func (client *Client) LPosCtx(ctx context.Context, key string, value string, args LPosArgs) (int64, error) {
+func (client *Client) LPosCtx(ctx context.Context, key string, value string, args redis.LPosArgs) (int64, error) {
     return client.conn.LPos(ctx, key, value, args).Result()
 }
 
-func (client *Client) LPosCount(key string, value string, count int64, args LPosArgs) ([]int64, error) {
+func (client *Client) LPosCount(key string, value string, count int64, args redis.LPosArgs) ([]int64, error) {
     return client.LPosCountCtx(context.Background(), key, value, count, args)
 }
 
-func (client *Client) LPosCountCtx(ctx context.Context, key string, value string, count int64, args LPosArgs) ([]int64, error) {
+func (client *Client) LPosCountCtx(ctx context.Context, key string, value string, count int64, args redis.LPosArgs) ([]int64, error) {
     return client.conn.LPosCount(ctx, key, value, count, args).Result()
 }
 
@@ -1048,93 +1041,93 @@ func (client *Client) SUnionStoreCtx(ctx context.Context, destination string, ke
     return client.conn.SUnionStore(ctx, destination, keys...).Result()
 }
 
-func (client *Client) ZAdd(key string, members ...*Z) (int64, error) {
+func (client *Client) ZAdd(key string, members ...redis.Z) (int64, error) {
     return client.ZAddCtx(context.Background(), key, members...)
 }
 
-func (client *Client) ZAddCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
+func (client *Client) ZAddCtx(ctx context.Context, key string, members ...redis.Z) (int64, error) {
     return client.conn.ZAdd(ctx, key, members...).Result()
 }
 
-func (client *Client) ZAddNX(key string, members ...*Z) (int64, error) {
+func (client *Client) ZAddNX(key string, members ...redis.Z) (int64, error) {
     return client.ZAddNXCtx(context.Background(), key, members...)
 }
 
-func (client *Client) ZAddNXCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
+func (client *Client) ZAddNXCtx(ctx context.Context, key string, members ...redis.Z) (int64, error) {
     return client.conn.ZAddNX(ctx, key, members...).Result()
 }
 
-func (client *Client) ZAddXX(key string, members ...*Z) (int64, error) {
+func (client *Client) ZAddXX(key string, members ...redis.Z) (int64, error) {
     return client.ZAddXXCtx(context.Background(), key, members...)
 }
 
-func (client *Client) ZAddXXCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
+func (client *Client) ZAddXXCtx(ctx context.Context, key string, members ...redis.Z) (int64, error) {
     return client.conn.ZAddXX(ctx, key, members...).Result()
 }
 
-func (client *Client) ZAddCh(key string, members ...*Z) (int64, error) {
-    return client.ZAddChCtx(context.Background(), key, members...)
-}
+//func (client *Client) ZAddCh(key string, members ...redis.Z) (int64, error) {
+//    return client.ZAddChCtx(context.Background(), key, members...)
+//}
 
-func (client *Client) ZAddChCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
-    return client.conn.ZAddCh(ctx, key, members...).Result()
-}
+//func (client *Client) ZAddChCtx(ctx context.Context, key string, members ...redis.Z) (int64, error) {
+//    //return client.conn.ZAddCh(ctx, key, members...).Result()
+//}
 
-func (client *Client) ZAddNXCh(key string, members ...*Z) (int64, error) {
-    return client.ZAddNXChCtx(context.Background(), key, members...)
-}
+//func (client *Client) ZAddNXCh(key string, members ...*redis.Z) (int64, error) {
+//    return client.ZAddNXChCtx(context.Background(), key, members...)
+//}
 
-func (client *Client) ZAddNXChCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
-    return client.conn.ZAddNXCh(ctx, key, members...).Result()
-}
+//func (client *Client) ZAddNXChCtx(ctx context.Context, key string, members ...*redis.Z) (int64, error) {
+//    return client.conn.ZAddNXCh(ctx, key, members...).Result()
+//}
 
-func (client *Client) ZAddXXCh(key string, members ...*Z) (int64, error) {
-    return client.ZAddXXChCtx(context.Background(), key, members...)
-}
+//func (client *Client) ZAddXXCh(key string, members ...*redis.Z) (int64, error) {
+//    return client.ZAddXXChCtx(context.Background(), key, members...)
+//}
 
-func (client *Client) ZAddXXChCtx(ctx context.Context, key string, members ...*Z) (int64, error) {
-    return client.conn.ZAddXXCh(ctx, key, members...).Result()
-}
+//func (client *Client) ZAddXXChCtx(ctx context.Context, key string, members ...*redis.Z) (int64, error) {
+//    return client.conn.ZAddXXCh(ctx, key, members...).Result()
+//}
 
-func (client *Client) ZAddArgs(key string, args ZAddArgs) (int64, error) {
+func (client *Client) ZAddArgs(key string, args redis.ZAddArgs) (int64, error) {
     return client.ZAddArgsCtx(context.Background(), key, args)
 }
 
-func (client *Client) ZAddArgsCtx(ctx context.Context, key string, args ZAddArgs) (int64, error) {
+func (client *Client) ZAddArgsCtx(ctx context.Context, key string, args redis.ZAddArgs) (int64, error) {
     return client.conn.ZAddArgs(ctx, key, args).Result()
 }
 
-func (client *Client) ZAddArgsIncr(key string, args ZAddArgs) (float64, error) {
+func (client *Client) ZAddArgsIncr(key string, args redis.ZAddArgs) (float64, error) {
     return client.ZAddArgsIncrCtx(context.Background(), key, args)
 }
 
-func (client *Client) ZAddArgsIncrCtx(ctx context.Context, key string, args ZAddArgs) (float64, error) {
+func (client *Client) ZAddArgsIncrCtx(ctx context.Context, key string, args redis.ZAddArgs) (float64, error) {
     return client.conn.ZAddArgsIncr(ctx, key, args).Result()
 }
 
-func (client *Client) ZIncr(key string, member *Z) (float64, error) {
-    return client.ZIncrCtx(context.Background(), key, member)
-}
+//func (client *Client) ZIncr(key string, member *redis.Z) (float64, error) {
+//    return client.ZIncrCtx(context.Background(), key, member)
+//}
 
-func (client *Client) ZIncrCtx(ctx context.Context, key string, member *Z) (float64, error) {
-    return client.conn.ZIncr(ctx, key, member).Result()
-}
+//func (client *Client) ZIncrCtx(ctx context.Context, key string, member *redis.Z) (float64, error) {
+//    return client.conn.ZIncr(ctx, key, member).Result()
+//}
 
-func (client *Client) ZIncrNX(key string, member *Z) (float64, error) {
-    return client.ZIncrNXCtx(context.Background(), key, member)
-}
+//func (client *Client) ZIncrNX(key string, member *redis.Z) (float64, error) {
+//    return client.ZIncrNXCtx(context.Background(), key, member)
+//}
 
-func (client *Client) ZIncrNXCtx(ctx context.Context, key string, member *Z) (float64, error) {
-    return client.conn.ZIncrNX(ctx, key, member).Result()
-}
+//func (client *Client) ZIncrNXCtx(ctx context.Context, key string, member *redis.Z) (float64, error) {
+//    return client.conn.ZIncrNX(ctx, key, member).Result()
+//}
 
-func (client *Client) ZIncrXX(key string, member *Z) (float64, error) {
-    return client.ZIncrXXCtx(context.Background(), key, member)
-}
+//func (client *Client) ZIncrXX(key string, member *redis.Z) (float64, error) {
+//    return client.ZIncrXXCtx(context.Background(), key, member)
+//}
 
-func (client *Client) ZIncrXXCtx(ctx context.Context, key string, member *Z) (float64, error) {
-    return client.conn.ZIncrXX(ctx, key, member).Result()
-}
+//func (client *Client) ZIncrXXCtx(ctx context.Context, key string, member *redis.Z) (float64, error) {
+//    return client.conn.ZIncrXX(ctx, key, member).Result()
+//}
 
 func (client *Client) ZCard(key string) (int64, error) {
     return client.ZCardCtx(context.Background(), key)
@@ -1168,27 +1161,27 @@ func (client *Client) ZIncrByCtx(ctx context.Context, key string, increment floa
     return client.conn.ZIncrBy(ctx, key, increment, member).Result()
 }
 
-func (client *Client) ZInter(store *ZStore) ([]string, error) {
+func (client *Client) ZInter(store *redis.ZStore) ([]string, error) {
     return client.ZInterCtx(context.Background(), store)
 }
 
-func (client *Client) ZInterCtx(ctx context.Context, store *ZStore) ([]string, error) {
+func (client *Client) ZInterCtx(ctx context.Context, store *redis.ZStore) ([]string, error) {
     return client.conn.ZInter(ctx, store).Result()
 }
 
-func (client *Client) ZInterWithScores(store *ZStore) ([]Z, error) {
+func (client *Client) ZInterWithScores(store *redis.ZStore) ([]redis.Z, error) {
     return client.ZInterWithScoresCtx(context.Background(), store)
 }
 
-func (client *Client) ZInterWithScoresCtx(ctx context.Context, store *ZStore) ([]Z, error) {
+func (client *Client) ZInterWithScoresCtx(ctx context.Context, store *redis.ZStore) ([]redis.Z, error) {
     return client.conn.ZInterWithScores(ctx, store).Result()
 }
 
-func (client *Client) ZInterStore(destination string, store *ZStore) (int64, error) {
+func (client *Client) ZInterStore(destination string, store *redis.ZStore) (int64, error) {
     return client.ZInterStoreCtx(context.Background(), destination, store)
 }
 
-func (client *Client) ZInterStoreCtx(ctx context.Context, destination string, store *ZStore) (int64, error) {
+func (client *Client) ZInterStoreCtx(ctx context.Context, destination string, store *redis.ZStore) (int64, error) {
     return client.conn.ZInterStore(ctx, destination, store).Result()
 }
 
@@ -1200,19 +1193,19 @@ func (client *Client) ZMScoreCtx(ctx context.Context, key string, members ...str
     return client.conn.ZMScore(ctx, key, members...).Result()
 }
 
-func (client *Client) ZPopMax(key string, count ...int64) ([]Z, error) {
+func (client *Client) ZPopMax(key string, count ...int64) ([]redis.Z, error) {
     return client.ZPopMaxCtx(context.Background(), key, count...)
 }
 
-func (client *Client) ZPopMaxCtx(ctx context.Context, key string, count ...int64) ([]Z, error) {
+func (client *Client) ZPopMaxCtx(ctx context.Context, key string, count ...int64) ([]redis.Z, error) {
     return client.conn.ZPopMax(ctx, key, count...).Result()
 }
 
-func (client *Client) ZPopMin(key string, count ...int64) ([]Z, error) {
+func (client *Client) ZPopMin(key string, count ...int64) ([]redis.Z, error) {
     return client.ZPopMinCtx(context.Background(), key, count...)
 }
 
-func (client *Client) ZPopMinCtx(ctx context.Context, key string, count ...int64) ([]Z, error) {
+func (client *Client) ZPopMinCtx(ctx context.Context, key string, count ...int64) ([]redis.Z, error) {
     return client.conn.ZPopMin(ctx, key, count...).Result()
 }
 
@@ -1224,59 +1217,59 @@ func (client *Client) ZRangeCtx(ctx context.Context, key string, start, stop int
     return client.conn.ZRange(ctx, key, start, stop).Result()
 }
 
-func (client *Client) ZRangeWithScores(key string, start, stop int64) ([]Z, error) {
+func (client *Client) ZRangeWithScores(key string, start, stop int64) ([]redis.Z, error) {
     return client.ZRangeWithScoresCtx(context.Background(), key, start, stop)
 }
 
-func (client *Client) ZRangeWithScoresCtx(ctx context.Context, key string, start, stop int64) ([]Z, error) {
+func (client *Client) ZRangeWithScoresCtx(ctx context.Context, key string, start, stop int64) ([]redis.Z, error) {
     return client.conn.ZRangeWithScores(ctx, key, start, stop).Result()
 }
 
-func (client *Client) ZRangeByScore(key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRangeByScore(key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.ZRangeByScoreCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRangeByScoreCtx(ctx context.Context, key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRangeByScoreCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.conn.ZRangeByScore(ctx, key, opt).Result()
 }
 
-func (client *Client) ZRangeByLex(key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRangeByLex(key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.ZRangeByLexCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRangeByLexCtx(ctx context.Context, key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRangeByLexCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.conn.ZRangeByLex(ctx, key, opt).Result()
 }
 
-func (client *Client) ZRangeByScoreWithScores(key string, opt *ZRangeBy) ([]Z, error) {
+func (client *Client) ZRangeByScoreWithScores(key string, opt *redis.ZRangeBy) ([]redis.Z, error) {
     return client.ZRangeByScoreWithScoresCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRangeByScoreWithScoresCtx(ctx context.Context, key string, opt *ZRangeBy) ([]Z, error) {
+func (client *Client) ZRangeByScoreWithScoresCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]redis.Z, error) {
     return client.conn.ZRangeByScoreWithScores(ctx, key, opt).Result()
 }
 
-func (client *Client) ZRangeArgs(z ZRangeArgs) ([]string, error) {
+func (client *Client) ZRangeArgs(z redis.ZRangeArgs) ([]string, error) {
     return client.ZRangeArgsCtx(context.Background(), z)
 }
 
-func (client *Client) ZRangeArgsCtx(ctx context.Context, z ZRangeArgs) ([]string, error) {
+func (client *Client) ZRangeArgsCtx(ctx context.Context, z redis.ZRangeArgs) ([]string, error) {
     return client.conn.ZRangeArgs(ctx, z).Result()
 }
 
-func (client *Client) ZRangeArgsWithScores(z ZRangeArgs) ([]Z, error) {
+func (client *Client) ZRangeArgsWithScores(z redis.ZRangeArgs) ([]redis.Z, error) {
     return client.ZRangeArgsWithScoresCtx(context.Background(), z)
 }
 
-func (client *Client) ZRangeArgsWithScoresCtx(ctx context.Context, z ZRangeArgs) ([]Z, error) {
+func (client *Client) ZRangeArgsWithScoresCtx(ctx context.Context, z redis.ZRangeArgs) ([]redis.Z, error) {
     return client.conn.ZRangeArgsWithScores(ctx, z).Result()
 }
 
-func (client *Client) ZRangeStore(dst string, z ZRangeArgs) (int64, error) {
+func (client *Client) ZRangeStore(dst string, z redis.ZRangeArgs) (int64, error) {
     return client.ZRangeStoreCtx(context.Background(), dst, z)
 }
 
-func (client *Client) ZRangeStoreCtx(ctx context.Context, dst string, z ZRangeArgs) (int64, error) {
+func (client *Client) ZRangeStoreCtx(ctx context.Context, dst string, z redis.ZRangeArgs) (int64, error) {
     return client.conn.ZRangeStore(ctx, dst, z).Result()
 }
 
@@ -1328,35 +1321,35 @@ func (client *Client) ZRevRangeCtx(ctx context.Context, key string, start, stop 
     return client.conn.ZRevRange(ctx, key, start, stop).Result()
 }
 
-func (client *Client) ZRevRangeWithScores(key string, start, stop int64) ([]Z, error) {
+func (client *Client) ZRevRangeWithScores(key string, start, stop int64) ([]redis.Z, error) {
     return client.ZRevRangeWithScoresCtx(context.Background(), key, start, stop)
 }
 
-func (client *Client) ZRevRangeWithScoresCtx(ctx context.Context, key string, start, stop int64) ([]Z, error) {
+func (client *Client) ZRevRangeWithScoresCtx(ctx context.Context, key string, start, stop int64) ([]redis.Z, error) {
     return client.conn.ZRevRangeWithScores(ctx, key, start, stop).Result()
 }
 
-func (client *Client) ZRevRangeByScore(key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRevRangeByScore(key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.ZRevRangeByScoreCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRevRangeByScoreCtx(ctx context.Context, key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRevRangeByScoreCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.conn.ZRevRangeByScore(ctx, key, opt).Result()
 }
 
-func (client *Client) ZRevRangeByLex(key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRevRangeByLex(key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.ZRevRangeByLexCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRevRangeByLexCtx(ctx context.Context, key string, opt *ZRangeBy) ([]string, error) {
+func (client *Client) ZRevRangeByLexCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]string, error) {
     return client.conn.ZRevRangeByLex(ctx, key, opt).Result()
 }
 
-func (client *Client) ZRevRangeByScoreWithScores(key string, opt *ZRangeBy) ([]Z, error) {
+func (client *Client) ZRevRangeByScoreWithScores(key string, opt *redis.ZRangeBy) ([]redis.Z, error) {
     return client.ZRevRangeByScoreWithScoresCtx(context.Background(), key, opt)
 }
 
-func (client *Client) ZRevRangeByScoreWithScoresCtx(ctx context.Context, key string, opt *ZRangeBy) ([]Z, error) {
+func (client *Client) ZRevRangeByScoreWithScoresCtx(ctx context.Context, key string, opt *redis.ZRangeBy) ([]redis.Z, error) {
     return client.conn.ZRevRangeByScoreWithScores(ctx, key, opt).Result()
 }
 
@@ -1376,37 +1369,37 @@ func (client *Client) ZScoreCtx(ctx context.Context, key, member string) (float6
     return client.conn.ZScore(ctx, key, member).Result()
 }
 
-func (client *Client) ZUnionStore(dest string, store *ZStore) (int64, error) {
+func (client *Client) ZUnionStore(dest string, store *redis.ZStore) (int64, error) {
     return client.ZUnionStoreCtx(context.Background(), dest, store)
 }
 
-func (client *Client) ZUnionStoreCtx(ctx context.Context, dest string, store *ZStore) (int64, error) {
+func (client *Client) ZUnionStoreCtx(ctx context.Context, dest string, store *redis.ZStore) (int64, error) {
     return client.conn.ZUnionStore(ctx, dest, store).Result()
 }
 
-func (client *Client) ZUnion(store ZStore) ([]string, error) {
+func (client *Client) ZUnion(store redis.ZStore) ([]string, error) {
     return client.ZUnionCtx(context.Background(), store)
 }
 
-func (client *Client) ZUnionCtx(ctx context.Context, store ZStore) ([]string, error) {
+func (client *Client) ZUnionCtx(ctx context.Context, store redis.ZStore) ([]string, error) {
     return client.conn.ZUnion(ctx, store).Result()
 }
 
-func (client *Client) ZUnionWithScores(store ZStore) ([]Z, error) {
+func (client *Client) ZUnionWithScores(store redis.ZStore) ([]redis.Z, error) {
     return client.ZUnionWithScoresCtx(context.Background(), store)
 }
 
-func (client *Client) ZUnionWithScoresCtx(ctx context.Context, store ZStore) ([]Z, error) {
+func (client *Client) ZUnionWithScoresCtx(ctx context.Context, store redis.ZStore) ([]redis.Z, error) {
     return client.conn.ZUnionWithScores(ctx, store).Result()
 }
 
-func (client *Client) ZRandMember(key string, count int, withScores bool) ([]string, error) {
-    return client.ZRandMemberCtx(context.Background(), key, count, withScores)
-}
+//func (client *Client) ZRandMember(key string, count int, withScores bool) ([]string, error) {
+//    return client.ZRandMemberCtx(context.Background(), key, count, withScores)
+//}
 
-func (client *Client) ZRandMemberCtx(ctx context.Context, key string, count int, withScores bool) ([]string, error) {
-    return client.conn.ZRandMember(ctx, key, count, withScores).Result()
-}
+//func (client *Client) ZRandMemberCtx(ctx context.Context, key string, count int, withScores bool) ([]string, error) {
+//    return client.conn.ZRandMember(ctx, key, count, withScores).Result()
+//}
 
 func (client *Client) ZDiff(keys ...string) ([]string, error) {
     return client.ZDiffCtx(context.Background(), keys...)
@@ -1416,11 +1409,11 @@ func (client *Client) ZDiffCtx(ctx context.Context, keys ...string) ([]string, e
     return client.conn.ZDiff(ctx, keys...).Result()
 }
 
-func (client *Client) ZDiffWithScores(keys ...string) ([]Z, error) {
+func (client *Client) ZDiffWithScores(keys ...string) ([]redis.Z, error) {
     return client.ZDiffWithScoresCtx(context.Background(), keys...)
 }
 
-func (client *Client) ZDiffWithScoresCtx(ctx context.Context, keys ...string) ([]Z, error) {
+func (client *Client) ZDiffWithScoresCtx(ctx context.Context, keys ...string) ([]redis.Z, error) {
     return client.conn.ZDiffWithScores(ctx, keys...).Result()
 }
 

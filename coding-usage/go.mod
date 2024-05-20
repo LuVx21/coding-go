@@ -45,6 +45,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.19.0
 	github.com/pterm/pterm v0.12.79
+	github.com/puzpuzpuz/xsync/v3 v3.1.0
 	github.com/pywee/gobson-where v0.0.4
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/robfig/cron/v3 v3.0.1
@@ -61,6 +62,7 @@ require (
 	github.com/valyala/fasthttp v1.52.0
 	github.com/withlin/canal-go v1.1.1
 	github.com/xxl-job/xxl-job-executor-go v1.2.0
+	github.com/yanyiwu/gojieba v1.3.0
 	gitlab.com/greyxor/slogor v1.2.8
 	go-micro.dev/v4 v4.10.2
 	go.mongodb.org/mongo-driver v1.15.0

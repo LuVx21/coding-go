@@ -3,8 +3,8 @@ package fmt_x
 import (
     "fmt"
     "github.com/jedib0t/go-pretty/v6/table"
+    "github.com/luvx21/coding-go/coding-common/text_x"
     "os"
-    "strconv"
     "strings"
 )
 
@@ -39,34 +39,40 @@ func Println0[T any](rows ...[]T) {
         colNum = max(colNum, len(_row))
     }
 
-    strRows := make([][]any, 0, len(rows))
+    strRows := make([][]string, 0, len(rows))
     width := make([]int, colNum)
     for _, _row := range rows {
-        strRow := make([]any, 0, colNum)
+        strRow := make([]string, 0, colNum)
         for i := 0; i < colNum; i++ {
             var colStr string
             if i < len(_row) {
                 col := _row[i]
                 colStr = " " + fmt.Sprint(col) + " "
-                width[i] = max(len(colStr), width[i])
+                width[i] = max(text_x.Width(colStr), width[i])
             }
             strRow = append(strRow, colStr)
         }
         strRows = append(strRows, strRow)
     }
 
-    format, line := "|", "+"
+    line := "+"
     for _, w := range width {
-        format += "%" + strconv.Itoa(w) + "v|"
         line += strings.Repeat("-", w) + "+"
     }
-    format += "\n"
     line += "\n"
 
     var sb strings.Builder
     sb.WriteString(line)
     for _, row := range strRows {
-        sb.WriteString(fmt.Sprintf(format, row...))
+        sb.WriteString("|")
+        for i, col := range row {
+            for _ = range width[i] - text_x.Width(col) {
+                sb.WriteString(" ")
+            }
+            sb.WriteString(col)
+            sb.WriteString("|")
+        }
+        sb.WriteString("\n")
         sb.WriteString(line)
     }
     fmt.Println(sb.String())

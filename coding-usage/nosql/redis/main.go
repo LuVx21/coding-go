@@ -4,19 +4,30 @@ import (
     "context"
     "errors"
     "fmt"
+    "github.com/luvx21/coding-go/coding-usage/nosql"
     "github.com/redis/go-redis/v9"
 )
 
-var ctx = context.Background()
+var (
+    addr     = nosql.RedisAddr
+    userName = nosql.RedisUserName
+    password = nosql.RedisPassword
+    db       = 0
+)
+
+func connect() *redis.Client {
+    return redis.NewClient(&redis.Options{
+        Addr:     addr,
+        Username: userName,
+        Password: password,
+        DB:       db,
+    })
+}
 
 func ExampleClient() {
-    rdb := redis.NewClient(&redis.Options{
-        Addr:     "redisConfig.Host",
-        Username: "redisConfig.Username",
-        Password: "redisConfig.Password",
-        DB:       0,
-    })
+    rdb := connect()
 
+    var ctx = context.Background()
     key1, key2 := "key1", "key2"
     err := rdb.Set(ctx, key1, "value", 0).Err()
     if err != nil {
