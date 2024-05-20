@@ -8,11 +8,11 @@ type Pool[T any] struct {
     pool sync.Pool
 }
 
-func New[T any](fn func() T) Pool[T] {
-    return Pool[T]{
-        pool: sync.Pool{New: func() any { return fn() }},
-    }
+func NewPool[T any](fn func() T) Pool[T] {
+    ff := func() any { return fn() }
+    return Pool[T]{sync.Pool{New: ff}}
 }
+
 func (p *Pool[T]) Get() T {
     return p.pool.Get().(T)
 }

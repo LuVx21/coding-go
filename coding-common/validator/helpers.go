@@ -60,14 +60,18 @@ func NotIn[T comparable](value T, blocklist ...T) bool {
     return true
 }
 
-func NoDuplicates[T comparable](values []T) bool {
-    uniqueValues := make(map[T]bool)
+//IsNotUnique 切片是否存在重复值
+func IsNotUnique[S ~[]E, E comparable](s S) bool {
+    m := make(map[E]struct{}, len(s))
 
-    for _, value := range values {
-        uniqueValues[value] = true
+    for _, e := range s {
+        if _, ok := m[e]; ok {
+            return true
+        }
+        m[e] = struct{}{}
     }
 
-    return len(values) == len(uniqueValues)
+    return false
 }
 
 func IsEmail(value string) bool {

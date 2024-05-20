@@ -106,3 +106,9 @@ func SyncCookie2Turso(c *gin.Context) {
     cookie.Sync2Turso(hosts...)
     responsex.R(c, hosts)
 }
+
+func ClearCache(c *gin.Context) {
+    _ = cookie.ClearCache()
+
+    responsex.R(c, "ok")
+}

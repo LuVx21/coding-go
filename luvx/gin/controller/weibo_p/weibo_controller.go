@@ -20,6 +20,7 @@ func PullByUser(c *gin.Context) {
 
 func PullByGroup(c *gin.Context) {
     weibo_p.PullByGroup()
+    weibo_p.Delete()
     responsex.R(c, "ok")
 }
 

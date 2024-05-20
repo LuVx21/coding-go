@@ -1,5 +1,7 @@
 package alias_x
 
+type EmptyHolder = struct{}
+
 type MapAny2Any = map[any]any
 type MapStr2Any = map[string]any
 

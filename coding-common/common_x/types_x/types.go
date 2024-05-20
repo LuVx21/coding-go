@@ -1,13 +1,17 @@
 package types_x
 
 type Map[K comparable, V any] map[K]V
-type Set[E comparable] Map[E, bool]
+type Set[E comparable] Map[E, struct{}]
 
 type Function[T, R any] func(T) R
 type Consumer[T any] func(T)
 type Supplier[T any] func() T
 type Runnable func()
 type Predicate[T any] Function[T, bool]
+
+type BiFunction[I1, I2, R any] func(I1, I2) R
+type BiConsumer[I1, I2 any] func(I1, I2)
+type BiPredicate[I1, I2 any] BiFunction[I1, I2, bool]
 
 func (m *Map[K, V]) Filter(f func(K, V) bool) Map[K, V] {
     clone := make(Map[K, V], len(*m))
@@ -38,7 +42,7 @@ func (m *Map[K, V]) Merge(source Map[K, V], replace bool) {
 
 func (s *Set[E]) Add(e ...E) {
     for _, _e := range e {
-        (*s)[_e] = true
+        (*s)[_e] = struct{}{}
     }
 }
 
@@ -49,6 +53,6 @@ func (s *Set[E]) Remove(e ...E) {
 }
 
 func (s *Set[E]) Contain(e E) bool {
-    value, exist := (*s)[e]
-    return exist && value == true
+    _, exist := (*s)[e]
+    return exist
 }

@@ -29,6 +29,7 @@ import (
     "luvx/gin/service/cookie"
     "math"
     "regexp"
+    "strconv"
     "strings"
     "time"
 )
@@ -264,6 +265,8 @@ func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
             "id":   cast_x.ToInt64(user["id"]),
             "name": user["screen_name"],
         }
+    } else {
+        feed["user"] = map[string]any{"id": 0, "name": ""}
     }
     //feed["invalid"] = 0
     maps_x.RemoveIf(feed, func(k string, v interface{}) bool {
@@ -446,12 +449,12 @@ func contentHtml(jo JsonObject) string {
 
     picList := ""
     picUrls := jo["pic_ids"].(bson.A)
-    for _, url := range picUrls {
+    for i, url := range picUrls {
         pUrl, _ := nets_x.UrlAddQuery("http://192.168.2.131:58090/redirect", map[string]any{
             "url": url.(string),
         })
+        picList += strconv.Itoa(i) + "<br/>"
         picList += "<img vspace=\"8\" hspace=\"4\" style=\"\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
-        //picList += "<br/>"
     }
     return text + picList
 }

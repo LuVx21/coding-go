@@ -10,7 +10,7 @@ GET http://{{host}}/app/:path
 GET http://{{host}}/app/healthyCheck
 
 ###
-POST http://{{host}}/app/syncCookie2Turso
+POST http://{{host}}/cookie/syncCookie2Turso
 Content-Type: application/json
 
 {
@@ -47,7 +47,7 @@ GET http://{{host}}/weibo/rss/:uid
 GET http://{{host}}/weibo/rss/delete/:id
 
 ### useful
-POST http://{{host}}/app/useful/compare
+POST http://{{host}}/useful/compare
 Content-Type: application/json
 
 {
@@ -62,3 +62,6 @@ Content-Type: application/json
         4
     ]
 }
+
+### cache
+GET http://{{host}}/cache/clear

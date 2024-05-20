@@ -43,10 +43,15 @@ func Register0(r *gin.Engine) {
 
     app := r.Group("/app")
     app.GET("/healthyCheck", controller.HealthyCheck)
-    app.POST("/syncCookie2Turso", controller.SyncCookie2Turso)
 
-    useful := app.Group("/useful")
+    cookie := r.Group("/cookie")
+    cookie.POST("/syncCookie2Turso", controller.SyncCookie2Turso)
+
+    useful := r.Group("/useful")
     useful.POST("/compare", useful_c.Compare)
+
+    cache := r.Group("/cache")
+    cache.GET("clear", controller.ClearCache)
 }
 
 func RegisterUser(r *gin.Engine) {

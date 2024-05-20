@@ -50,10 +50,10 @@ func GetOnce(k string) *sync.Once {
     onceMu.Lock()
     defer onceMu.Unlock()
 
-    limiter := onceMap[k]
-    if limiter == nil {
-        var once sync.Once
-        onceMap[k] = &once
+    once := onceMap[k]
+    if once == nil {
+        once = &sync.Once{}
+        onceMap[k] = once
     }
-    return limiter
+    return once
 }

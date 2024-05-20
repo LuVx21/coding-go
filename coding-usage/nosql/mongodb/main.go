@@ -3,6 +3,7 @@ package main
 import (
     "context"
     "fmt"
+    "github.com/luvx21/coding-go/coding-usage/nosql"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/event"
     "go.mongodb.org/mongo-driver/mongo"
@@ -10,8 +11,8 @@ import (
     "log"
 )
 
-const (
-    uri            = ""
+var (
+    uri            = nosql.MongoUri
     dbName         = "boot"
     collectionName = "user"
 )
@@ -23,16 +24,16 @@ func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
     var logMonitor = event.CommandMonitor{
         Started: func(ctx context.Context, event *event.CommandStartedEvent) {
             if event.CommandName != "ping" {
-            log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
+                log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
             }
         },
         Succeeded: func(ctx context.Context, event *event.CommandSucceededEvent) {
             if event.CommandName != "ping" {
-            log.Printf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)
+                log.Printf("查询语句:%s 耗时:%dms", event.CommandName, event.Duration/1000/1000)
             }
         },
         Failed: func(ctx context.Context, event *event.CommandFailedEvent) {
-            log.Fatalf("查询语句:%s 耗时:%dns", event.CommandName, event.Duration)
+            log.Fatalf("查询语句:%s 耗时:%dms", event.CommandName, event.Duration/1000/1000)
         },
     }
     clientOptions.SetMonitor(&logMonitor)

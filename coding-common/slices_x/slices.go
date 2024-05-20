@@ -72,9 +72,9 @@ func ClearZeroRef[S ~[]E, E any](s S) S {
 // Intersect 交集
 func Intersect[S ~[]E, E comparable](a, b S) S {
     var r S
-    mp := make(map[E]bool, len(a))
+    mp := make(map[E]struct{}, len(a))
     for _, val := range a {
-        mp[val] = true
+        mp[val] = struct{}{}
     }
     for _, val := range b {
         if _, ok := mp[val]; ok {
