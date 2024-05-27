@@ -14,6 +14,7 @@ require (
 	github.com/bytedance/sonic v1.11.6
 	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/dgraph-io/ristretto v0.1.1
+	github.com/dolthub/swiss v0.2.1
 	github.com/eko/gocache/lib/v4 v4.1.6
 	github.com/eko/gocache/store/bigcache/v4 v4.2.1
 	github.com/elastic/go-elasticsearch/v8 v8.13.1
@@ -34,6 +35,7 @@ require (
 	github.com/labstack/echo/v4 v4.1.11
 	github.com/levigross/grequests v0.0.0-20231203190023-9c307ef1f48d
 	github.com/lib/pq v1.2.0
+	github.com/linvon/cuckoo-filter v0.4.0
 	github.com/linxGnu/grocksdb v1.8.14
 	github.com/lmittmann/tint v1.0.4
 	github.com/logrusorgru/aurora v2.0.3+incompatible
@@ -48,6 +50,7 @@ require (
 	github.com/puzpuzpuz/xsync/v3 v3.1.0
 	github.com/pywee/gobson-where v0.0.4
 	github.com/redis/go-redis/v9 v9.5.1
+	github.com/redis/rueidis v1.0.37
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.39.0
 	github.com/segmentio/kafka-go v0.4.47
@@ -106,7 +109,9 @@ require (
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
 	github.com/eapache/go-resiliency v1.6.0 // indirect

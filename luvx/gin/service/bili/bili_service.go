@@ -210,11 +210,14 @@ func PullUpVideo(mid int64) []string {
         video["invalid"] = 0
         video["pubtime"] = time.Unix(cast_x.ToInt64(video["created"]), 0)
         video["from"] = "go-up"
-        video["upper"] = map[string]interface{}{
-            "mid":      cast_x.ToInt64(video["mid"]),
-            "name":     video["author"],
-            "seasonId": cast_x.ToInt64(video["season_id"]),
+        upper := map[string]any{
+            "mid":  cast_x.ToInt64(video["mid"]),
+            "name": video["author"],
         }
+        if v, ok := video["season_id"]; ok {
+            upper["seasonId"] = cast_x.ToInt64(v)
+        }
+        video["upper"] = upper
 
         maps_x.RemoveIf(video, func(k string, v interface{}) bool {
             return !slices.Contains(fields, k)

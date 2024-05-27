@@ -18,8 +18,8 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20240520063214-3ee149a4dd8a
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20240520063214-3ee149a4dd8a
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240527090804-52079be8af94
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20240527090804-52079be8af94
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/tidwall/gjson v1.17.1
