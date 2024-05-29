@@ -81,12 +81,12 @@ func Of(_json string) SpiderParam {
         Index: index{
             PageCount:                     2,
             CountInPage:                   2,
-            IndexItemListPostProcessor:    func_x.Identity[[]*goquery.Selection](),
-            IndexNextPageUrlPostProcessor: func_x.Identity[string](),
+            IndexItemListPostProcessor:    func_x.Identity[[]*goquery.Selection],
+            IndexNextPageUrlPostProcessor: func_x.Identity[string],
         },
         Content: content{
-            ContentPostProcessor:            func_x.Identity[PageContent](),
-            ContentNextPageUrlPostProcessor: func_x.Identity[string](),
+            ContentPostProcessor:            func_x.Identity[PageContent],
+            ContentNextPageUrlPostProcessor: func_x.Identity[string],
         },
     }
     _ = json.Unmarshal([]byte(_json), &r)

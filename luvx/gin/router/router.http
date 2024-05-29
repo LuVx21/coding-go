@@ -35,7 +35,7 @@ GET http://{{host}}/bili/pull/season?seasonId=0
 GET http://{{host}}/bili/pull/up/video?mid=0
 
 ###
-GET http://{{host}}/weibo/pull/user?uid=0
+# GET http://{{host}}/weibo/pull/user?uid=0
 
 ###
 GET http://{{host}}/weibo/pull/group

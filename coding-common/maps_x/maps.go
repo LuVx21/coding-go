@@ -7,6 +7,33 @@ import (
     "reflect"
 )
 
+func Merge[M ~map[K]V, K comparable, V any](m1, m2 M, replace bool) M {
+    r := make(M, len(m1)+len(m2))
+    for sk, sv := range m1 {
+        r[sk] = sv
+    }
+    for sk, sv := range m2 {
+        if _, ok := r[sk]; !ok || replace {
+            r[sk] = sv
+        }
+    }
+    return r
+}
+
+func Clone[M ~map[K]V, K comparable, V any](m M) M {
+    return Filter(m, func(k K, v V) bool { return true })
+}
+
+func Filter[M ~map[K]V, K comparable, V any](m M, f func(K, V) bool) M {
+    r := make(M, len(m))
+    for k, v := range m {
+        if f(k, v) {
+            r[k] = v
+        }
+    }
+    return r
+}
+
 func Join[M ~map[K]V, K comparable, V any](m M, kvLink, eLink string) string {
     var result string
     keys := maps.Keys(m)

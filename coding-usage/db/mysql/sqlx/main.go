@@ -1,7 +1,9 @@
 package main
 
 import (
+    "database/sql"
     "fmt"
+    "github.com/luvx21/coding-go/coding-usage/db"
     "log"
     "time"
 
@@ -10,19 +12,19 @@ import (
 )
 
 type User struct {
-    Id         uint
-    UserName   string
-    Password   string
+    Id         uint32
+    UserName   string         `db:"user_name"`
+    Password   sql.NullString `db:"password"`
     Age        int8
     Birthday   time.Time
     UpdateTime time.Time
 }
 
-const (
+var (
     host     = "luvx"
-    port     = 3306
+    port     = db.MysqlPort
     user     = "root"
-    password = ""
+    password = db.MysqlPassword
     dbname   = "boot"
     url      = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 )
@@ -39,7 +41,7 @@ func main() {
     _ = db.Get(&user, "SELECT * FROM user WHERE id = 1")
     fmt.Printf("%#v\n", user)
 
-    rows, _ := db.NamedQuery(`SELECT * FROM user WHERE user_name=:aaa`, map[string]interface{}{"aaa": "foo"})
+    rows, _ := db.NamedQuery(`SELECT * FROM user WHERE user_name=:aaa`, map[string]any{"aaa": "foo"})
     for rows.Next() {
         err := rows.StructScan(&user)
         if err != nil {

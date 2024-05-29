@@ -67,8 +67,3 @@ func TrackTime(name string) func() {
         logs.Log.Infof("%s 执行时间: %v", name, time.Since(start))
     }
 }
-
-func IsZero[T comparable](v T) bool {
-    var zero T
-    return v == zero
-}

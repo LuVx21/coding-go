@@ -42,7 +42,7 @@ func Delete() {
 `
     mysqlGuids, guids := make([]string, 0), make([]int64, 0)
     for _, rss := range feeds {
-        rows, _ := db.MySQLClient.Debug().Raw(sql, rss["id"], rss["id"]).Rows()
+        rows, _ := db.MySQLClient.Raw(sql, rss["id"], rss["id"]).Rows()
         for rows.Next() {
             var guid string
             _ = rows.Scan(&guid)

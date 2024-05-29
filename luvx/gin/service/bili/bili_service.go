@@ -170,17 +170,17 @@ func PullUpVideo(mid int64) []string {
     _ = mongoClient.FindOne(context.TODO(), bson.M{"upper.mid": mid}, opts).Decode(&latest)
 
     cursor, limit := 1, 30
-    iterator := iterators.NewCursorIteratorSimple[interface{}, int](
+    iterator := iterators.NewCursorIteratorSimple[any, int](
         cursor,
         false,
-        func(_cursor int) []interface{} {
+        func(_cursor int) []any {
             return requestUpVideo(mid, _cursor, limit)
         },
-        func(curId int, items []interface{}) int {
+        func(curId int, items []any) int {
             if latest == nil || len(items) < limit {
                 return -1
             }
-            last := cast_x.ToInt64(items[len(items)-1].(map[string]interface{})["created"])
+            last := cast_x.ToInt64(items[len(items)-1].(map[string]any)["created"])
             if last <= cast_x.ToInt64(latest["pubtime"])/1000 {
                 return -1
             }
@@ -191,9 +191,9 @@ func PullUpVideo(mid int64) []string {
             return i <= 0
         },
     )
-    result := make([]string, 0)
-    iterator.ForEachRemaining(func(item interface{}) {
-        video := item.(map[string]interface{})
+    result, toSave := make([]string, 0), make([]any, 0)
+    iterator.ForEachRemaining(func(item any) {
+        video := item.(map[string]any)
         id := video["aid"]
         if cast_x.ToInt64(video["created"]) <= cast_x.ToInt64(latest["pubtime"])/1000 {
             return
@@ -219,13 +219,17 @@ func PullUpVideo(mid int64) []string {
         }
         video["upper"] = upper
 
-        maps_x.RemoveIf(video, func(k string, v interface{}) bool {
+        maps_x.RemoveIf(video, func(k string, v any) bool {
             return !slices.Contains(fields, k)
         })
-        _, _ = mongoClient.InsertOne(context.TODO(), video)
+        //_, _ = mongoClient.InsertOne(context.TODO(), video)
+        toSave = append(toSave, video)
         result = append(result, video["bvid"].(string))
         logs.Log.Infoln(video["pubtime"], video["title"])
     })
+    for _, s := range slices_x.Partition(toSave, 30) {
+        _, _ = mongoClient.InsertMany(context.TODO(), s)
+    }
     return result
 }
 

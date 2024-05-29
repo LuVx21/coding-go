@@ -9,16 +9,16 @@ import (
 const HELLO_WORLD = "helloWorld"
 
 func Test_00(t *testing.T) {
-    listener1 := NewEventListener(func(event Event) {
+    listener1 := NewEventListener(func(event Event[string]) {
         time.Sleep(time.Second * 2)
         log.Info("监听器1", time.Now(), event.Type, event.Data)
     })
-    listener2 := NewEventListener(func(event Event) {
+    listener2 := NewEventListener(func(event Event[string]) {
         time.Sleep(time.Second * 2)
         log.Info("监听器2", time.Now(), event.Type, event.Data)
     })
 
-    dispatcher := NewEventDispatcher()
+    dispatcher := NewEventDispatcher[string]()
     dispatcher.RegisterListener(HELLO_WORLD, listener1)
     dispatcher.RegisterListener(HELLO_WORLD, listener2)
 

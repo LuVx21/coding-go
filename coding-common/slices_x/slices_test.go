@@ -5,6 +5,12 @@ import (
     "testing"
 )
 
+func Test_Partition(t *testing.T) {
+    ints := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+    r := Partition(ints, 5)
+    fmt.Println(r)
+}
+
 func Test_01(t *testing.T) {
 
     bs := []bool{true, false, true}

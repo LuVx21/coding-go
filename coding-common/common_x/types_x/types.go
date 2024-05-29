@@ -1,43 +1,28 @@
 package types_x
 
+import (
+    "github.com/luvx21/coding-go/coding-common/maps_x"
+)
+
+type Slice[T any] []T
+type NumberSlice[T Number] Slice[T]
+
 type Map[K comparable, V any] map[K]V
 type Set[E comparable] Map[E, struct{}]
 
-type Function[T, R any] func(T) R
-type Consumer[T any] func(T)
-type Supplier[T any] func() T
-type Runnable func()
-type Predicate[T any] Function[T, bool]
-
-type BiFunction[I1, I2, R any] func(I1, I2) R
-type BiConsumer[I1, I2 any] func(I1, I2)
-type BiPredicate[I1, I2 any] BiFunction[I1, I2, bool]
-
 func (m *Map[K, V]) Filter(f func(K, V) bool) Map[K, V] {
-    clone := make(Map[K, V], len(*m))
-    for k, v := range *m {
-        if f(k, v) {
-            clone[k] = v
-        }
-    }
-    return clone
+    return maps_x.Filter(*m, f)
 }
 
 func (m *Map[K, V]) Clone() Map[K, V] {
-    f := func(k K, v V) bool { return true }
-    return m.Filter(f)
+    return maps_x.Clone(*m)
 }
 
-func (m *Map[K, V]) Merge(source Map[K, V], replace bool) {
+func (m *Map[K, V]) Merge(source Map[K, V], replace bool) Map[K, V] {
     if *m == nil {
         *m = make(Map[K, V], len(source))
     }
-
-    for sourceKey, sourceValue := range source {
-        if _, ok := (*m)[sourceKey]; !ok || replace {
-            (*m)[sourceKey] = sourceValue
-        }
-    }
+    return maps_x.Merge(*m, source, replace)
 }
 
 func (s *Set[E]) Add(e ...E) {
@@ -55,4 +40,8 @@ func (s *Set[E]) Remove(e ...E) {
 func (s *Set[E]) Contain(e E) bool {
     _, exist := (*s)[e]
     return exist
+}
+
+func (s *Slice[E]) Remove(e E) *Slice[E] {
+    return s
 }

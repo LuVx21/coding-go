@@ -12,6 +12,7 @@ require (
 	github.com/apache/pulsar-client-go v0.12.1
 	github.com/bits-and-blooms/bloom/v3 v3.7.0
 	github.com/bytedance/sonic v1.11.6
+	github.com/cch123/elasticsql v1.0.1
 	github.com/deckarep/golang-set/v2 v2.6.0
 	github.com/dgraph-io/ristretto v0.1.1
 	github.com/dolthub/swiss v0.2.1
@@ -209,6 +210,7 @@ require (
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	github.com/xwb1989/sqlparser v0.0.0-20171128062118-da747e0c62c4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
 	go.opentelemetry.io/otel/metric v1.21.0 // indirect

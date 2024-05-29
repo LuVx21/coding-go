@@ -17,13 +17,13 @@ func Test_00(t *testing.T) {
     _ = sonic.Unmarshal([]byte(_json), &m)
     fmt.Println(m)
 
-    m.Merge(Map[string, any]{"aaa": "bbb"}, true)
-    fmt.Println(m)
+    merge := m.Merge(Map[string, any]{"aaa": "bbb"}, true)
+    fmt.Println(merge)
 
-    nm := m.Filter(func(k string, v any) bool {
+    nm := merge.Filter(func(k string, v any) bool {
         return k == "aaa"
     })
-    fmt.Println(m, nm)
+    fmt.Println(nm)
 }
 
 func Test_Set(t *testing.T) {

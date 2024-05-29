@@ -24,7 +24,7 @@ func NewPageIteratorSimple[ITEM any](
     dataAccessor func(curId int) []ITEM,
     endChecker func(curId int) bool,
 ) *CursorIterator[ITEM, int, []ITEM] {
-    return NewPageIterator[ITEM, []ITEM](initCursor, checkFirstCursor, dataAccessor, func_x.Identity[[]ITEM](), endChecker)
+    return NewPageIterator[ITEM, []ITEM](initCursor, checkFirstCursor, dataAccessor, func_x.Identity[[]ITEM], endChecker)
 }
 
 func NewPageIterator[ITEM, ITEMS any](
@@ -46,7 +46,7 @@ func NewCursorIteratorSimple[ITEM, ID any](
     endChecker func(curId ID) bool,
 ) *CursorIterator[ITEM, ID, []ITEM] {
     return NewCursorIterator[ITEM, ID, []ITEM](initCursor, checkFirstCursor, dataAccessor, cursorExtractor,
-        func_x.Identity[[]ITEM](), endChecker,
+        func_x.Identity[[]ITEM], endChecker,
     )
 }
 

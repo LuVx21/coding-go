@@ -11,7 +11,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/eko/gocache/lib/v4 v4.1.6
-	github.com/eko/gocache/store/bigcache/v4 v4.2.1
+	github.com/eko/gocache/store/bigcache/v4 v4.2.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-co-op/gocron/v2 v2.5.0
 	github.com/go-sql-driver/mysql v1.8.1
@@ -21,12 +21,12 @@ require (
 	github.com/luvx21/coding-go/coding-common v0.0.0-20240527090804-52079be8af94
 	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20240527090804-52079be8af94
 	github.com/parnurzeal/gorequest v0.3.0
-	github.com/redis/go-redis/v9 v9.5.1
+	github.com/redis/go-redis/v9 v9.5.2
 	github.com/tidwall/gjson v1.17.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240416075003-747366ff79c4
 	github.com/valyala/fasthttp v1.54.0
 	go.mongodb.org/mongo-driver v1.15.0
-	golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
+	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc
 	golang.org/x/time v0.5.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gen v0.3.26
@@ -70,7 +70,7 @@ require (
 	github.com/prometheus/client_golang v1.19.1 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.53.0 // indirect
-	github.com/prometheus/procfs v0.15.0 // indirect
+	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
@@ -100,7 +100,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/bytedance/sonic v1.11.7
+	github.com/bytedance/sonic v1.11.8
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gabriel-vasile/mimetype v1.4.4 // indirect

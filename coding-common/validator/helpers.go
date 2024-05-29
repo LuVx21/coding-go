@@ -1,12 +1,11 @@
 package validator
 
 import (
+    "cmp"
     "net/url"
     "regexp"
     "strings"
     "unicode/utf8"
-
-    "golang.org/x/exp/constraints"
 )
 
 var (
@@ -25,7 +24,7 @@ func MaxRunes(value string, n int) bool {
     return utf8.RuneCountInString(value) <= n
 }
 
-func Between[T constraints.Ordered](value, min, max T) bool {
+func Between[T cmp.Ordered](value, min, max T) bool {
     return value >= min && value <= max
 }
 
