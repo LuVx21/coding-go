@@ -104,7 +104,7 @@ func spiderIndexPage(key, paramJson string) []soup.PageContent {
 
     ignoreIndexItemUrlSet := make([]string, 0, 2000)
     for cursor.Next(context.Background()) {
-        m := make(map[string]interface{})
+        m := make(map[string]any)
         _ = cursor.Decode(&m)
         ignoreIndexItemUrlSet = append(ignoreIndexItemUrlSet, m["url"].(string))
     }

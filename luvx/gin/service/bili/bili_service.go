@@ -75,10 +75,10 @@ func PullSeasonList(seasonId int64) {
     iterator := iterators.NewCursorIteratorSimple(
         cursor,
         false,
-        func(_cursor int) []interface{} {
+        func(_cursor int) []any {
             return requestSeasonVideo(seasonId, _cursor, limit)
         },
-        func(curId int, items []interface{}) int {
+        func(curId int, items []any) int {
             if len(items) < limit {
                 return -1
             }
@@ -92,8 +92,8 @@ func PullSeasonList(seasonId int64) {
         },
     )
 
-    iterator.ForEachRemaining(func(item interface{}) {
-        media := item.(map[string]interface{})
+    iterator.ForEachRemaining(func(item any) {
+        media := item.(map[string]any)
         id := cast_x.ToInt64(media["id"])
         media["_id"] = id
         if slices.Contains(ids, id) {
@@ -107,17 +107,17 @@ func PullSeasonList(seasonId int64) {
         }
 
         media["invalid"] = 0
-        maps_x.ComputeIfPresent(media, "pubtime", func(k string, v interface{}) interface{} {
+        maps_x.ComputeIfPresent(media, "pubtime", func(k string, v any) any {
             return time.Unix(cast_x.ToInt64(v), 0)
         })
         media["from"] = "go-season"
-        upper := media["upper"].(map[string]interface{})
-        maps_x.ComputeIfPresent(upper, "mid", func(k string, v interface{}) interface{} {
+        upper := media["upper"].(map[string]any)
+        maps_x.ComputeIfPresent(upper, "mid", func(k string, v any) any {
             return cast_x.ToInt64(v)
         })
         upper["seasonId"] = seasonId
 
-        maps_x.RemoveIf(media, func(k string, v interface{}) bool {
+        maps_x.RemoveIf(media, func(k string, v any) bool {
             return !slices.Contains(fields, k)
         })
         _, _ = mongoClient.InsertOne(context.TODO(), media)
@@ -125,7 +125,7 @@ func PullSeasonList(seasonId int64) {
     })
 }
 
-func requestSeasonVideo(seasonId int64, cursor int, limit int) []interface{} {
+func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
     client := &fasthttp.Client{}
 
     req := fasthttp.AcquireRequest()
@@ -143,10 +143,10 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []interface{} {
     _ = rateLimiter.Wait(context.TODO())
     logs.Log.Infoln("请求:", pUrl)
     _ = client.Do(req, resp)
-    ff := make(map[string]interface{})
+    ff := make(map[string]any)
     _ = sonic.Unmarshal(resp.Body(), &ff)
 
-    medias := ff["data"].(map[string]interface{})["medias"].([]interface{})
+    medias := ff["data"].(map[string]any)["medias"].([]any)
     return medias
 }
 
@@ -233,7 +233,7 @@ func PullUpVideo(mid int64) []string {
     return result
 }
 
-func requestUpVideo(mid int64, cursor int, limit int) []interface{} {
+func requestUpVideo(mid int64, cursor int, limit int) []any {
     m := map[string]any{
         "mid":           mid,
         "ps":            limit,
@@ -267,8 +267,8 @@ func requestUpVideo(mid int64, cursor int, limit int) []interface{} {
         Set("Cookie", cookie).
         End()
 
-    ff, _ := jsons.JsonStringToMap[string, interface{}, map[string]interface{}](body)
-    vlist := ff["data"].(map[string]interface{})["list"].(map[string]interface{})["vlist"].([]interface{})
+    ff, _ := jsons.JsonStringToMap[string, any, map[string]any](body)
+    vlist := ff["data"].(map[string]any)["list"].(map[string]any)["vlist"].([]any)
     return vlist
 }
 

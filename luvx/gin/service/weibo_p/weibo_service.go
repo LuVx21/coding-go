@@ -49,15 +49,15 @@ func PullHotBand() {
     })
 
     c.OnResponse(func(r *colly.Response) {
-        ff := make(map[string]interface{})
+        ff := make(map[string]any)
         _ = sonic.Unmarshal(r.Body, &ff)
 
         client := db.MongoDatabase.Collection("weibo_hot_band")
-        bandList := ff["data"].(map[string]interface{})["band_list"].([]interface{})
+        bandList := ff["data"].(map[string]any)["band_list"].([]any)
         now := times_x.TimeNowDate()
         worker, _ := ids.NewSnowflakeIdWorker(0, 0)
         for _, v := range bandList {
-            vv := v.(map[string]interface{})
+            vv := v.(map[string]any)
             rank := vv["realpos"]
             if rank == nil {
                 continue
@@ -115,17 +115,17 @@ func PullByUser(uid int64) {
     _ = collection.FindOne(context.TODO(), bson.M{"user.id": uid}, opts).Decode(&latest)
 
     cursor := 1
-    iterator := iterators.NewCursorIteratorSimple[interface{}, int](
+    iterator := iterators.NewCursorIteratorSimple[any, int](
         cursor,
         false,
-        func(_cursor int) []interface{} {
+        func(_cursor int) []any {
             return requestPageOfUser(uid, _cursor)
         },
-        func(curId int, items []interface{}) int {
+        func(curId int, items []any) int {
             if latest == nil || items == nil || len(items) == 0 {
                 return -1
             }
-            id := cast_x.ToInt64(items[len(items)-1].(map[string]interface{})["id"])
+            id := cast_x.ToInt64(items[len(items)-1].(map[string]any)["id"])
             if id <= latest["_id"].(int64) {
                 return -1
             }
@@ -138,8 +138,8 @@ func PullByUser(uid int64) {
         },
     )
     arr := make([]any, 0)
-    iterator.ForEachRemaining(func(item interface{}) {
-        feed := item.(map[string]interface{})
+    iterator.ForEachRemaining(func(item any) {
+        feed := item.(map[string]any)
         id := cast_x.ToInt64(feed["id"])
         if latest["_id"] != nil && id <= latest["_id"].(int64) {
             return
@@ -148,7 +148,7 @@ func PullByUser(uid int64) {
 
         ret := feed["retweeted_status"]
         if ret != nil {
-            f := ret.(map[string]interface{})
+            f := ret.(map[string]any)
             feed["retweeted_status"] = parseAndSaveFeed(f, true)
             arr = append(arr, f)
         }
@@ -165,24 +165,24 @@ func PullByGroup() {
     _ = collection.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
 
     var cursor int64 = 0
-    iterator := iterators.NewCursorIterator[interface{}, int64, Pair[[]interface{}, int64]](
+    iterator := iterators.NewCursorIterator[any, int64, Pair[[]any, int64]](
         cursor, false,
-        func(_cursor int64) Pair[[]interface{}, int64] {
+        func(_cursor int64) Pair[[]any, int64] {
             return requestPageOfGroup(groupId, _cursor)
         },
-        func(curId int64, p Pair[[]interface{}, int64]) int64 {
+        func(curId int64, p Pair[[]any, int64]) int64 {
             items := p.K
             if latest == nil || items == nil || len(items) == 0 {
                 return -1
             }
             last := items[len(items)-1]
-            id := cast_x.ToInt64(last.(map[string]interface{})["id"])
+            id := cast_x.ToInt64(last.(map[string]any)["id"])
             if id <= latest["_id"].(int64) {
                 return -1
             }
             return p.V
         },
-        func(p Pair[[]interface{}, int64]) []interface{} {
+        func(p Pair[[]any, int64]) []any {
             return p.K
         },
         func(i int64) bool {
@@ -190,15 +190,15 @@ func PullByGroup() {
         },
     )
     arr := make([]any, 0)
-    iterator.ForEachRemaining(func(item interface{}) {
-        feed := item.(map[string]interface{})
+    iterator.ForEachRemaining(func(item any) {
+        feed := item.(map[string]any)
         id := cast_x.ToInt64(feed["id"])
         if latest["_id"] != nil && id <= latest["_id"].(int64) {
             return
         }
         ret := feed["retweeted_status"]
         if ret != nil {
-            f := ret.(map[string]interface{})
+            f := ret.(map[string]any)
             feed["retweeted_status"] = parseAndSaveFeed(f, true)
             arr = append(arr, f)
         }
@@ -208,7 +208,7 @@ func PullByGroup() {
     _, _ = collection.InsertMany(context.TODO(), arr)
 }
 
-func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
+func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
     id := cast_x.ToInt64(feed["id"])
     feed["_id"] = id
     var r bson.M
@@ -217,7 +217,7 @@ func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
         return id
     }
 
-    //feed["extra"] = map[string]interface{}{
+    //feed["extra"] = map[string]any{
     //    "retweeted": retweeted,
     //}
 
@@ -228,22 +228,22 @@ func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
     picUrl := make([]string, 0)
     i2 := feed["pic_ids"]
     if i2 != nil {
-        if b, picIds := slices_x.IsEmpty[[]interface{}, interface{}](i2.([]interface{})); !b {
+        if b, picIds := slices_x.IsEmpty[[]any, any](i2.([]any)); !b {
             i := feed["pic_infos"]
             if i != nil {
-                picInfos := i.(map[string]interface{})
+                picInfos := i.(map[string]any)
                 for _, picId := range picIds {
-                    url := picInfos[picId.(string)].(map[string]interface{})["largest"].(map[string]interface{})["url"]
+                    url := picInfos[picId.(string)].(map[string]any)["largest"].(map[string]any)["url"]
                     picUrl = append(picUrl, url.(string))
                 }
             } else {
                 i3 := feed["mix_media_info"]
                 if i3 != nil {
-                    i4 := i3.(map[string]interface{})["items"].([]interface{})
+                    i4 := i3.(map[string]any)["items"].([]any)
                     for _, i5 := range i4 {
-                        m := i5.(map[string]interface{})
+                        m := i5.(map[string]any)
                         if m["type"] == "pic" {
-                            url := m["data"].(map[string]interface{})["largest"].(map[string]interface{})["url"]
+                            url := m["data"].(map[string]any)["largest"].(map[string]any)["url"]
                             picUrl = append(picUrl, url.(string))
                         }
                     }
@@ -254,14 +254,14 @@ func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
     feed["pic_ids"] = picUrl
     // 视频: page_info.media_info.{h5_url,playback_list}
 
-    maps_x.ComputeIfPresent(feed, "created_at", func(k string, v interface{}) interface{} {
+    maps_x.ComputeIfPresent(feed, "created_at", func(k string, v any) any {
         t, _ := time.ParseInLocation(time.RubyDate, v.(string), time.Local)
         return t
     })
     i := feed["user"]
     if i != nil {
-        user := i.(map[string]interface{})
-        feed["user"] = map[string]interface{}{
+        user := i.(map[string]any)
+        feed["user"] = map[string]any{
             "id":   cast_x.ToInt64(user["id"]),
             "name": user["screen_name"],
         }
@@ -269,7 +269,7 @@ func parseAndSaveFeed(feed map[string]interface{}, retweeted bool) int64 {
         feed["user"] = map[string]any{"id": 0, "name": ""}
     }
     //feed["invalid"] = 0
-    maps_x.RemoveIf(feed, func(k string, v interface{}) bool {
+    maps_x.RemoveIf(feed, func(k string, v any) bool {
         return !slices.Contains(fields, k)
     })
     //_, _ = collection.InsertOne(context.TODO(), feed)
@@ -290,7 +290,7 @@ func requestLongText(mblogid string) string {
     return gjson.Get(body, "data.longTextContent").String()
 }
 
-func requestPageOfUser(uid int64, cursor int) []interface{} {
+func requestPageOfUser(uid int64, cursor int) []any {
     m := map[string]any{
         "uid":     uid,
         "page":    cursor,
@@ -305,16 +305,16 @@ func requestPageOfUser(uid int64, cursor int) []interface{} {
         Set("Cookie", getCookie()).
         End()
 
-    ff, _ := jsons.JsonStringToMap[string, interface{}, map[string]interface{}](body)
+    ff, _ := jsons.JsonStringToMap[string, any, map[string]any](body)
     i := ff["data"]
     if i == nil {
-        return make([]interface{}, 0)
+        return make([]any, 0)
     }
-    list := i.(map[string]interface{})["list"].([]interface{})
+    list := i.(map[string]any)["list"].([]any)
     return list
 }
 
-func requestPageOfGroup(groupId int64, cursor int64) Pair[[]interface{}, int64] {
+func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
     m := map[string]any{
         "list_id":      groupId,
         "max_id":       cursor,
@@ -336,7 +336,7 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]interface{}, int64] 
         return NewPair[[]any, int64](nil, math.MaxInt64)
     }
     ff, _ := jsons.JsonStringToMap[string, any, JsonObject](body)
-    list := ff["statuses"].([]interface{})
+    list := ff["statuses"].([]any)
     maxId := cast_x.ToInt64(ff["max_id"])
 
     return NewPair(list, maxId)
@@ -347,7 +347,7 @@ func getCookie() string {
 }
 
 func Rss(uid int64) string {
-    _kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (interface{}, error) {
+    _kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
         key := "rss_weibo_config"
         m := commonkvservice.Get(commonkvservice.BEAN, key)
         return m[key], nil

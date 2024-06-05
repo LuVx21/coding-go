@@ -1,13 +1,8 @@
 package numbers
 
 import (
-    "golang.org/x/exp/constraints"
     "strings"
 )
-
-func BetweenAnd[T constraints.Integer | constraints.Float](v, start, end T) bool {
-    return v >= start && v <= end
-}
 
 // TrimZeroDecimal 保留小数点之前
 func TrimZeroDecimal(s string) string {

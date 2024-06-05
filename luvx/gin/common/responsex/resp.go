@@ -10,10 +10,10 @@ import (
 )
 
 type response struct {
-    Code    int         `json:"code"`
-    Message string      `json:"message"`
-    Data    interface{} `json:"data"`
-    TraceId string      `json:"traceId"`
+    Code    int    `json:"code"`
+    Message string `json:"message"`
+    Data    any    `json:"data"`
+    TraceId string `json:"traceId"`
 }
 
 func NoMethod(ctx *gin.Context) {
@@ -28,7 +28,7 @@ func ServiceUnavailable(ctx *gin.Context) {
     R(ctx, errorx.NewCodeError(http.StatusServiceUnavailable))
 }
 
-func R(ctx *gin.Context, data interface{}) {
+func R(ctx *gin.Context, data any) {
     result := newResponse(ctx, data)
     result.TraceId = fmt.Sprintf("%s", ctx.Value("traceId"))
     httpStatus := http.StatusOK
@@ -38,7 +38,7 @@ func R(ctx *gin.Context, data interface{}) {
     ctx.JSON(httpStatus, result)
 }
 
-func newResponse(ctx context.Context, data interface{}) *response {
+func newResponse(ctx context.Context, data any) *response {
     switch value := data.(type) {
     case *errorx.CodeError:
         return &response{

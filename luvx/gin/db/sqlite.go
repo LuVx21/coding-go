@@ -22,7 +22,7 @@ func init() {
 }
 
 func GetDataSource(dataSourceName string) (*sql.DB, error) {
-    _kv, err, _ := consts.SfGroup.Do(dataSourceName, func() (interface{}, error) {
+    _kv, err, _ := consts.SfGroup.Do(dataSourceName, func() (any, error) {
         defer common_x.TrackTime("初始化Sqlite连接..." + dataSourceName)()
         return sql.Open(driverName, dataSourceName)
     })

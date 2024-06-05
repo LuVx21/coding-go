@@ -137,6 +137,18 @@ func Diff[S ~[]E, E comparable](a, b S) S {
     return r
 }
 
+//IsUnique 切片是否存在重复值
+func IsUnique[S ~[]E, E comparable](s S) bool {
+    m := make(map[E]struct{}, len(s))
+    for _, e := range s {
+        if _, ok := m[e]; ok {
+            return false
+        }
+        m[e] = struct{}{}
+    }
+    return true
+}
+
 //Unique 切片去重实现
 func Unique[S ~[]E, E comparable](arr S) S {
     l := len(arr)
@@ -180,6 +192,31 @@ func AnyTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
         }
     }
     return false
+}
+
+func In[S ~[]E, E comparable](value E, safelist ...E) bool {
+    for i := range safelist {
+        if value == safelist[i] {
+            return true
+        }
+    }
+    return false
+}
+func AllIn[S ~[]E, E comparable](values S, safelist ...E) bool {
+    for i := range values {
+        if !In[S, E](values[i], safelist...) {
+            return false
+        }
+    }
+    return true
+}
+func NotIn[S ~[]E, E comparable](value E, blocklist ...E) bool {
+    for i := range blocklist {
+        if value == blocklist[i] {
+            return false
+        }
+    }
+    return true
 }
 
 func IsSorted[S ~[]E, E constraints.Ordered](s S) bool {
