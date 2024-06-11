@@ -16,28 +16,29 @@ import (
 )
 
 func (param SpiderParam) content(title, _url string) PageContent {
+    paramConfig := param.Content
     contentList := make([]string, 0, 16)
     var pubDate string
     categorySet := make([]string, 0, 2)
     pageUrl := _url
     for i := 0; !strings_x.IsBlank(pageUrl); i++ {
         unescape, _ := url.QueryUnescape(pageUrl)
-        logs.Log.Infof("解析内容页: No.%d %s-%s", i+1, title, unescape)
+        logs.Log.Infof("解析内容页: No.%d %s-%s\n", i+1, title, unescape)
         doc, err := request("解析内容页重试", pageUrl)
         if err != nil {
             logs.Log.Error(err)
             break
         }
         if i == 0 {
-            contentTitleRule := param.Content.ContentTitleRule
+            contentTitleRule := paramConfig.ContentTitleRule
             if contentTitleRule.Valid() {
                 title = getValue1(doc.Selection, contentTitleRule)
             }
-            rule := param.Content.ContentPubDateRule
+            rule := paramConfig.ContentPubDateRule
             if rule.Valid() {
                 pubDate = getValue1(doc.Selection, rule)
             }
-            contentCategoryRuleList := param.Content.ContentCategoryRuleList
+            contentCategoryRuleList := paramConfig.ContentCategoryRuleList
             if empty, rules := slices_x.IsEmpty(contentCategoryRuleList); !empty {
                 for _, _rule := range rules {
                     afterSelect := getValueListAfterSelect(doc.Selection, _rule)
@@ -46,19 +47,19 @@ func (param SpiderParam) content(title, _url string) PageContent {
             }
         }
 
-        rule := param.Content.ContentRule
+        rule := paramConfig.ContentRule
         doc.Find(rule.ElementQuery).Each(func(i int, s *goquery.Selection) {
             value := getValue(s, rule.ValueQuery)
             contentList = append(contentList, value)
         })
 
         pageUrl = ""
-        urlRule := param.Content.ContentNextPageUrlRule
+        urlRule := paramConfig.ContentNextPageUrlRule
         if urlRule.Valid() {
             value := getValue1(doc.Selection, urlRule)
             if len(value) > 0 {
                 domain := urlAddDomain(_url, value)
-                uu := param.Content.ContentNextPageUrlPostProcessor(domain)
+                uu := paramConfig.ContentNextPageUrlPostProcessor(domain)
                 if pageUrl != uu {
                     pageUrl = uu
                 }
@@ -76,15 +77,16 @@ func (param SpiderParam) content(title, _url string) PageContent {
         Invalid:     0,
         CreateTime:  time.Now(),
     }
-    return param.Content.ContentPostProcessor(page)
+    return paramConfig.ContentPostProcessor(page)
 }
 
 func (param SpiderParam) Visit() []PageContent {
+    paramConfig := param.Index
     result := make([]PageContent, 0, 10)
 
     _url := param.StartUrl
     pageUrl := _url
-    for i := 0; i < param.Index.PageCount && len(pageUrl) > 0; i++ {
+    for i := 0; i < paramConfig.PageCount && len(pageUrl) > 0; i++ {
         logs.Log.Infoln("解析目录页:", pageUrl)
         doc, err := request("解析目录页重试", pageUrl)
         if err != nil {
@@ -92,21 +94,22 @@ func (param SpiderParam) Visit() []PageContent {
             break
         }
         temp1 := make([]*goquery.Selection, 0, 10)
-        doc.Find(param.Index.IndexItemListRule).Each(func(i int, s *goquery.Selection) {
+        doc.Find(paramConfig.IndexItemListRule).Each(func(i int, s *goquery.Selection) {
             temp1 = append(temp1, s)
         })
 
-        indexList := param.Index.IndexItemListPostProcessor(temp1)
+        indexList := paramConfig.IndexItemListPostProcessor(temp1)
         if len(indexList) == 0 {
             return result
         }
-        _max := min(len(indexList), param.Index.CountInPage)
+        _max := min(len(indexList), paramConfig.CountInPage)
         for k := 0; k < _max; k++ {
             element := indexList[k]
-            title := strings.TrimSpace(getValue1(element, param.Index.IndexItemTitleRule))
-            href := getValue1(element, param.Index.IndexItemUrlRule)
-            logs.Log.Debugf("目录页内容:No.%d %s %s", k+1, title, href)
-            if strings_x.IsBlank(href) || slices.Contains(param.Index.IgnoreIndexItemUrlSet, href) {
+            title := strings.TrimSpace(getValue1(element, paramConfig.IndexItemTitleRule))
+            href := getValue1(element, paramConfig.IndexItemUrlRule)
+            href = urlAddDomain(_url, href)
+            logs.Log.Debugf("目录页内容:No.%d %s %s\n", k+1, title, href)
+            if strings_x.IsBlank(href) || slices.Contains(paramConfig.IgnoreIndexItemUrlSet, href) {
                 continue
             }
             content := param.content(title, href)
@@ -114,17 +117,17 @@ func (param SpiderParam) Visit() []PageContent {
             if len(content.Content) == 0 {
                 continue
             }
-            param.Index.IgnoreIndexItemUrlSet = append(param.Index.IgnoreIndexItemUrlSet, content.Url)
+            paramConfig.IgnoreIndexItemUrlSet = append(paramConfig.IgnoreIndexItemUrlSet, content.Url)
             result = append(result, content)
         }
 
         pageUrl = ""
-        rule := param.Index.IndexNextPageUrlRule
+        rule := paramConfig.IndexNextPageUrlRule
         if rule.Valid() {
             value := getValue1(doc.Selection, rule)
             if len(value) > 0 {
                 domain := urlAddDomain(_url, value)
-                uu := param.Index.IndexNextPageUrlPostProcessor(domain)
+                uu := paramConfig.IndexNextPageUrlPostProcessor(domain)
                 if pageUrl != uu {
                     pageUrl = uu
                 }

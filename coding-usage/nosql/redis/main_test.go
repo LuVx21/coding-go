@@ -23,3 +23,12 @@ func Test_00(t *testing.T) {
     val, _ := rdb.Get(context.TODO(), "foo").Result()
     fmt.Println("foo", "=", val)
 }
+
+func Test_map_00(t *testing.T) {
+    defer beforeAfter("Test_map_00")()
+    result, _ := rdb.HGetAll(context.TODO(), "mm").Result()
+    fmt.Println("mm", "=", result, result["mk"])
+
+    v, _ := rdb.HGet(context.TODO(), "mm", "mk").Result()
+    fmt.Println("mm.mk", "=", v)
+}

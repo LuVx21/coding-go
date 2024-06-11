@@ -34,21 +34,21 @@ type index struct {
     PageCount                     int
     CountInPage                   int
     IndexItemListRule             string
-    IndexItemListPostProcessor    func([]*goquery.Selection) []*goquery.Selection
+    IndexItemListPostProcessor    func([]*goquery.Selection) []*goquery.Selection `json:"-"`
     IndexItemTitleRule            QueryRule
     IndexItemUrlRule              QueryRule
     IgnoreIndexItemUrlSet         []string // Set,去重
     IndexNextPageUrlRule          QueryRule
-    IndexNextPageUrlPostProcessor func(string) string
+    IndexNextPageUrlPostProcessor func(string) string `json:"-"`
 }
 type content struct {
     ContentTitleRule                QueryRule
     ContentPubDateRule              QueryRule
     ContentCategoryRuleList         []QueryRule
     ContentRule                     QueryRule
-    ContentPostProcessor            func(PageContent) PageContent
+    ContentPostProcessor            func(PageContent) PageContent `json:"-"`
     ContentNextPageUrlRule          QueryRule
-    ContentNextPageUrlPostProcessor func(string) string
+    ContentNextPageUrlPostProcessor func(string) string `json:"-"`
 }
 
 type SpiderParam struct {

@@ -11,6 +11,7 @@ import (
     "fmt"
     "github.com/allegro/bigcache/v3"
     "github.com/bytedance/sonic"
+    "github.com/luvx21/coding-go/coding-common/cast_x"
     lcommon "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/luvx21/coding-go/coding-common/dbs"
     "github.com/luvx21/coding-go/coding-common/maps_x"
@@ -64,7 +65,6 @@ func GetCookieByHost(hosts ...string) map[string]string {
 }
 
 func Sync2Turso(hosts ...string) {
-    key := masterKey()
     rowsMap, err := readDb(hosts...)
     if err != nil {
         log.Fatalln("读取cookie异常", err)
@@ -72,8 +72,7 @@ func Sync2Turso(hosts ...string) {
 
     rows := make([][]any, 0, len(rowsMap))
     for _, row := range rowsMap {
-        value, _ := DecryptWithChromium(key, row["encrypted_value"].([]byte))
-        values := []any{row["host_key"], row["name"], string(value)}
+        values := []any{row["host_key"], row["name"], row["value"]}
         rows = append(rows, values)
     }
     _, _ = db.Turso.Exec("delete from cookies;")
@@ -104,7 +103,12 @@ order by host_key, name
     if err == nil {
         key := masterKey()
         for _, row := range rowsMap {
-            value, _ := DecryptWithChromium(key, row["encrypted_value"].([]byte))
+            // turso中不设置这个字段
+            encryptedValue, ok := row["encrypted_value"]
+            if !ok {
+                continue
+            }
+            value, _ := DecryptWithChromium(key, encryptedValue.([]byte))
             row["value"] = string(value)
         }
     }
@@ -113,8 +117,13 @@ order by host_key, name
 
 func getClient() *sql.DB {
     if client == nil {
-        home, _ := lcommon.Dir()
-        client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
+        result, _ := db.RedisClient.HGet(context.TODO(), "app_switch", "remote_cookie").Result()
+        if cast_x.ToBool(result) {
+            client = db.Turso
+        } else {
+            home, _ := lcommon.Dir()
+            client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
+        }
     }
     return client
 }

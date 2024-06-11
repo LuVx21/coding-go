@@ -19,7 +19,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/luvx21/coding-go/coding-common v0.0.0-20240603165903-f1b3a61adadf
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20240603165903-f1b3a61adadf
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20240611125405-ec686b64232d
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/tidwall/gjson v1.17.1
