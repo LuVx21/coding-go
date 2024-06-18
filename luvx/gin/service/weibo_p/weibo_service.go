@@ -346,7 +346,7 @@ func getCookie() string {
     return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 }
 
-func Rss(uid int64) string {
+func Rss(uids ...int64) string {
     _kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
         key := "rss_weibo_config"
         m := commonkvservice.Get(commonkvservice.BEAN, key)
@@ -358,15 +358,17 @@ func Rss(uid int64) string {
     _ = jsons.JsonStringToObject(kv.CommonValue, &config)
     ignore := config.Ignore
 
-    filter := bson.M{}
-    if uid > 0 {
-        filter = bson.M{"user.id": uid}
-        if !slices.Contains(ignore, uid) {
-            commonkvdao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+    filter := bson.D{}
+    if len(uids) == 1 && uids[0] == 0 {
+        if len(ignore) > 0 {
+            filter = bson.D{bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}}}
         }
     } else {
-        if len(ignore) > 0 {
-            filter = bson.M{"user.id": bson.M{"$nin": ignore}}
+        filter = bson.D{bson.E{Key: "user.id", Value: bson.M{"$in": uids}}}
+        for _, uid := range uids {
+            if !slices.Contains(ignore, uid) {
+                commonkvdao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+            }
         }
     }
 

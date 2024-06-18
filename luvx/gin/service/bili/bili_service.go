@@ -8,6 +8,7 @@ import (
     "github.com/bytedance/sonic"
     "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/common_x"
+    "github.com/luvx21/coding-go/coding-common/common_x/runs"
     "github.com/luvx21/coding-go/coding-common/iterators"
     "github.com/luvx21/coding-go/coding-common/jsons"
     "github.com/luvx21/coding-go/coding-common/logs"
@@ -59,7 +60,9 @@ func PullAll() {
         if !flag {
             continue
         }
-        go PullSeasonList(cast_x.ToInt64(seasonId))
+        runs.Go(func() {
+            PullSeasonList(cast_x.ToInt64(seasonId))
+        })
     }
 }
 
@@ -160,7 +163,9 @@ func PullAllUpVideo() {
         if !flag {
             continue
         }
-        go PullUpVideo(cast_x.ToInt64(mid))
+        runs.Go(func() {
+            PullUpVideo(cast_x.ToInt64(mid))
+        })
     }
 }
 

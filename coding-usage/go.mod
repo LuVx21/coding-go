@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/coding-usage
 
-go 1.22.2
+go 1.22.4
 
 //replace github.com/luvx21/coding-go/coding-common => ../coding-common
 

@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/coding-common
 
-go 1.22.2
+go 1.22.4
 
 require (
 	github.com/blockloop/scan v1.3.0

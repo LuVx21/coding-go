@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/infra/nosql/mongodb
 
-go 1.22.2
+go 1.22.4
 
 require go.mongodb.org/mongo-driver v1.15.0
 

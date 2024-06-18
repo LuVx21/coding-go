@@ -12,3 +12,5 @@ type SliceMapStr2Any = []MapStr2Any
 
 type JsonObject = MapStr2Any
 type JsonArray = SliceAny
+
+type Seq0 = func(yield func() bool)

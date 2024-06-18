@@ -3,9 +3,11 @@ package weibo_p
 import (
     "github.com/gin-gonic/gin"
     "github.com/luvx21/coding-go/coding-common/cast_x"
+    "github.com/luvx21/coding-go/coding-common/slices_x"
     "luvx/gin/common/responsex"
     "luvx/gin/service/weibo_p"
     "net/http"
+    "strings"
 )
 
 func PullByUser(c *gin.Context) {
@@ -25,8 +27,11 @@ func PullByGroup(c *gin.Context) {
 }
 
 func Rss(c *gin.Context) {
-    uid := c.Param("uid")
-    rss := weibo_p.Rss(cast_x.ToInt64(uid))
+    uidStr := c.Param("uid")
+    uids := slices_x.Transfer(func(i string) int64 {
+        return cast_x.ToInt64(i)
+    }, strings.Split(uidStr, ",")...)
+    rss := weibo_p.Rss(uids...)
     c.Header("Content-Type", "application/xml;charset=UTF-8")
     c.String(http.StatusOK, rss)
 }
