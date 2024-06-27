@@ -26,8 +26,34 @@ func Test_00(t *testing.T) {
     fmt.Println(nm)
 }
 
+func Test_Stack(t *testing.T) {
+    s := Stack[string]{"foo", "bar"}
+    fmt.Println(s)
+    s.Push("aaa")
+    fmt.Println(s, s.Peek(), "----------")
+    fmt.Println(s)
+    top := s.Pop()
+    fmt.Println(s, top, s.IsEmpty(), "----------")
+    s.Pop()
+    s.Pop()
+    fmt.Println(s, s.IsEmpty())
+}
+
+func Test_Queue(t *testing.T) {
+    q := Queue[string]{"foo", "bar"}
+    fmt.Println(q)
+    q.Offer("aaa")
+    fmt.Println(q, q.Peek(), "----------")
+    fmt.Println(q)
+    top := q.Poll()
+    fmt.Println(q, top, q.IsEmpty(), "----------")
+    q.Poll()
+    q.Poll()
+    fmt.Println(q, q.IsEmpty())
+}
+
 func Test_Set(t *testing.T) {
-    s := Set[string]{}
+    s := Set[string]{"foobar": struct{}{}}
     s.Add("foo", "bar")
     fmt.Println(s.Contain("foo"), s.Contain("bar1"))
 }

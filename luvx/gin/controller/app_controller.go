@@ -4,6 +4,7 @@ import (
     "context"
     "github.com/gin-gonic/gin"
     "github.com/luvx21/coding-go/coding-common/common_x"
+    "github.com/luvx21/coding-go/coding-common/common_x/types_x"
     "github.com/luvx21/coding-go/coding-common/dbs"
     "github.com/luvx21/coding-go/coding-common/slices_x"
     "go.mongodb.org/mongo-driver/bson"
@@ -85,6 +86,11 @@ func HealthyCheck(c *gin.Context) {
     })
 }
 
+var ignoreHeaders = types_x.Set[string]{
+    "x-frame-options": struct{}{},
+    "X-Frame-Options": struct{}{},
+}
+
 func Redirect(c *gin.Context) {
     toUrl := c.Query("url")
     //logs.Log.Infoln("重定向到:", toUrl)
@@ -93,6 +99,9 @@ func Redirect(c *gin.Context) {
         End()
     if response != nil {
         for k, v := range response.Header {
+            if ignoreHeaders.Contain(k) {
+                continue
+            }
             c.Header(k, v[0])
         }
         c.String(response.StatusCode, body)

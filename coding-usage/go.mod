@@ -41,7 +41,7 @@ require (
 	github.com/lmittmann/tint v1.0.4
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20240511052153-7aeeeadffbe8
+	github.com/luvx21/coding-go/coding-common v0.0.0-20240626093345-74f6817c9cfd
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/panjf2000/ants/v2 v2.9.1
 	github.com/parnurzeal/gorequest v0.3.0

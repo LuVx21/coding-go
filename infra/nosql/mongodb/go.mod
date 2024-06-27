@@ -2,7 +2,7 @@ module github.com/luvx21/coding-go/infra/nosql/mongodb
 
 go 1.22.4
 
-require go.mongodb.org/mongo-driver v1.15.1
+require go.mongodb.org/mongo-driver v1.16.0
 
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect

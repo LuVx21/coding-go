@@ -149,6 +149,11 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
     ff := make(map[string]any)
     _ = sonic.Unmarshal(resp.Body(), &ff)
 
+    if cast_x.ToInt32(ff["code"]) != 0 || ff["data"] == nil {
+        logs.Log.Warnln("bili->请求结果非json,cookie可能过期")
+        return make([]any, 0)
+    }
+
     medias := ff["data"].(map[string]any)["medias"].([]any)
     return medias
 }

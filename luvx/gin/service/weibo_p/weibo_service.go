@@ -332,7 +332,7 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
     isJson := sonic.ValidString(body)
     logs.Log.Infof("请求: %s 响应:%v", pUrl, isJson)
     if !isJson {
-        logs.Log.Warnln("请求结果非json,cookie可能过期")
+        logs.Log.Warnln("weibo->请求结果非json,cookie可能过期")
         return NewPair[[]any, int64](nil, math.MaxInt64)
     }
     ff, _ := jsons.JsonStringToMap[string, any, JsonObject](body)
