@@ -1,8 +1,8 @@
 module github.com/luvx21/coding-go/infra/nosql/redis
 
-go 1.22.4
+go 1.23.0
 
-require github.com/redis/go-redis/v9 v9.5.3
+require github.com/redis/go-redis/v9 v9.6.1
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

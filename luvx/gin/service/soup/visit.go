@@ -115,6 +115,7 @@ func (param SpiderParam) Visit() []PageContent {
             content := param.content(title, href)
             logs.Log.Debug("内容页内容:\n", content.Content)
             if len(content.Content) == 0 {
+                logs.Log.Warnln("内容页内容为空")
                 continue
             }
             paramConfig.IgnoreIndexItemUrlSet = append(paramConfig.IgnoreIndexItemUrlSet, content.Url)

@@ -95,7 +95,9 @@ func Redirect(c *gin.Context) {
     toUrl := c.Query("url")
     //logs.Log.Infoln("重定向到:", toUrl)
 
-    response, body, _ := consts.GoRequest.Get(toUrl).
+    response, body, _ := consts.GoRequest.
+        Proxy("http://mini.rx:7890").
+        Get(toUrl).
         End()
     if response != nil {
         for k, v := range response.Header {
