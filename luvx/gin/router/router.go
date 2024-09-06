@@ -75,4 +75,5 @@ func RegisterWeibo(r *gin.Engine) {
     _rss := r.Group("/rss")
     _rss.GET("/feed/:spiderKey", rss_p.Rss)
     _rss.GET("/delete/:id", rssService.DeleteById)
+    _rss.GET("pullbykey", rss_p.PullByKey)
 }

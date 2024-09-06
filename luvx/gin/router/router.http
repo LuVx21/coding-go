@@ -46,6 +46,9 @@ GET http://{{host}}/weibo/rss/:uid
 ###
 GET http://{{host}}/weibo/rss/delete/:id
 
+###
+GET http://{{host}}/rss/pullbykey
+
 ### useful
 POST http://{{host}}/useful/compare
 Content-Type: application/json
