@@ -108,6 +108,14 @@ order by host_key, name
             if !ok {
                 continue
             }
+
+            // var password []byte
+            // t2 := fmt.Sprintf("%T", encryptedValue)
+            // if t2 == "string" {
+            //     password = []byte(encryptedValue.(string))
+            // } else {
+            //     password = encryptedValue.([]byte)
+            // }
             value, _ := DecryptWithChromium(key, encryptedValue.([]byte))
             row["value"] = string(value)
         }

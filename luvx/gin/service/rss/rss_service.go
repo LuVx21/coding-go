@@ -12,6 +12,7 @@ import (
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/bson/primitive"
     "go.mongodb.org/mongo-driver/mongo/options"
+    "luvx/gin/common/consts"
     "luvx/gin/common/responsex"
     "luvx/gin/db"
     "luvx/gin/service/common_kv"
@@ -54,7 +55,7 @@ func parse2RssItem(m JsonObject) *ItemRss {
         }
     }
 
-    deleteUrl := fmt.Sprintf(`<a href="http://192.168.2.131:58090/rss/delete/%v">删除<a/>`, _id)
+    deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceHost+`:58090/rss/delete/%v">删除<a/>`, _id)
     contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
     return &ItemRss{

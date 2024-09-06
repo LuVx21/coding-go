@@ -437,13 +437,14 @@ func a(jo JsonObject) string {
 }
 
 func addDelete(_id int64) string {
-    format := `<a href="http://192.168.2.131:58090/weibo/rss/delete/%v">删除<a/>`
+    format := `<a href="http://` + consts.ServiceHost + `:58090/weibo/rss/delete/%v">删除<a/>`
     return fmt.Sprintf(format, _id)
 }
 
 func contentHtml(jo JsonObject) string {
     text := jo["text"].(string)
     text = strings.ReplaceAll(text, "//<a ", "<br/>//<a ")
+    text = strings.ReplaceAll(text, "//@", "<br/>//@")
     text = strings.ReplaceAll(text, "\n", "<br/>")
     //text = strings.ReplaceAll(text, "。", "。<br/>")
 
@@ -452,10 +453,10 @@ func contentHtml(jo JsonObject) string {
     picList := ""
     picUrls := jo["pic_ids"].(bson.A)
     for i, url := range picUrls {
-        pUrl, _ := nets_x.UrlAddQuery("http://192.168.2.131:58090/redirect", map[string]any{
+        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ServiceHost+":58090/redirect", map[string]any{
             "url": url.(string),
         })
-        picList += strconv.Itoa(i) + "<br/>"
+        picList += "<br/>" + strconv.Itoa(i) + "<br/>"
         picList += "<img vspace=\"8\" hspace=\"4\" style=\"\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
     }
     return text + picList
@@ -472,7 +473,7 @@ func aa(text string) string {
             r = append(r, ss[0])
             continue
         }
-        pUrl, _ := nets_x.UrlAddQuery("http://192.168.2.131:58090/redirect", map[string]any{
+        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ServiceHost+":58090/redirect", map[string]any{
             "url": ss[1],
         })
         a := "<img vspace=\"8\" hspace=\"4\" style=\"\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
