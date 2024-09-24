@@ -13,7 +13,7 @@ require (
 	github.com/eko/gocache/lib/v4 v4.1.6
 	github.com/eko/gocache/store/bigcache/v4 v4.2.2
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-co-op/gocron/v2 v2.12.0
+	github.com/go-co-op/gocron/v2 v2.12.1
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
@@ -24,8 +24,8 @@ require (
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/tidwall/gjson v1.17.3
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
-	github.com/valyala/fasthttp v1.55.0
-	go.mongodb.org/mongo-driver v1.16.1
+	github.com/valyala/fasthttp v1.56.0
+	go.mongodb.org/mongo-driver v1.17.0
 	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
 	golang.org/x/time v0.6.0
 	gorm.io/driver/mysql v1.5.7
@@ -68,7 +68,7 @@ require (
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_golang v1.20.3 // indirect
+	github.com/prometheus/client_golang v1.20.4 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.59.1 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
@@ -99,7 +99,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/bytedance/sonic v1.12.2
+	github.com/bytedance/sonic v1.12.3
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gabriel-vasile/mimetype v1.4.5 // indirect
@@ -112,7 +112,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.17.10 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/strftime v1.1.0 // indirect

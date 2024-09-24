@@ -205,7 +205,11 @@ func PullByGroup() {
         parseAndSaveFeed(feed, false)
         arr = append(arr, feed)
     })
-    _, _ = collection.InsertMany(context.TODO(), arr)
+    arrs := slices_x.Partition(arr, 50)
+    for i := len(arrs) - 1; i >= 0; i-- {
+        many, _ := collection.InsertMany(context.TODO(), arrs[i])
+        logs.Log.Infoln("weibo insert", len(arrs[i]), len(many.InsertedIDs))
+    }
 }
 
 func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
@@ -332,7 +336,7 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
     isJson := sonic.ValidString(body)
     logs.Log.Infof("请求: %s 响应:%v", pUrl, isJson)
     if !isJson {
-        logs.Log.Warnln("weibo->请求结果非json,cookie可能过期")
+        logs.Log.Warnln(body, "weibo->请求结果非json,cookie可能过期")
         return NewPair[[]any, int64](nil, math.MaxInt64)
     }
     ff, _ := jsons.JsonStringToMap[string, any, JsonObject](body)
@@ -372,7 +376,7 @@ func Rss(uids ...int64) string {
         }
     }
 
-    opts := options.Find().SetSort(bson.M{"_id": -1}).SetLimit(100)
+    opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(100)
     cursor, _ := collection.Find(context.Background(), filter, opts)
     defer cursor.Close(context.Background())
 
@@ -453,7 +457,7 @@ func contentHtml(jo JsonObject) string {
     picList := ""
     picUrls := jo["pic_ids"].(bson.A)
     for i, url := range picUrls {
-        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ServiceHost+":58090/redirect", map[string]any{
+        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ImgHost+":58090/redirect", map[string]any{
             "url": url.(string),
         })
         picList += "<br/>" + strconv.Itoa(i) + "<br/>"
@@ -473,7 +477,7 @@ func aa(text string) string {
             r = append(r, ss[0])
             continue
         }
-        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ServiceHost+":58090/redirect", map[string]any{
+        pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ImgHost+":58090/redirect", map[string]any{
             "url": ss[1],
         })
         a := "<img vspace=\"8\" hspace=\"4\" style=\"\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
