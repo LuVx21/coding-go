@@ -155,7 +155,14 @@ func PullByUser(uid int64) {
         parseAndSaveFeed(feed, false)
         arr = append(arr, feed)
     })
-    _, _ = collection.InsertMany(context.TODO(), arr)
+    for i := len(arr) - 1; i >= 0; i-- {
+        one, err := collection.InsertOne(context.TODO(), arr[i])
+        if err != nil {
+            logs.Log.Infoln("weibo PullByUser:", err)
+            continue
+        }
+        logs.Log.Infoln("weibo PullByUser:", one.InsertedID)
+    }
 }
 
 func PullByGroup() {
@@ -205,10 +212,22 @@ func PullByGroup() {
         parseAndSaveFeed(feed, false)
         arr = append(arr, feed)
     })
-    arrs := slices_x.Partition(arr, 50)
+
+    arrs := slices_x.Partition(arr, 5)
     for i := len(arrs) - 1; i >= 0; i-- {
-        many, _ := collection.InsertMany(context.TODO(), arrs[i])
-        logs.Log.Infoln("weibo insert", len(arrs[i]), len(many.InsertedIDs))
+        arr := arrs[i]
+        if many, e := collection.InsertMany(context.TODO(), arr); e != nil {
+            for j := len(arr) - 1; j >= 0; j-- {
+                if one, err := collection.InsertOne(context.TODO(), arr[j]); err != nil {
+                    logs.Log.Infoln("weibo insert1:", err)
+                    continue
+                } else {
+                    logs.Log.Infoln("weibo insert1:", one.InsertedID)
+                }
+            }
+        } else {
+            logs.Log.Infoln("weibo insert", len(arr), len(many.InsertedIDs))
+        }
     }
 }
 
@@ -272,7 +291,7 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
     } else {
         feed["user"] = map[string]any{"id": 0, "name": ""}
     }
-    //feed["invalid"] = 0
+    feed["invalid"] = 0
     maps_x.RemoveIf(feed, func(k string, v any) bool {
         return !slices.Contains(fields, k)
     })
@@ -362,13 +381,13 @@ func Rss(uids ...int64) string {
     _ = jsons.JsonStringToObject(kv.CommonValue, &config)
     ignore := config.Ignore
 
-    filter := bson.D{}
+    filter := bson.D{bson.E{Key: "invalid", Value: 0}}
     if len(uids) == 1 && uids[0] == 0 {
         if len(ignore) > 0 {
-            filter = bson.D{bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}}}
+            filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}})
         }
     } else {
-        filter = bson.D{bson.E{Key: "user.id", Value: bson.M{"$in": uids}}}
+        filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$in": uids}})
         for _, uid := range uids {
             if !slices.Contains(ignore, uid) {
                 commonkvdao.JsonArrayAppend(kv.ID, "$.ignore", uid)
@@ -450,7 +469,7 @@ func contentHtml(jo JsonObject) string {
     text = strings.ReplaceAll(text, "//<a ", "<br/>//<a ")
     text = strings.ReplaceAll(text, "//@", "<br/>//@")
     text = strings.ReplaceAll(text, "\n", "<br/>")
-    //text = strings.ReplaceAll(text, "。", "。<br/>")
+    text = strings.ReplaceAll(text, "。”", "。”<br/>")
 
     text = aa(text)
 

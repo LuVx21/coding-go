@@ -3,6 +3,7 @@ package main
 import (
     "context"
     "fmt"
+    "github.com/luvx21/coding-go/infra/nosql/mongodb"
     where "github.com/pywee/gobson-where"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
@@ -19,7 +20,7 @@ func beforeAfter(caseName string) func() {
     }
 
     return func() {
-        fmt.Println(caseName, "end...")
+        fmt.Println(caseName, "test case end...")
     }
 }
 
@@ -31,6 +32,39 @@ func print(cursor *mongo.Cursor) {
     for i, result := range results {
         fmt.Println("查询结果:", i, result)
     }
+}
+
+func Test_insert(t *testing.T) {
+    defer beforeAfter("Test_insert")()
+
+    m := map[string]any{
+        "_id":      0,
+        "userName": "newnewnew",
+    }
+    one, err := collection.InsertOne(context.TODO(), m)
+    fmt.Println(one.InsertedID, err)
+}
+
+func Test_find(t *testing.T) {
+    defer beforeAfter("Test_find")()
+
+    filter := bson.D{bson.E{Key: "age", Value: 0}}
+    filter = append(filter, bson.E{Key: "password", Value: "bar_0"})
+
+    opts := options.Find().SetSort(bson.M{"_id": -1}).SetLimit(100)
+    rowsMap, _ := mongodb.RowsMap(context.Background(), collection, filter, opts)
+    fmt.Println(rowsMap)
+}
+
+func Test_update(t *testing.T) {
+    defer beforeAfter("Test_update")()
+
+    filter := bson.D{bson.E{Key: "_id", Value: 0}}
+    update := bson.D{{"$set",
+        bson.D{{"age", -1}},
+    }}
+    many, err := collection.UpdateMany(context.TODO(), filter, update)
+    fmt.Println(many, err)
 }
 
 func Test_00(t *testing.T) {

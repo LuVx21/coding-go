@@ -24,12 +24,16 @@ func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
     var logMonitor = event.CommandMonitor{
         Started: func(ctx context.Context, event *event.CommandStartedEvent) {
             if event.CommandName != "ping" {
+                log.Println("---------------------------------------Started---------------------------------------")
                 log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
+                log.Println("-------------------------------------------------------------------------------------")
             }
         },
         Succeeded: func(ctx context.Context, event *event.CommandSucceededEvent) {
             if event.CommandName != "ping" {
+                log.Println("---------------------------------------Succeed---------------------------------------")
                 log.Printf("查询语句:%s 耗时:%dms", event.CommandName, event.Duration/1000/1000)
+                log.Println("-------------------------------------------------------------------------------------")
             }
         },
         Failed: func(ctx context.Context, event *event.CommandFailedEvent) {

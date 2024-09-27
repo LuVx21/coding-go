@@ -55,10 +55,15 @@ func Delete() {
     }
 
     filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-    dr, err := collection.DeleteMany(context.TODO(), filter)
+    update := bson.D{{"$set",
+        bson.D{{"invalid", 1}},
+    }}
+    dr, err := collection.UpdateMany(context.TODO(), filter, update)
+
+    //dr, err := collection.DeleteMany(context.TODO(), filter)
     if err != nil {
         return
     }
-    logs.Log.Infoln("mongodb删除数量:", dr.DeletedCount)
+    logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
     db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ?", mysqlGuids)
 }

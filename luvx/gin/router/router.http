@@ -54,16 +54,16 @@ POST http://{{host}}/useful/compare
 Content-Type: application/json
 
 {
-    "left": [
-        1,
-        2,
-        3
-    ],
-    "right": [
-        2,
-        3,
-        4
-    ]
+  "left": [
+    1,
+    2,
+    3
+  ],
+  "right": [
+    2,
+    3,
+    4
+  ]
 }
 
 ### cache

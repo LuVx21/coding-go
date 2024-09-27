@@ -8,6 +8,16 @@ import (
     "log/slog"
 )
 
+func InsertMany(ctx context.Context, col *mongo.Collection, documents []any, opts ...*options.InsertManyOptions, ) (*mongo.InsertManyResult, error) {
+    if many, err := col.InsertMany(ctx, documents, opts...); err == nil {
+        return many, err
+    }
+    for _, document := range documents {
+        _, _ = col.InsertOne(ctx, document)
+    }
+    return nil, nil
+}
+
 func RowsMap(ctx context.Context, col *mongo.Collection, filter interface{}, opts ...*options.FindOptions) (*[]bson.M, error) {
     cur, err := col.Find(ctx, filter, opts...)
     defer func(cur *mongo.Cursor, ctx context.Context) {
