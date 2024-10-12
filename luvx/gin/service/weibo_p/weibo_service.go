@@ -292,6 +292,9 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
         feed["user"] = map[string]any{"id": 0, "name": ""}
     }
     feed["invalid"] = 0
+    if retweeted {
+        feed["invalid"] = 1
+    }
     maps_x.RemoveIf(feed, func(k string, v any) bool {
         return !slices.Contains(fields, k)
     })
