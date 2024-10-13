@@ -1,6 +1,6 @@
 module luvx
 
-go 1.23.0
+go 1.23.2
 
 replace (
 	//github.com/luvx21/coding-go/coding-common => ../coding-common
