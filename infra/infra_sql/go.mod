@@ -1,4 +1,4 @@
-module github.com/luvx21/coding-go/infra/sql
+module github.com/luvx21/coding-go/infra/infra_sql
 
 go 1.23.2
 
