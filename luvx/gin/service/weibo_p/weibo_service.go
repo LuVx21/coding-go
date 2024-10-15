@@ -433,7 +433,7 @@ func a(jo JsonObject) string {
             if i != nil {
                 uName = i.(JsonObject)["name"].(string)
             }
-            _contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/><br/><br/>%s", _contentHtml, uName, contentHtml(retweet))
+            _contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/><br/>%s", _contentHtml, uName, contentHtml(retweet))
         }
     }
     deleteUrl := addDelete(_id)

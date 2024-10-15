@@ -13,8 +13,8 @@ import (
 func RunnerRegister() []*service.Runner {
     return []*service.Runner{
         {Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() { common_x.RunCatching(PullHotBand) }},
-        {Name: "拉取分组微博", Crontab: "0 9/6 * * * *", Fn: func() { common_x.RunCatching(PullByGroup) }},
-        {Name: "删除已读", Crontab: "0 1/20 * * * *", Fn: func() { common_x.RunCatching(Delete) }},
+        {Name: "拉取分组微博", Crontab: "0 9/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroup) }},
+        {Name: "删除已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(Delete) }},
     }
 }
 
