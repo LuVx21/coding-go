@@ -37,7 +37,7 @@ func HealthyCheck(c *gin.Context) {
     f1 := func() bson.M {
         mongo, _ := common_x.RunWithTime2("mongodb", func() (bson.M, error) {
             userTable := db.MongoDatabase.Collection("user")
-            filter := bson.D{{"_id", args}}
+            filter := bson.D{{Key: "_id", Value: args}}
             var result bson.M
             a := userTable.FindOne(context.TODO(), filter).Decode(&result)
             return result, a

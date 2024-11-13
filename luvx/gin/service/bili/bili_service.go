@@ -68,7 +68,7 @@ func PullAll() {
 
 func PullSeasonList(seasonId int64) {
     opts := options.Find().
-        SetProjection(bson.D{{"_id", 1}}).
+        SetProjection(bson.D{{Key: "_id", Value: 1}}).
         SetSort(bson.D{{Key: "_id", Value: -1}}).
         SetLimit(300)
     rowsMap, _ := mongodb.RowsMap(context.Background(), mongoClient, bson.M{"upper.seasonId": seasonId}, opts)
@@ -102,7 +102,7 @@ func PullSeasonList(seasonId int64) {
         if slices.Contains(ids, id) {
             return
         }
-        filter := bson.D{{"_id", id}}
+        filter := bson.D{{Key: "_id", Value: id}}
         var result bson.M
         _ = mongoClient.FindOne(context.TODO(), filter).Decode(&result)
         if result != nil {
@@ -210,7 +210,7 @@ func PullUpVideo(mid int64) []string {
         }
 
         video["_id"] = id
-        filter := bson.D{{"_id", id}}
+        filter := bson.D{{Key: "_id", Value: id}}
         var r bson.M
         _ = mongoClient.FindOne(context.TODO(), filter).Decode(&r)
         if r != nil {

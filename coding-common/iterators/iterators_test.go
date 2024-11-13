@@ -2,7 +2,7 @@ package iterators
 
 import (
     "fmt"
-    "github.com/luvx21/coding-go/coding-common/common_x"
+    "github.com/luvx21/coding-go/coding-common/common_x/pairs"
     "github.com/luvx21/coding-go/coding-common/logs"
     "strconv"
     "testing"
@@ -13,7 +13,7 @@ type Item struct {
     name string
 }
 
-func dao0(cursor int, limit int) common_x.Pair[[]Item, int] {
+func dao0(cursor int, limit int) pairs.Pair[[]Item, int] {
     res := make([]Item, 0)
     var cnt = 1
     for i := 0; i <= 112 && cnt <= limit; i++ {
@@ -27,14 +27,14 @@ func dao0(cursor int, limit int) common_x.Pair[[]Item, int] {
         }
     }
     logs.Log.Printf("cursor:%d limit:%d data:%v", cursor, limit, res)
-    return common_x.NewPair(res, cursor+limit)
+    return pairs.NewPair(res, cursor+limit)
 }
 
 func dao1(cursor int, limit int) []Item {
     return dao0(cursor, limit).K
 }
 
-func dao2(pageNo int, limit int) common_x.Pair[[]Item, int] {
+func dao2(pageNo int, limit int) pairs.Pair[[]Item, int] {
     return dao0((pageNo-1)*limit, limit)
 }
 
@@ -44,20 +44,20 @@ func dao3(pageNo int, limit int) []Item {
 
 func Test_00(t *testing.T) {
     const limit = 10
-    iterator := NewCursorIterator[Item, int, common_x.Pair[[]Item, int]](
+    iterator := NewCursorIterator[Item, int, pairs.Pair[[]Item, int]](
         0,
         false,
-        func(id int) common_x.Pair[[]Item, int] {
+        func(id int) pairs.Pair[[]Item, int] {
             return dao0(id, limit)
         },
-        func(curId int, p common_x.Pair[[]Item, int]) int {
+        func(curId int, p pairs.Pair[[]Item, int]) int {
             items := p.K
             if len(items) < limit {
                 return -1
             }
             return items[len(items)-1].id + 1
         },
-        func(p common_x.Pair[[]Item, int]) []Item {
+        func(p pairs.Pair[[]Item, int]) []Item {
             return p.K
         },
         func(i int) bool {
@@ -98,13 +98,13 @@ func Test_01(t *testing.T) {
 func Test_page(t *testing.T) {
     const limit = 10
     iterator :=
-        NewPageIterator[Item, common_x.Pair[[]Item, int]](
+        NewPageIterator[Item, pairs.Pair[[]Item, int]](
             0,
             false,
-            func(pageNo int) common_x.Pair[[]Item, int] {
+            func(pageNo int) pairs.Pair[[]Item, int] {
                 return dao2(pageNo, limit)
             },
-            func(p common_x.Pair[[]Item, int]) []Item {
+            func(p pairs.Pair[[]Item, int]) []Item {
                 return p.K
             },
             func(pageNo int) bool {

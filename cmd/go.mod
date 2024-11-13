@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/cmds
 
-go 1.23.2
+go 1.23.4
 
 require (
 	github.com/go-sql-driver/mysql v1.8.1

@@ -2,7 +2,6 @@ package maps_x
 
 import (
     "fmt"
-    . "github.com/luvx21/coding-go/coding-common/common_x/types_x"
     "reflect"
     "testing"
 )
@@ -66,7 +65,7 @@ func Test_02(t *testing.T) {
 
 func TestGetByKey(t *testing.T) {
     var i int64 = 999
-    m := Map[string]{"a": i, "m": Map[string]{"mm": "mm"}, "s": []string{"ss"}}
+    m := map[string]any{"a": i, "m": map[string]any{"mm": "mm"}, "s": []string{"ss"}}
 
     v, err := GetByKey(m, "a", reflect.Int64, 0)
     fmt.Println(v, err)

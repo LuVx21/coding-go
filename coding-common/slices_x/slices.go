@@ -85,6 +85,16 @@ func ToAnySliceE[E any](s ...E) []any {
     return Transfer[E, any](f, s...)
 }
 
+func FilterTransfer[I, O any](filter Predicate[I], f Function[I, O], s ...I) []O {
+    r := make([]O, 0)
+    for _, e := range s {
+        if filter(e) {
+            r = append(r, f(e))
+        }
+    }
+    return r
+}
+
 // ToAnySlice 入参类型可随意
 func ToAnySlice(s ...any) []any {
     return ToAnySliceE[any](s...)

@@ -55,8 +55,8 @@ func Delete() {
     }
 
     filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-    update := bson.D{{"$set",
-        bson.D{{"invalid", 1}},
+    update := bson.D{{Key: "$set",
+        Value: bson.D{{Key: "invalid", Value: 1}},
     }}
     dr, err := collection.UpdateMany(context.TODO(), filter, update)
 

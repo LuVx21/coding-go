@@ -47,8 +47,8 @@ func IndirectToStringerOrError(a interface{}) interface{} {
         return nil
     }
 
-    var errorType = reflect.TypeOf((*error)(nil)).Elem()
-    var fmtStringerType = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
+    errorType := reflect.TypeOf((*error)(nil)).Elem()
+    fmtStringerType := reflect.TypeOf((*fmt.Stringer)(nil)).Elem()
 
     v := reflect.ValueOf(a)
     for !v.Type().Implements(fmtStringerType) && !v.Type().Implements(errorType) && v.Kind() == reflect.Pointer && !v.IsNil() {

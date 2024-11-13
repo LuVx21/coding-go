@@ -1,7 +1,7 @@
 package sortx
 
 import (
-    . "github.com/luvx21/coding-go/coding-common/common_x/types_x"
+    . "github.com/luvx21/coding-go/coding-common/common_x/funcs"
     "sort"
 )
 

@@ -19,6 +19,13 @@ var (
     errNegativeNotAllowed = errors.New("unable to cast negative value")
 )
 
+type float64EProvider interface {
+    Float64() (float64, error)
+}
+type float64Provider interface {
+    Float64() float64
+}
+
 func ToTimeInDefaultLocationE(i interface{}, location *time.Location) (tim time.Time, err error) {
     i = reflects.Indirect(i)
 
@@ -69,10 +76,13 @@ func ToDurationE(i interface{}) (d time.Duration, err error) {
             d, err = time.ParseDuration(rv + "ns")
         }
         return
-    case json.Number:
+    case float64EProvider:
         var v float64
         v, err = rv.Float64()
         d = time.Duration(v)
+        return
+    case float64Provider:
+        d = time.Duration(rv.Float64())
         return
     default:
         err = fmt.Errorf("unable to cast %#v of type %T to Duration", i, i)
@@ -160,12 +170,14 @@ func ToFloat64E(i interface{}) (float64, error) {
             return v, nil
         }
         return 0, fmt.Errorf("unable to cast %#v of type %T to float64", i, i)
-    case json.Number:
+    case float64EProvider:
         v, err := rv.Float64()
         if err == nil {
             return v, nil
         }
         return 0, fmt.Errorf("unable to cast %#v of type %T to float64", i, i)
+    case float64Provider:
+        return rv.Float64(), nil
     case bool:
         if rv {
             return 1, nil
@@ -215,12 +227,14 @@ func ToFloat32E(i interface{}) (float32, error) {
             return float32(v), nil
         }
         return 0, fmt.Errorf("unable to cast %#v of type %T to float32", i, i)
-    case json.Number:
+    case float64EProvider:
         v, err := rv.Float64()
         if err == nil {
             return float32(v), nil
         }
         return 0, fmt.Errorf("unable to cast %#v of type %T to float32", i, i)
+    case float64Provider:
+        return float32(rv.Float64()), nil
     case bool:
         if rv {
             return 1, nil
@@ -926,7 +940,7 @@ func ToStringE(i interface{}) (string, error) {
 }
 
 func ToStringMapStringE(i interface{}) (map[string]string, error) {
-    var m = map[string]string{}
+    m := map[string]string{}
 
     switch rv := i.(type) {
     case map[string]string:
@@ -955,7 +969,7 @@ func ToStringMapStringE(i interface{}) (map[string]string, error) {
 }
 
 func ToStringMapStringSliceE(i interface{}) (map[string][]string, error) {
-    var m = map[string][]string{}
+    m := map[string][]string{}
 
     switch rv := i.(type) {
     case map[string][]string:
@@ -1018,7 +1032,7 @@ func ToStringMapStringSliceE(i interface{}) (map[string][]string, error) {
 }
 
 func ToStringMapBoolE(i interface{}) (map[string]bool, error) {
-    var m = map[string]bool{}
+    m := map[string]bool{}
 
     switch rv := i.(type) {
     case map[interface{}]interface{}:
@@ -1042,7 +1056,7 @@ func ToStringMapBoolE(i interface{}) (map[string]bool, error) {
 }
 
 func ToStringMapE(i interface{}) (map[string]interface{}, error) {
-    var m = map[string]interface{}{}
+    m := map[string]interface{}{}
 
     switch rv := i.(type) {
     case map[interface{}]interface{}:
@@ -1061,7 +1075,7 @@ func ToStringMapE(i interface{}) (map[string]interface{}, error) {
 }
 
 func ToStringMapIntE(i interface{}) (map[string]int, error) {
-    var m = map[string]int{}
+    m := map[string]int{}
     if i == nil {
         return m, fmt.Errorf("unable to cast %#v of type %T to map[string]int", i, i)
     }
@@ -1101,7 +1115,7 @@ func ToStringMapIntE(i interface{}) (map[string]int, error) {
 }
 
 func ToStringMapInt64E(i interface{}) (map[string]int64, error) {
-    var m = map[string]int64{}
+    m := map[string]int64{}
     if i == nil {
         return m, fmt.Errorf("unable to cast %#v of type %T to map[string]int64", i, i)
     }

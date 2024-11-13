@@ -2,7 +2,7 @@ package optional_x
 
 import (
     "fmt"
-    . "github.com/luvx21/coding-go/coding-common/common_x/types_x"
+    . "github.com/luvx21/coding-go/coding-common/common_x/funcs"
     "github.com/luvx21/coding-go/coding-common/reflects"
 )
 

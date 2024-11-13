@@ -1,28 +1,25 @@
-# ARG IMAGE=golang:1.23
 ARG IMAGE=golang:1.23-alpine3.19
-FROM ${IMAGE} as pkg
+FROM ${IMAGE} AS pkg
 
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct CGO_ENABLED=0 GOOS=linux GOARCH=amd64
-# RUN apk add --no-cache gcc
+RUN apk add --no-cache upx
 WORKDIR /pkg
 COPY go.mod ./
 RUN go mod download && go mod verify
 
 # -------------------------------------------
 
-FROM pkg as builder
+FROM pkg AS builder
 
 WORKDIR /build
 
 COPY . .
 RUN go mod download && go mod tidy
-# RUN go build -v -o . ./... # 所有main
-RUN go build -ldflags="-w -s" -v -o luvx main.go # && upx -9 luvx
+RUN go build -ldflags="-w -s" -v -o luvx main.go && upx -9 luvx
 
 # -------------------------------------------
 
 FROM alpine:3.19
-#FROM debian:bookworm
 
 WORKDIR /app
 ENV log_LogDir=/root/data/logs TZ=Asia/Shanghai

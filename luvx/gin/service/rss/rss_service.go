@@ -71,8 +71,8 @@ func parse2RssItem(m JsonObject) *ItemRss {
 func DeleteById(c *gin.Context) {
     id := cast_x.ToInt64(c.Param("id"))
     update := bson.D{
-        {"$set", bson.D{
-            {"invalid", 1},
+        {Key: "$set", Value: bson.D{
+            {Key: "invalid", Value: 1},
         }},
     }
     one, _ := collection.UpdateOne(context.TODO(), bson.M{"_id": id}, update)
@@ -97,7 +97,7 @@ func spiderIndexPage(key, paramJson string) []soup.PageContent {
     }
     opts := options.Find().
         SetProjection(bson.D{
-            {"url", 1},
+            {Key: "url", Value: 1},
             //{"content", 1},
         }).
         SetSort(bson.M{"_id": -1}).SetLimit(2000)

@@ -12,20 +12,18 @@ func Test_Partition(t *testing.T) {
 }
 
 func Test_01(t *testing.T) {
-
-    bs := []bool{true, false, true}
-    fmt.Println(ClearZero(bs))
-
-    is := []int{1, 2, 0, 0, 3}
-    fmt.Println(ClearZero(is))
-
-    strs := []string{"", "foo", "bar", "baz"}
-    fmt.Println(ClearZero(strs))
-
     ms := []map[string]string{
         {"foo": "foo"},
         nil,
         {"bar": "bar"},
     }
     fmt.Println(ClearZeroRef(ms))
+}
+func Test_02(t *testing.T) {
+    r := FilterTransfer(func(i string) bool {
+        return i == "a" || i == "c"
+    }, func(i string) string {
+        return i + "_1"
+    }, "a", "b", "c")
+    fmt.Println(r, len(r))
 }
