@@ -6,10 +6,13 @@ import (
     "fmt"
     "github.com/jedib0t/go-pretty/v6/table"
     "github.com/jedib0t/go-pretty/v6/text"
+    "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/nets_x"
+    "github.com/luvx21/coding-go/coding-common/times_x"
     "github.com/parnurzeal/gorequest"
     "github.com/tidwall/gjson"
     "golang.org/x/time/rate"
+    "strconv"
     "strings"
     "time"
 )
@@ -61,9 +64,12 @@ func main() {
                 if os == "unknown" || architecture == "unknown" {
                     continue
                 }
+                date, _ := times_x.StringToDate(_image.Get("last_pushed").Str)
                 rows = append(rows, table.Row{
                     result.Get("name").Str,
                     os + "/" + architecture,
+                    date.Format(time.DateTime),
+                    strconv.FormatUint(cast_x.ToUint64(_image.Get("size").Raw)/1024/1024, 10) + " MB",
                     _image.Get("digest").Str,
                 })
             }
@@ -74,7 +80,7 @@ func main() {
 
     t := table.NewWriter()
     t.SetTitle(*image)
-    t.AppendHeader(table.Row{"Tag", "Arch", "Digest"})
+    t.AppendHeader(table.Row{"Tag", "Arch", "Pushed", "Size", "Digest"})
     for _, row := range rows {
         t.AppendRow(row, rowConfigAutoMerge)
     }

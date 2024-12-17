@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #brew install protobuf
-#go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
-#go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+#go install -ldflags="-w -s" google.golang.org/protobuf/cmd/protoc-gen-go@latest
+#go install -ldflags="-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 protoc \
   --go_out=. \

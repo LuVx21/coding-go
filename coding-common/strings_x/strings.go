@@ -38,3 +38,7 @@ func MaxRunes(value string, n int) bool {
 func Matches(value string, rx *regexp.Regexp) bool {
     return rx.MatchString(value)
 }
+
+func Map[T any](s string, mapping func(string) T) T {
+    return mapping(s)
+}

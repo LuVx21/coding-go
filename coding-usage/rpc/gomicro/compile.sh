@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-#go install github.com/go-micro/generator/cmd/protoc-gen-micro@latest
+#go install -ldflags="-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+#go install -ldflags="-w -s" github.com/go-micro/generator/cmd/protoc-gen-micro@latest
 
 protoc \
   --proto_path=. \

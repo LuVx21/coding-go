@@ -5,7 +5,10 @@ import (
     "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/luvx21/coding-go/coding-common/logs"
+    "github.com/luvx21/coding-go/coding-common/slices_x"
+    "github.com/luvx21/coding-go/infra/nosql/mongodb"
     "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/mongo/options"
     "luvx/gin/db"
     "luvx/gin/service"
 )
@@ -55,6 +58,16 @@ func Delete() {
     }
 
     filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
+    opts := options.Find().
+        SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "retweeted_status", Value: 1}}).
+        SetLimit(300)
+    rowsMap, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+    ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["retweeted_status"]) }, *rowsMap...)
+    idsStr := slices_x.Transfer(func(m bson.M) string { return cast_x.ToString(m["retweeted_status"]) }, *rowsMap...)
+    guids = append(guids, ids...)
+    mysqlGuids = append(mysqlGuids, idsStr...)
+
+    filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
     update := bson.D{{Key: "$set",
         Value: bson.D{{Key: "invalid", Value: 1}},
     }}
