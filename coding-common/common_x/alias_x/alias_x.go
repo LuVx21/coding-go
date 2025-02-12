@@ -2,6 +2,7 @@ package alias_x
 
 type EmptyHolder = struct{}
 
+type Map[K comparable, V any] = map[K]V
 type MapAny2Any = map[any]any
 type MapComparable2Any[K comparable] = map[K]any
 type MapStr2Any = map[string]any

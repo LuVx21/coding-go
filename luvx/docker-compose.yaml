@@ -10,6 +10,8 @@ services:
       - "58090:8090"
     volumes:
       - $HOME/data:/root/data
+    environment:
+      - TZ=Asia/Shanghai
 #    command: ["sleep", "infinity"]
 
 networks:

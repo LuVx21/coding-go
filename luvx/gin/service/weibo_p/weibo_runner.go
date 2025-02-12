@@ -1,33 +1,39 @@
 package weibo_p
 
 import (
-    "context"
-    "github.com/luvx21/coding-go/coding-common/cast_x"
-    "github.com/luvx21/coding-go/coding-common/common_x"
-    "github.com/luvx21/coding-go/coding-common/logs"
-    "github.com/luvx21/coding-go/coding-common/slices_x"
-    "github.com/luvx21/coding-go/infra/nosql/mongodb"
-    "go.mongodb.org/mongo-driver/bson"
-    "go.mongodb.org/mongo-driver/mongo/options"
-    "luvx/gin/db"
-    "luvx/gin/service"
+	"context"
+
+	"github.com/luvx21/coding-go/coding-common/cast_x"
+	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/logs"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
+	"github.com/luvx21/coding-go/infra/nosql/mongodb"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"luvx/gin/common/consts"
+	"luvx/gin/db"
+	"luvx/gin/service"
 )
 
 func RunnerRegister() []*service.Runner {
-    return []*service.Runner{
-        {Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() { common_x.RunCatching(PullHotBand) }},
-        {Name: "拉取分组微博", Crontab: "0 9/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroup) }},
-        {Name: "删除已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(Delete) }},
-    }
+	result, _ := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_weibo").Result()
+	if !cast_x.ToBool(result) {
+		return make([]*service.Runner, 0)
+	}
+	return []*service.Runner{
+		{Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() { common_x.RunCatching(PullHotBand) }},
+		{Name: "拉取分组微博", Crontab: "0 4/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroup) }},
+		{Name: "删除已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(Delete) }},
+	}
 }
 
 func Delete() {
-    var feeds []map[string]any
-    db.MySQLClient.Table("freshrss.t_admin_feed").
-        Select("id").
-        Find(&feeds, "url like '%/weibo/rss/%'")
+	var feeds []map[string]any
+	db.MySQLClient.Table("freshrss.t_admin_feed").
+		Select("id").
+		Find(&feeds, "url like '%/weibo/rss/%'")
 
-    sql := `
+	sql := `
  select guid
  from freshrss.t_admin_entry
  where true
@@ -43,40 +49,40 @@ func Delete() {
  order by guid
  limit 100
 `
-    mysqlGuids, guids := make([]string, 0), make([]int64, 0)
-    for _, rss := range feeds {
-        rows, _ := db.MySQLClient.Raw(sql, rss["id"], rss["id"]).Rows()
-        for rows.Next() {
-            var guid string
-            _ = rows.Scan(&guid)
-            mysqlGuids = append(mysqlGuids, guid)
-            guids = append(guids, cast_x.ToInt64(guid))
-        }
-    }
-    if len(guids) == 0 {
-        return
-    }
+	mysqlGuids, guids := make([]string, 0), make([]int64, 0)
+	for _, rss := range feeds {
+		rows, _ := db.MySQLClient.Raw(sql, rss["id"], rss["id"]).Rows()
+		for rows.Next() {
+			var guid string
+			_ = rows.Scan(&guid)
+			mysqlGuids = append(mysqlGuids, guid)
+			guids = append(guids, cast_x.ToInt64(guid))
+		}
+	}
+	if len(guids) == 0 {
+		return
+	}
 
-    filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-    opts := options.Find().
-        SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "retweeted_status", Value: 1}}).
-        SetLimit(300)
-    rowsMap, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
-    ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["retweeted_status"]) }, *rowsMap...)
-    idsStr := slices_x.Transfer(func(m bson.M) string { return cast_x.ToString(m["retweeted_status"]) }, *rowsMap...)
-    guids = append(guids, ids...)
-    mysqlGuids = append(mysqlGuids, idsStr...)
+	filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
+	opts := options.Find().
+		SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "retweeted_status", Value: 1}}).
+		SetLimit(300)
+	rowsMap, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+	ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["retweeted_status"]) }, *rowsMap...)
+	idsStr := slices_x.Transfer(func(m bson.M) string { return cast_x.ToString(m["retweeted_status"]) }, *rowsMap...)
+	guids = append(guids, ids...)
+	mysqlGuids = append(mysqlGuids, idsStr...)
 
-    filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-    update := bson.D{{Key: "$set",
-        Value: bson.D{{Key: "invalid", Value: 1}},
-    }}
-    dr, err := collection.UpdateMany(context.TODO(), filter, update)
+	filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
+	update := bson.D{{Key: "$set",
+		Value: bson.D{{Key: "invalid", Value: 1}},
+	}}
+	dr, err := collection.UpdateMany(context.TODO(), filter, update)
 
-    //dr, err := collection.DeleteMany(context.TODO(), filter)
-    if err != nil {
-        return
-    }
-    logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
-    db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ?", mysqlGuids)
+	// dr, err := collection.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		return
+	}
+	logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
+	db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ?", mysqlGuids)
 }

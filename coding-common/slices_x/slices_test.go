@@ -27,3 +27,8 @@ func Test_02(t *testing.T) {
     }, "a", "b", "c")
     fmt.Println(r, len(r))
 }
+
+func Test_empty_01(t *testing.T) {
+    e := Empty[string]()
+    fmt.Println(e)
+}

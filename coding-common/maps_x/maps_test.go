@@ -79,3 +79,8 @@ func TestGetByKey(t *testing.T) {
     v, err = GetSlice(m, "s", []string{"sss"})
     fmt.Println(v, err)
 }
+
+func Test_empty_01(t *testing.T) {
+    e := Empty[string, string]()
+    fmt.Println(e)
+}

@@ -2,14 +2,18 @@ package main
 
 import (
     "context"
+    "errors"
     "fmt"
     "github.com/allegro/bigcache/v3"
     "github.com/dgraph-io/ristretto"
     gocache "github.com/eko/gocache/lib/v4/cache"
-    bigcachestore "github.com/eko/gocache/store/bigcache/v4"
+    gocache_store "github.com/eko/gocache/lib/v4/store"
+    gocache_store_bigcache "github.com/eko/gocache/store/bigcache/v4"
+    gocache_store_redis "github.com/eko/gocache/store/redis/v4"
     "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/times_x"
     go_cache "github.com/patrickmn/go-cache"
+    "github.com/redis/go-redis/v9"
     "log"
     "testing"
     "time"
@@ -76,26 +80,56 @@ func Test_bigcache(t *testing.T) {
 
 func Test_Gocache(t *testing.T) {
     bigcacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(5*time.Minute))
-    bigcacheStore := bigcachestore.NewBigcache(bigcacheClient)
+    cache := gocache.New[[]byte](gocache_store_bigcache.NewBigcache(bigcacheClient))
 
-    loadFunc := func(_ context.Context, key any) ([]byte, error) {
-        fmt.Println("自动加载...", key)
-        return []byte(cast_x.ToString(key) + "-" + times_x.TimeNow()), nil
+    loadFunc := func(_ context.Context, key any) ([]byte, []gocache_store.Option, error) {
+        fmt.Println("自动加载缓存...", key)
+        return []byte(cast_x.ToString(key) + "-" + times_x.TimeNow()), nil, nil
     }
-    loadable := gocache.NewLoadable[[]byte](loadFunc, gocache.New[[]byte](bigcacheStore))
+    loadable := gocache.NewLoadable[[]byte](loadFunc, cache)
 
-    err := loadable.Set(context.TODO(), "foo", []byte("bar"))
-    if err != nil {
+    if err := loadable.Set(context.TODO(), "foo", []byte("bar")); err != nil {
         panic(err)
     }
 
     for _, key := range []string{"foo", "foo1"} {
         if data, err := loadable.Get(context.TODO(), key); err == nil {
-            fmt.Printf("key: %s 结果:%s\n", key, data)
+            fmt.Printf("命中缓存-> key: %s 结果:%s\n", key, data)
         }
     }
 
     time.Sleep(1 * time.Second)
     get, _ := loadable.Get(context.TODO(), "foo1")
     fmt.Println(string(get))
+}
+
+func Test_Gocache_redis(t *testing.T) {
+    ctx := context.TODO()
+
+    bigcacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(5*time.Minute))
+    bigcacheStore := gocache_store_bigcache.NewBigcache(bigcacheClient)
+
+    redisStore := gocache_store_redis.NewRedis(redis.NewClient(&redis.Options{
+        Addr: "127.0.0.1:6379",
+    }))
+
+	cache := gocache.NewChain(
+        gocache.New[any](bigcacheStore),
+        gocache.New[any](redisStore),
+    )
+
+    key := "foo1"
+    //if err := cache.Set(ctx, key, "my-value", gocache_store.WithExpiration(15*time.Second)); err != nil {
+    //    panic(err)
+    //}
+
+    value, err := cache.Get(ctx, key)
+    switch {
+    case err == nil:
+        fmt.Printf("命中缓存-> key: %s 结果:%s\n", key, value)
+    case errors.Is(err, redis.Nil):
+        fmt.Printf("未命中缓存-> key: %s\n", key)
+    default:
+        fmt.Printf("查询缓存失败-> %s: %v\n", key, err)
+    }
 }

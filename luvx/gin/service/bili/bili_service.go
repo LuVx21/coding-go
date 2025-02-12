@@ -6,6 +6,7 @@ import (
     "encoding/hex"
     "fmt"
     "github.com/bytedance/sonic"
+    gocache_store "github.com/eko/gocache/lib/v4/store"
     "github.com/luvx21/coding-go/coding-common/cast_x"
     "github.com/luvx21/coding-go/coding-common/common_x"
     "github.com/luvx21/coding-go/coding-common/common_x/runs"
@@ -41,10 +42,10 @@ var (
         36, 20, 34, 44, 52,
     }
     fields = []string{"_id", "title", "pubtime", "bvid", "upper", "invalid", "from"}
-    cache  = consts.NewLoadableCache[[]byte](func(ctx context.Context, key any) ([]byte, error) {
+    cache  = consts.NewLoadableCache[[]byte](func(ctx context.Context, key any) ([]byte, []gocache_store.Option, error) {
         fmt.Println("自动加载缓存......", key)
         imgKey, subKey := getWbiKeys()
-        return []byte(imgKey + "|" + subKey), nil
+        return []byte(imgKey + "|" + subKey), nil, nil
     })
     rateLimiter = rate.NewLimiter(1, 1)
     mongoClient = db.MongoDatabase.Collection("bili_video")
