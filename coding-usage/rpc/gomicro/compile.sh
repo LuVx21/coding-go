@@ -1,7 +1,12 @@
 #!/bin/bash
 
-#go install -ldflags="-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-#go install -ldflags="-w -s" github.com/go-micro/generator/cmd/protoc-gen-micro@latest
+if [[ -z $(which protoc-gen-go-grpc) ]]; then
+  go install -ldflags="-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+fi
+
+if [[ -z $(which protoc-gen-micro) ]]; then
+  go install -ldflags="-w -s" github.com/go-micro/generator/cmd/protoc-gen-micro@latest
+fi
 
 protoc \
   --proto_path=. \

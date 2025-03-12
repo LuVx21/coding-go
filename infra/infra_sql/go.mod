@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/infra/infra_sql
 
-go 1.24.0
+go 1.24.1
 
 require (
 	github.com/go-sql-driver/mysql v1.9.0

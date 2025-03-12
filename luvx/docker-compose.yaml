@@ -11,7 +11,10 @@ services:
     volumes:
       - $HOME/data:/root/data
     environment:
-      - TZ=Asia/Shanghai
+      TZ: Asia/Shanghai
+      APP_PORT: ":8090"
+      APP_HOST_NAME: "mini.rx"
+      APP_PROXY: "host.docker.internal:7890"
 #    command: ["sleep", "infinity"]
 
 networks:
