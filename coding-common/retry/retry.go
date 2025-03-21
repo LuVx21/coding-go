@@ -1,42 +1,43 @@
 package retry
 
 import (
-    "fmt"
-    "github.com/luvx21/coding-go/coding-common/logs"
-    "github.com/luvx21/coding-go/coding-common/strings_x"
-    "github.com/luvx21/coding-go/coding-common/times_x"
-    "time"
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/luvx21/coding-go/coding-common/strings_x"
+	"github.com/luvx21/coding-go/coding-common/times_x"
 )
 
 func SupplyWithRetry[T any](
-    name string, fn func() T,
-    maxRetryTimes int32, retryPeriod time.Duration,
+	name string, fn func() T,
+	maxRetryTimes int32, retryPeriod time.Duration,
 ) (T, error) {
-    if strings_x.IsBlank(name) {
-        name = "重试" + times_x.TimeNow()
-    }
+	if strings_x.IsBlank(name) {
+		name = "重试" + times_x.TimeNow()
+	}
 
-    var times int32
-    for times <= maxRetryTimes {
-        var pass = true
-        t := func() T {
-            defer func() {
-                if r := recover(); r != nil {
-                    pass = false
-                    time.Sleep(retryPeriod)
-                    times++
-                    if times <= maxRetryTimes {
-                        logs.Log.Warnf("%s->当前异常:%v, 进行第%d次重试", name, r, times)
-                    }
-                }
-            }()
-            return fn()
-        }()
-        if pass {
-            return t, nil
-        }
-    }
-    logs.Log.Warnf("进行%d次重试仍失败", maxRetryTimes)
-    var zero T
-    return zero, fmt.Errorf("重试失败")
+	var times int32
+	for times <= maxRetryTimes {
+		var pass = true
+		t := func() T {
+			defer func() {
+				if r := recover(); r != nil {
+					pass = false
+					time.Sleep(retryPeriod)
+					times++
+					if times <= maxRetryTimes {
+						log.Printf("%s->当前异常:%v, 进行第%d次重试", name, r, times)
+					}
+				}
+			}()
+			return fn()
+		}()
+		if pass {
+			return t, nil
+		}
+	}
+	logs.Log.Warnf("进行%d次重试仍失败", maxRetryTimes)
+	var zero T
+	return zero, fmt.Errorf("重试失败")
 }

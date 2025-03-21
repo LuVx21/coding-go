@@ -1,5 +1,10 @@
 package slicequeue
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Queue[T any] []T
 
 func (s *Queue[E]) IsEmpty() bool {
@@ -28,4 +33,15 @@ func (s *Queue[E]) PollLast() E {
 	e := (*s)[i]
 	*s = (*s)[:i]
 	return e
+}
+
+func (s *Queue[E]) String() string {
+	var sb strings.Builder
+	for i, item := range *s {
+		sb.WriteString(fmt.Sprintf("%v", item))
+		if i < len(*s)-1 {
+			sb.WriteString("←")
+		}
+	}
+	return sb.String()
 }

@@ -1,13 +1,26 @@
 package anys_x
 
 import (
-    "fmt"
-    "testing"
+	"testing"
+
+	"github.com/luvx21/coding-go/coding-common/test"
 )
 
 func Test_any_00(t *testing.T) {
-}
+	tests := []test.Step{
+		{
+			Name:     "用例1",
+			Input:    11,
+			Expected: "11",
+		},
+		{
+			Name:     "用例2",
+			Input:    "abc",
+			Expected: "abc",
+		},
+	}
 
-func Test_any_01(t *testing.T) {
-    fmt.Println(String(11))
+	test.OneOne(t, tests, func(v any) any {
+		return String(v)
+	})
 }

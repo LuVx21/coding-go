@@ -12,7 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/logs"
+	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/config"
 	"luvx/gin/middleware"
 	"luvx/gin/router"

@@ -24,12 +24,12 @@ func Test_array_queue(t *testing.T) {
 func Test_list_queue(t *testing.T) {
 	q := NewListQueue[int]()
 
-	q.Enqueue(3)
-	q.Enqueue(2)
-	q.Enqueue(1)
+	q.Offer(3)
+	q.Offer(2)
+	q.Offer(1)
 
 	for !q.IsEmpty() {
-		item, _ := q.Dequeue()
+		item, _ := q.Poll()
 		fmt.Println(item)
 	}
 }

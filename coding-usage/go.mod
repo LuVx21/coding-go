@@ -31,6 +31,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/gocolly/colly v1.2.0
 	github.com/gofiber/fiber/v2 v2.52.6
+	github.com/golang/glog v1.2.4
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/gookit/goutil v0.6.18
@@ -76,6 +77,7 @@ require (
 	github.com/yanyiwu/gojieba v1.4.5
 	go-micro.dev/v4 v4.11.0
 	go.mongodb.org/mongo-driver v1.17.3
+	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.12.0
 	golang.org/x/time v0.11.0
 	google.golang.org/grpc v1.71.0

@@ -7,7 +7,7 @@ import (
 	"github.com/go-co-op/gocron/v2"
 	"github.com/google/uuid"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
-	"github.com/luvx21/coding-go/coding-common/logs"
+	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
 	"luvx/gin/service"

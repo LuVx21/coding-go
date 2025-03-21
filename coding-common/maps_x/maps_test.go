@@ -1,11 +1,12 @@
 package maps_x
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
 
-	"github.com/bytedance/sonic"
+	// json "github.com/bytedance/sonic"
 )
 
 func Test_map(t *testing.T) {
@@ -16,7 +17,7 @@ func Test_map(t *testing.T) {
 }
 `
 	m := Map[string, any]{}
-	_ = sonic.Unmarshal([]byte(_json), &m)
+	_ = json.Unmarshal([]byte(_json), &m)
 	fmt.Println(m)
 
 	merge := m.Merge(Map[string, any]{"aaa": "bbb"}, true)
