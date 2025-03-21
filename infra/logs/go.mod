@@ -1,4 +1,4 @@
-module github.com/luvx21/coding-go/infra/log
+module github.com/luvx21/coding-go/infra/logs
 
 go 1.24.1
 
