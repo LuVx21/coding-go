@@ -27,19 +27,6 @@ func Test_00(t *testing.T) {
 	fmt.Println(nm)
 }
 
-func Test_Stack(t *testing.T) {
-	s := Stack[string]{"foo", "bar"}
-	fmt.Println(s)
-	s.Push("aaa")
-	fmt.Println(s, s.Peek(), "----------")
-	fmt.Println(s)
-	top := s.Pop()
-	fmt.Println(s, top, s.IsEmpty(), "----------")
-	s.Pop()
-	s.Pop()
-	fmt.Println(s, s.IsEmpty())
-}
-
 func Test_Set(t *testing.T) {
 	s := Set[string]{"foobar": struct{}{}}
 	s.Add("foo", "bar")

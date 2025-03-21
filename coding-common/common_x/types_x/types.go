@@ -6,25 +6,6 @@ import (
 
 type Slice[T any] []T
 type NumberSlice[T Number] Slice[T]
-type Stack[T any] []T
-
-func (s *Stack[E]) IsEmpty() bool {
-	return len(*s) == 0
-}
-func (s *Stack[E]) Push(e ...E) {
-	*s = append(*s, e...)
-}
-func (s *Stack[E]) Peek() E {
-	i := len(*s) - 1
-	return (*s)[i]
-}
-
-func (s *Stack[E]) Pop() E {
-	i := len(*s) - 1
-	e := (*s)[i]
-	*s = (*s)[:i]
-	return e
-}
 
 type Map[K comparable, V any] map[K]V
 type Set[E comparable] Map[E, struct{}]
