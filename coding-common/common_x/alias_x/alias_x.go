@@ -22,3 +22,4 @@ type JsonArray = SliceAny
 type Row = SliceAny
 
 type Seq0 = func(yield func() bool)
+type Comparator[T any] = func(x, y T) int

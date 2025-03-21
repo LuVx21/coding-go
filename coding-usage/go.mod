@@ -2,7 +2,11 @@ module github.com/luvx21/coding-go/coding-usage
 
 go 1.24.1
 
-//replace github.com/luvx21/coding-go/coding-common => ../coding-common
+replace (
+	github.com/luvx21/coding-go/coding-common => ../coding-common
+	github.com/luvx21/coding-go/infra/logs => ../infra/logs
+	github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
+)
 
 require (
 	github.com/Goldziher/go-utils v1.8.1
@@ -12,7 +16,7 @@ require (
 	github.com/apache/pulsar-client-go v0.14.0
 	github.com/avast/retry-go/v4 v4.6.1
 	github.com/bits-and-blooms/bloom/v3 v3.7.0
-	github.com/bytedance/sonic v1.13.1
+	github.com/bytedance/sonic v1.13.2
 	github.com/cch123/elasticsql v1.0.1
 	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/hertz v0.9.6
@@ -28,10 +32,11 @@ require (
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/go-co-op/gocron/v2 v2.16.1
 	github.com/go-resty/resty/v2 v2.16.5
-	github.com/go-sql-driver/mysql v1.9.0
+	github.com/go-sql-driver/mysql v1.9.1
 	github.com/gocolly/colly v1.2.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang/glog v1.2.4
+	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/gookit/goutil v0.6.18
@@ -49,6 +54,7 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
 	github.com/luvx21/coding-go/coding-common v0.0.0-20250307100758-4a92a8615909
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250321140609-f09f58a477d1
 	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250307100758-4a92a8615909
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
@@ -59,7 +65,7 @@ require (
 	github.com/pterm/pterm v0.12.80
 	github.com/puzpuzpuz/xsync/v3 v3.5.1
 	github.com/pywee/gobson-where v0.0.4
-	github.com/redis/go-redis/v9 v9.7.1
+	github.com/redis/go-redis/v9 v9.7.3
 	github.com/redis/rueidis v1.0.56
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.49.1
@@ -172,7 +178,6 @@ require (
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
-	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/mock v1.7.0-rc.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
@@ -232,7 +237,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.63.0 // indirect
-	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/prometheus/procfs v0.16.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect

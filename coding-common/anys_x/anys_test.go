@@ -8,16 +8,8 @@ import (
 
 func Test_any_00(t *testing.T) {
 	tests := []test.Step{
-		{
-			Name:     "用例1",
-			Input:    11,
-			Expected: "11",
-		},
-		{
-			Name:     "用例2",
-			Input:    "abc",
-			Expected: "abc",
-		},
+		{Name: "用例1", Input: 11, Expected: "11"},
+		{Name: "用例2", Input: "abc", Expected: "abc"},
 	}
 
 	test.OneOne(t, tests, func(v any) any {

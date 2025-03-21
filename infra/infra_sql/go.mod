@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/blockloop/scan v1.3.0
-	github.com/go-sql-driver/mysql v1.9.0
+	github.com/go-sql-driver/mysql v1.9.1
 	github.com/jmoiron/sqlx v1.4.0
 )
 

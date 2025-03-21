@@ -20,9 +20,10 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250307100758-4a92a8615909
-	github.com/luvx21/coding-go/infra/logs v0.0.0-00010101000000-000000000000
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250307100758-4a92a8615909
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250321140609-f09f58a477d1
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250321140609-f09f58a477d1
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250321140609-f09f58a477d1
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250321140609-f09f58a477d1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/tidwall/gjson v1.18.0
@@ -49,6 +50,7 @@ require (
 	github.com/antchfx/xpath v1.3.3 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
@@ -70,9 +72,9 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
-	github.com/jedib0t/go-pretty/v6 v6.6.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
@@ -84,7 +86,6 @@ require (
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -102,7 +103,6 @@ require (
 	github.com/prometheus/procfs v0.16.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/sagikazarmark/locafero v0.8.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect

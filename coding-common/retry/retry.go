@@ -37,7 +37,7 @@ func SupplyWithRetry[T any](
 			return t, nil
 		}
 	}
-	logs.Log.Warnf("进行%d次重试仍失败", maxRetryTimes)
+	log.Printf("进行%d次重试仍失败", maxRetryTimes)
 	var zero T
 	return zero, fmt.Errorf("重试失败")
 }
