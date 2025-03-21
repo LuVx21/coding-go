@@ -1,5 +1,7 @@
 package alias_x
 
+import "github.com/luvx21/coding-go/coding-common/common_x/types_x"
+
 type EmptyHolder = struct{}
 
 type Map[K comparable, V any] = map[K]V
@@ -8,6 +10,7 @@ type MapComparable2Any[K comparable] = map[K]any
 type MapStr2Any = map[string]any
 
 type Slice[T any] = []T
+type NumberSlice[T types_x.Number] = []T
 type SliceAny = []any
 type SliceStr = []string
 type SliceSlice = []SliceAny
