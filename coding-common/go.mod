@@ -6,7 +6,6 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.20.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394

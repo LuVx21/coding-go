@@ -4,6 +4,7 @@ go 1.24.1
 
 replace (
 	//github.com/luvx21/coding-go/coding-common => ../coding-common
+	//github.com/luvx21/coding-go/infra/logs => ../infra/logs
 	//github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
 )
 
@@ -48,7 +49,6 @@ require (
 	github.com/antchfx/xpath v1.3.3 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
@@ -69,6 +69,7 @@ require (
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
+	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
 	github.com/jedib0t/go-pretty/v6 v6.6.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -91,6 +92,8 @@ require (
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.36.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.21.1 // indirect
@@ -117,6 +120,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
@@ -132,7 +136,6 @@ require (
 	golang.org/x/tools v0.31.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
