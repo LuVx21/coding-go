@@ -1,12 +1,12 @@
 package func_x
 
 func Identity[T any](t T) T {
-    return t
+	return t
 }
 
 func True[T any](t T) bool {
-    return true
+	return true
 }
 func False[T any](t T) bool {
-    return false
+	return false
 }

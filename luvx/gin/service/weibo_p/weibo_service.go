@@ -9,6 +9,13 @@ import (
 	"strings"
 	"time"
 
+	"luvx/gin/common/consts"
+	commonkvdao "luvx/gin/dao/common_kv"
+	"luvx/gin/db"
+	"luvx/gin/model"
+	commonkvservice "luvx/gin/service/common_kv"
+	"luvx/gin/service/cookie"
+
 	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -19,6 +26,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
+	"github.com/luvx21/coding-go/coding-common/maths_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
@@ -27,12 +35,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/exp/slices"
-	"luvx/gin/common/consts"
-	commonkvdao "luvx/gin/dao/common_kv"
-	"luvx/gin/db"
-	"luvx/gin/model"
-	commonkvservice "luvx/gin/service/common_kv"
-	"luvx/gin/service/cookie"
 )
 
 var (
@@ -64,7 +66,7 @@ func PullHotBand() {
 				continue
 			}
 			word := vv["word"]
-			filter := bson.D{{"word", word}}
+			filter := bson.D{{Key: "word", Value: word}}
 			var result bson.M
 			_ = client.FindOne(context.TODO(), filter).Decode(&result)
 			if result != nil {
@@ -72,19 +74,19 @@ func PullHotBand() {
 				oldRank := maps_x.GetOrDefault(rankMap, now, "99")
 				if cast_x.ToInt(oldRank) > cast_x.ToInt(rank) {
 					rankMap[now] = cast_x.ToString(rank)
-					update := bson.D{{"$set", bson.D{
-						{"rankMap", rankMap},
-						{"category", vv["category"]},
+					update := bson.D{{Key: "$set", Value: bson.D{
+						{Key: "rankMap", Value: rankMap},
+						{Key: "category", Value: vv["category"]},
 					}}}
 					_, _ = client.UpdateOne(context.TODO(), filter, update)
 				}
 			} else {
 				d := bson.D{
-					{"_id", worker.NextId()},
-					{"_class", "org.luvx.boot.tools.dao.mongo.weibo.HotBand"},
-					{"word", word},
-					{"category", vv["category"]},
-					{"rankMap", map[string]string{now: cast_x.ToString(rank)}},
+					{Key: "_id", Value: worker.NextId()},
+					{Key: "_class", Value: "org.luvx.boot.tools.dao.mongo.weibo.HotBand"},
+					{Key: "word", Value: word},
+					{Key: "category", Value: vv["category"]},
+					{Key: "rankMap", Value: map[string]string{now: cast_x.ToString(rank)}},
 				}
 				_, _ = client.InsertOne(context.TODO(), d)
 			}
@@ -116,7 +118,7 @@ func PullByUser(uid int64) {
 	_ = collection.FindOne(context.TODO(), bson.M{"user.id": uid}, opts).Decode(&latest)
 
 	cursor := 1
-	iterator := iterators.NewCursorIteratorSimple[any, int](
+	iterator := iterators.NewCursorIteratorSimple(
 		cursor,
 		false,
 		func(_cursor int) []any {
@@ -173,7 +175,7 @@ func PullByGroup() {
 	_ = collection.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
 
 	var cursor int64 = 0
-	iterator := iterators.NewCursorIterator[any, int64, Pair[[]any, int64]](
+	iterator := iterators.NewCursorIterator(
 		cursor, false,
 		func(_cursor int64) Pair[[]any, int64] {
 			return requestPageOfGroup(groupId, _cursor)
@@ -236,7 +238,7 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	id := cast_x.ToInt64(feed["id"])
 	feed["_id"] = id
 	var r bson.M
-	_ = collection.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&r)
+	_ = collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&r)
 	if r != nil {
 		return id
 	}
@@ -252,7 +254,7 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	picUrl := make([]string, 0)
 	i2 := feed["pic_ids"]
 	if i2 != nil {
-		if b, picIds := slices_x.IsEmpty[[]any, any](i2.([]any)); !b {
+		if b, picIds := slices_x.IsEmpty(i2.([]any)); !b {
 			i := feed["pic_infos"]
 			if i != nil {
 				picInfos := i.(map[string]any)
@@ -422,7 +424,7 @@ func Rss(uids ...int64) string {
 
 func a(jo JsonObject) string {
 	_id := cast_x.ToInt64(jo["_id"])
-	title := jo["text_raw"]
+	title := jo["text_raw"].(string)
 	_contentHtml := contentHtml(jo)
 	retweetId := jo["retweeted_status"]
 	if retweetId != nil {
@@ -434,6 +436,7 @@ func a(jo JsonObject) string {
 			if i != nil {
 				uName = i.(JsonObject)["name"].(string)
 			}
+			uName += common_x.IfThen(cast_x.ToBool(retweet["invalid"]), "<br/>pass<br/>", "")
 			_contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/><br/>%s", _contentHtml, uName, contentHtml(retweet))
 		}
 	}
@@ -460,7 +463,7 @@ func a(jo JsonObject) string {
                    <![CDATA[ %v ]]>
                </author>
            </item>
-`, title, _contentHtml, createdAt, url, _id, screenName)
+`, title[0:maths_x.Min(10, len(title))], _contentHtml, createdAt, url, _id, screenName)
 }
 
 func addDelete(_id int64) string {

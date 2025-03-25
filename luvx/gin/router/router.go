@@ -1,15 +1,17 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/common/consts"
 	"luvx/gin/common/responsex"
 	"luvx/gin/controller"
+	"luvx/gin/controller/ai_c"
 	"luvx/gin/controller/rss_p"
 	"luvx/gin/controller/useful_c"
 	"luvx/gin/controller/weibo_p"
 	rssService "luvx/gin/service/rss"
+
+	"github.com/gin-gonic/gin"
+	"github.com/luvx21/coding-go/infra/logs"
 )
 
 // AddTraceId TODO 不太正确
@@ -76,4 +78,7 @@ func RegisterWeibo(r *gin.Engine) {
 	_rss.GET("/feed/:spiderKey", rss_p.Rss)
 	_rss.GET("/delete/:id", rssService.DeleteById)
 	_rss.GET("pullbykey", rss_p.PullByKey)
+
+	_ai := r.Group("/ai")
+	_ai.POST("/v1/chat/completions", ai_c.HandleChatCompletion)
 }

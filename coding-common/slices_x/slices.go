@@ -83,7 +83,7 @@ func Transfer[I, O any](f Function[I, O], s ...I) []O {
 // ToAnySliceE 入参类型一致
 func ToAnySliceE[E any](s ...E) []any {
 	f := func(a E) any { return a }
-	return Transfer[E, any](f, s...)
+	return Transfer(f, s...)
 }
 
 func FilterTransfer[I, O any](filter Predicate[I], f Function[I, O], s ...I) []O {
@@ -281,12 +281,18 @@ func Flat[S ~[]E, E any](s []S) (r S) {
 	}
 	return r
 }
-
-func GroupBy[S ~[]E, E any, K comparable](s S, by Function[E, K]) map[K]S {
-	groups := make(map[K]S)
+func FlatMap[S ~[]E, E, O any](s S, transfer func(E) []O) (r []O) {
 	for _, e := range s {
-		key := by(e)
-		groups[key] = append(groups[key], e)
+		r = append(r, transfer(e)...)
+	}
+	return r
+}
+
+func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper Function[E, K], valueMapper Function[E, V]) map[K][]V {
+	groups := make(map[K][]V)
+	for _, e := range s {
+		key, value := keyMapper(e), valueMapper(e)
+		groups[key] = append(groups[key], value)
 	}
 	return groups
 }

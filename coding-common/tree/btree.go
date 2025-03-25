@@ -61,3 +61,51 @@ func (n *TreeNode[T]) printTree(sb *strings.Builder, prefix string, childPrefix 
 func (m *TreeNode[T]) IsLeaf() bool {
 	return m.Left == nil && m.Right == nil
 }
+
+func (root *TreeNode[T]) String1() string {
+	if root == nil {
+		return ""
+	}
+
+	levelRows := make([][]T, 0)
+	queue := make([]*TreeNode[T], 0)
+
+	for k := 0; len(queue) > 0; k++ {
+		var isBreak bool = true
+		size := len(queue)
+		row := make([]T, 0)
+		for i := 0; i < size; i++ {
+			node := queue[len(queue)-1]
+			queue = queue[:len(queue)-1]
+			if node == nil {
+				// TODO
+				// row = append(row, math.MinInt)
+				queue = append(queue, nil, nil)
+			} else {
+				isBreak = isBreak && node.IsLeaf()
+				row = append(row, node.Val)
+				queue = append(queue, node.Left, node.Right)
+			}
+		}
+		levelRows = append(levelRows, row)
+		if isBreak {
+			break
+		}
+	}
+	line := strings.Repeat("-", 150)
+	sb := dumpTreeFormat0(levelRows)
+	sb.WriteString(line)
+	sb.WriteString("\n")
+	sb.WriteString(dumpTreeFormat(levelRows))
+	sb.WriteString(line)
+	sb.WriteString("\n")
+	return sb.String()
+}
+
+func dumpTreeFormat0[T any](rows [][]T) strings.Builder {
+	var sb strings.Builder
+	return sb
+}
+func dumpTreeFormat[T any](rows [][]T) string {
+	return ""
+}
