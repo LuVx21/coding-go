@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#brew install protobuf
+if [[ -z $(which protoc) ]]; then
+  brew install protobuf
+fi
 
 if [[ -z $(which protoc-gen-go) ]]; then
   go install -ldflags="-w -s" google.golang.org/protobuf/cmd/protoc-gen-go@latest

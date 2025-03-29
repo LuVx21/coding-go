@@ -46,8 +46,8 @@ func Test_select(t *testing.T) {
 
 	columns, _ := rows.Columns()
 
-	scanArgs := make([]interface{}, len(columns))
-	values := make([]interface{}, len(columns))
+	scanArgs := make([]any, len(columns))
+	values := make([]any, len(columns))
 	for j := range values {
 		scanArgs[j] = &values[j]
 	}

@@ -1,16 +1,16 @@
 package jsonpicker
 
 type IJsonValue interface {
-    Get(key string) IJsonValue
-    DeepGet(key string) IJsonValue
-    ContainsKey(key string) bool
+	Get(key string) IJsonValue
+	DeepGet(key string) IJsonValue
+	ContainsKey(key string) bool
 
-    GetAt(index int) IJsonValue
+	GetAt(index int) IJsonValue
 
-    Contains(v interface{}) bool
+	Contains(v any) bool
 
-    Value() interface{}
+	Value() any
 
-    IsMap() bool
-    IsSliceOrArray() bool
+	IsMap() bool
+	IsSliceOrArray() bool
 }

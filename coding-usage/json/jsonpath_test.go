@@ -1,14 +1,15 @@
 package json
 
 import (
-    "encoding/json"
-    "fmt"
-    "github.com/jmespath-community/go-jmespath"
-    "testing"
+	"encoding/json"
+	"fmt"
+	"testing"
+
+	"github.com/jmespath-community/go-jmespath"
 )
 
 func Test_aa(t *testing.T) {
-    _json := `
+	_json := `
 {
     "foo": {
         "bar": {
@@ -23,8 +24,8 @@ func Test_aa(t *testing.T) {
     }
 }
 `
-    var data interface{}
-    _ = json.Unmarshal([]byte(_json), &data)
-    search, _ := jmespath.Search("foo.bar.baz[2]", data)
-    fmt.Println(search)
+	var data any
+	_ = json.Unmarshal([]byte(_json), &data)
+	search, _ := jmespath.Search("foo.bar.baz[2]", data)
+	fmt.Println(search)
 }

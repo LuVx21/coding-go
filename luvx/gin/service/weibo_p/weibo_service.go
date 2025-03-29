@@ -295,9 +295,9 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 		feed["user"] = map[string]any{"id": 0, "name": ""}
 	}
 	feed["invalid"] = 0
-	if retweeted {
-		feed["invalid"] = 1
-	}
+	// if retweeted {
+	// 	feed["invalid"] = 1
+	// }
 	maps_x.RemoveIf(feed, func(k string, v any) bool {
 		return !slices.Contains(fields, k)
 	})
@@ -436,8 +436,8 @@ func a(jo JsonObject) string {
 			if i != nil {
 				uName = i.(JsonObject)["name"].(string)
 			}
-			uName += common_x.IfThen(cast_x.ToBool(retweet["invalid"]), "<br/>pass<br/>", "")
-			_contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/><br/>%s", _contentHtml, uName, contentHtml(retweet))
+			uName += common_x.IfThen(cast_x.ToBool(retweet["invalid"]), "<br/>pass", "")
+			_contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/>%s", _contentHtml, uName, contentHtml(retweet))
 		}
 	}
 	deleteUrl := addDelete(_id)

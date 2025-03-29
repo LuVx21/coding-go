@@ -20,11 +20,11 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250323084229-6da5d10efe82
-	github.com/luvx21/coding-go/infra/ai v0.0.0-00010101000000-000000000000
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250323084229-6da5d10efe82
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250323084229-6da5d10efe82
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250323084229-6da5d10efe82
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250329115142-5476e919091b
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/tidwall/gjson v1.18.0

@@ -4,11 +4,12 @@ import (
 	"errors"
 
 	"github.com/linxGnu/grocksdb"
+	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/infra/logs"
 )
 
 const (
-	DB_PATH = "/Users/renxie/data/RocksDB"
+	DB_PATH = "/data/RocksDB"
 )
 const (
 	KB int = 1024
@@ -102,7 +103,8 @@ func GetDBClient() (*grocksdb.DB, error) {
 	options.SetWriteBufferSize(uint64(8 * KB))
 	options.SetAllowConcurrentMemtableWrites(false)
 
-	db, err := grocksdb.OpenDb(options, DB_PATH)
+	home, _ := common_x.Dir()
+	db, err := grocksdb.OpenDb(options, home+DB_PATH)
 
 	if err != nil {
 		logs.Log.Fatalln("OPEN DB error", db, err)

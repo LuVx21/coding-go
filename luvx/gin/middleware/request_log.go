@@ -27,7 +27,7 @@ func requestLog(c *gin.Context) {
 		Cost = Cost.Truncate(time.Second)
 	}
 
-	requestMap := map[string]interface{}{
+	requestMap := map[string]any{
 		"Path":      path,
 		"Method":    c.Request.Method,
 		"ClientIP":  c.ClientIP(),

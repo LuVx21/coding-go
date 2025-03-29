@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option go_package = "github.com/luvx21/coding-go/coding-usage/serialize/proto/proto_gen";
+
+message Person {
+  string name = 1;
+  int32 age = 2;
+  repeated string hobbies = 3;
+}

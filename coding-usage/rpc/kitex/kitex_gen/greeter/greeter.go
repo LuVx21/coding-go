@@ -71,7 +71,7 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 		}
 		methods[name] = m
 	}
-	extra := map[string]interface{}{
+	extra := map[string]any{
 		"PackageName": "proto",
 	}
 	if hasStreaming {
@@ -88,7 +88,7 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 	return svcInfo
 }
 
-func sayHelloHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func sayHelloHandler(ctx context.Context, handler any, arg, result any) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
 		st := s.Stream
@@ -113,11 +113,11 @@ func sayHelloHandler(ctx context.Context, handler interface{}, arg, result inter
 		return errInvalidMessageType
 	}
 }
-func newSayHelloArgs() interface{} {
+func newSayHelloArgs() any {
 	return &SayHelloArgs{}
 }
 
-func newSayHelloResult() interface{} {
+func newSayHelloResult() any {
 	return &SayHelloResult{}
 }
 
@@ -175,7 +175,7 @@ func (p *SayHelloArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *SayHelloArgs) GetFirstArgument() interface{} {
+func (p *SayHelloArgs) GetFirstArgument() any {
 	return p.Req
 }
 
@@ -229,7 +229,7 @@ func (p *SayHelloResult) GetSuccess() *kitex_gen.HelloReply {
 	return p.Success
 }
 
-func (p *SayHelloResult) SetSuccess(x interface{}) {
+func (p *SayHelloResult) SetSuccess(x any) {
 	p.Success = x.(*kitex_gen.HelloReply)
 }
 
@@ -237,7 +237,7 @@ func (p *SayHelloResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *SayHelloResult) GetResult() interface{} {
+func (p *SayHelloResult) GetResult() any {
 	return p.Success
 }
 

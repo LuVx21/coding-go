@@ -31,7 +31,7 @@ func OneOneError(t *testing.T, tests []Step, fn func(v any) (any, error)) {
 			result, resultErr := fn(input)
 			if tt.IsErr {
 				if !errors.Is(resultErr, err) {
-					t.Errorf("测试用例不通过(异常类型不匹配)-> \n入参: %v \n实际: %v \n预期: %v", input, resultErr, err)
+					t.Errorf("测试用例不通过(异常类型不匹配)->\n入参: %v\n实际: %v\n预期: %v", input, resultErr, err)
 				}
 				return
 			}

@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250307100758-4a92a8615909
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.3
 )

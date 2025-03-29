@@ -11,7 +11,7 @@ func IsZeroRef[T any](v T) bool {
 	return reflect.ValueOf(&v).Elem().IsZero()
 }
 
-func IsNil(v interface{}) bool {
+func IsNil(v any) bool {
 	valueOf := reflect.ValueOf(&v).Elem()
 	k := valueOf.Kind()
 	switch k {
@@ -22,7 +22,7 @@ func IsNil(v interface{}) bool {
 	}
 }
 
-func RealType(a interface{}) reflect.Kind {
+func RealType(a any) reflect.Kind {
 	if t := reflect.TypeOf(a); t.Kind() != reflect.Pointer {
 		return t.Kind()
 	} else {
@@ -30,7 +30,7 @@ func RealType(a interface{}) reflect.Kind {
 	}
 }
 
-func Indirect(a interface{}) interface{} {
+func Indirect(a any) any {
 	if a == nil {
 		return nil
 	}
@@ -44,7 +44,7 @@ func Indirect(a interface{}) interface{} {
 	return v.Interface()
 }
 
-func IndirectToStringerOrError(a interface{}) interface{} {
+func IndirectToStringerOrError(a any) any {
 	if a == nil {
 		return nil
 	}
