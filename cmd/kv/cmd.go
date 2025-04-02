@@ -7,6 +7,8 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/luvx21/coding-go/coding-common/fmt_x"
+	"github.com/luvx21/coding-go/coding-common/maths_x"
+	"github.com/luvx21/coding-go/coding-common/text_x"
 	"github.com/urfave/cli/v3"
 )
 
@@ -107,9 +109,12 @@ func list(ctx context.Context, c *cli.Command) error {
 		list_v(pairs)
 		return nil
 	}
-
+	var width int
+	for k := range pairs {
+		width = maths_x.Max(text_x.Width(k), width)
+	}
 	for k, v := range pairs {
-		fmt.Printf("%s %s\n", k, v)
+		fmt.Printf("%-*s %s\n", width, k, v)
 	}
 
 	return nil

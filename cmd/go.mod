@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/cmds
 
-go 1.24.1
+go 1.24.2
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -10,10 +10,10 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.1
 	github.com/jedib0t/go-pretty/v6 v6.6.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-00010101000000-000000000000
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250402100721-819de95017ea
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/tidwall/gjson v1.18.0
@@ -41,7 +41,7 @@ require (
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.0.9 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect

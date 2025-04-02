@@ -4,17 +4,26 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/glamour"
 	"github.com/luvx21/coding-go/cmds/ai/utils"
+	"github.com/luvx21/coding-go/coding-common/cast_x"
+	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/luvx21/coding-go/infra/ai"
 )
 
 var (
-	curModel *ai.Model
-	file     *os.File
+	curModel  *ai.Model
+	file      *os.File
+	stream    = cast_x.ToBool(strings_x.FirstNonEmpty(os.Getenv("STREAM"), "true"))
+	render, _ = glamour.NewTermRenderer(
+		glamour.WithAutoStyle(),
+		glamour.WithWordWrap(0),
+	)
 )
 
 func newFile(session string) *os.File {
@@ -29,7 +38,7 @@ func newFile(session string) *os.File {
 }
 
 func main() {
-	newFile("对话")
+	newFile("chat")
 	defer file.Close()
 
 	for {
@@ -53,26 +62,27 @@ func main() {
 
 		file.WriteString(fmt.Sprintf("---\n\n### %s(%s) %s\n", question, curModel.Id, time.Now().Format("2006-01-02 15:04:05")))
 
-		res, err := curModel.Request(question)
+		res, err := curModel.Request(question, stream)
 		if err != nil {
 			fmt.Printf("请求接口失败,模型:%s, 服务商:%s\n", curModel.Id, curModel.Sp.BaseUrl)
 			continue
 		}
 		defer res.Body.Close()
 
-		// 处理流式响应
-		scanner := bufio.NewReader(res.Body)
-		for {
-			line, err := scanner.ReadString('\n')
-			if err != nil {
-				break
-			}
-
+		scanner := bufio.NewScanner(res.Body)
+		for scanner.Scan() {
+			line := scanner.Text()
 			content := ai.ParseLineContent(line)
 			if content != "" {
-				fmt.Print(content)
 				file.WriteString(content)
+				if !stream {
+					content, _ = render.Render(content)
+				}
+				fmt.Print(content)
 			}
+		}
+		if err := scanner.Err(); err != nil {
+			slog.Warn("读取失败:" + err.Error())
 		}
 	}
 }

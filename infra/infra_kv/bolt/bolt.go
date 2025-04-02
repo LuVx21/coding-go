@@ -3,17 +3,30 @@ package bolt
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	bolt "go.etcd.io/bbolt"
 )
 
 func OpenDBWithBucket(dbFilePath, bucket string) (*bolt.DB, error) {
-	db, err := bolt.Open(dbFilePath, os.FileMode(0600), nil)
+	if _, err := os.Stat(dbFilePath); err != nil {
+		dir := filepath.Dir(dbFilePath)
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			os.MkdirAll(dir, 0766)
+		}
+		if _, err := os.Create(dbFilePath); err != nil {
+			panic(err)
+		}
+	}
+
+	db, err := bolt.Open(dbFilePath, os.FileMode(0600), &bolt.Options{
+		NoFreelistSync: true,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if len(bucket) == 0 {
+	if len(bucket) > 0 {
 		err = db.Update(func(tx *bolt.Tx) error {
 			_, err := tx.CreateBucket([]byte(bucket))
 			if err != nil {

@@ -1,9 +1,9 @@
 module github.com/luvx21/coding-go/infra/ai
 
-go 1.24.1
+go 1.24.2
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/tidwall/gjson v1.18.0
 )

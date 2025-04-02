@@ -15,6 +15,7 @@ services:
       APP_PORT: ":8090"
       APP_HOST_NAME: "mini.rx"
       APP_PROXY: "host.docker.internal:7890"
+      passwordStr: ${passwordStr}
 #    command: ["sleep", "infinity"]
 
 networks:

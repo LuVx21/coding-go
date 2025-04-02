@@ -39,7 +39,7 @@ import (
 
 var (
 	fields = []string{"_id", "user", "mblogid", "created_at", "text_raw", "text", "retweeted_status", "pic_ids",
-		"invalid", "extra",
+		"invalid", "read", "extra",
 	}
 	collection = db.MongoDatabase.Collection("weibo_feed")
 )
@@ -295,9 +295,10 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 		feed["user"] = map[string]any{"id": 0, "name": ""}
 	}
 	feed["invalid"] = 0
-	// if retweeted {
-	// 	feed["invalid"] = 1
-	// }
+	feed["read"] = 0
+	if retweeted {
+		feed["invalid"] = 1
+	}
 	maps_x.RemoveIf(feed, func(k string, v any) bool {
 		return !slices.Contains(fields, k)
 	})
@@ -436,7 +437,7 @@ func a(jo JsonObject) string {
 			if i != nil {
 				uName = i.(JsonObject)["name"].(string)
 			}
-			uName += common_x.IfThen(cast_x.ToBool(retweet["invalid"]), "<br/>pass", "")
+			uName += common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
 			_contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/>%s", _contentHtml, uName, contentHtml(retweet))
 		}
 	}

@@ -10,13 +10,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/infra/logs"
+	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/middleware"
 	"luvx/gin/router"
 	"luvx/gin/runner"
+
+	"github.com/gin-gonic/gin"
+	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/infra/logs"
 )
 
 func WebStart() {
@@ -28,7 +30,7 @@ func WebStart() {
 	router.Register(r)
 	middleware.RegisterGlobalMiddlewares(r)
 
-	envPort := os.Getenv("APP_PORT")
+	envPort := consts.AppPort
 	port := common_x.IfThen(len(envPort) > 0, envPort, config.AppConfig.Server.Port)
 	if err := r.Run(port); err != nil {
 		fmt.Printf("Start server error,err=%v", err)

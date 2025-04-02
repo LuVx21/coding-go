@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/infra/nosql/redis
 
-go 1.24.1
+go 1.24.2
 
 require github.com/redis/go-redis/v9 v9.7.3
 

@@ -1,6 +1,6 @@
 module luvx
 
-go 1.24.1
+go 1.24.2
 
 replace (
 	//github.com/luvx21/coding-go/coding-common => ../coding-common
@@ -20,16 +20,16 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250402100721-819de95017ea
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
-	github.com/valyala/fasthttp v1.59.0
+	github.com/valyala/fasthttp v1.60.0
 	go.mongodb.org/mongo-driver v1.17.3
 	golang.org/x/crypto v0.36.0
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
@@ -39,7 +39,7 @@ require (
 	gorm.io/gen v0.3.26
 	gorm.io/gorm v1.25.12
 	gorm.io/plugin/dbresolver v1.5.3
-	modernc.org/sqlite v1.36.3
+	modernc.org/sqlite v1.37.0
 )
 
 require (
@@ -143,7 +143,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
-	modernc.org/libc v1.62.0 // indirect
+	modernc.org/libc v1.62.1 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.9.1 // indirect
 )

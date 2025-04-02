@@ -1,6 +1,7 @@
 package consts
 
 import (
+	"os"
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/ids"
@@ -22,4 +23,11 @@ var (
 	RateLimiter = rate.NewLimiter(1, 1)
 	IdWorker, _ = ids.NewSnowflakeIdWorker(0, 0)
 	SfGroup     = singleflight.Group{}
+)
+
+var (
+	AppPort     = os.Getenv("APP_PORT")
+	AppHostName = os.Getenv("APP_HOST_NAME")
+	AppProxy    = os.Getenv("APP_PROXY")
+	PasswordStr = os.Getenv("passwordStr")
 )

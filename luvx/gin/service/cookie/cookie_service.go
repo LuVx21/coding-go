@@ -142,17 +142,22 @@ func getClient() *sql.DB {
 
 func masterKey() []byte {
 	if len(passwordByte) == 0 {
-		var (
-			stdout, stderr bytes.Buffer
-		)
-		cmd := exec.Command("security", "find-generic-password", "-wa", "Microsoft Edge")
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		if err := cmd.Run(); err != nil {
-			fmt.Println(cmd.String())
-			// fmt.Printf("run security command failed: %w, message %s", err, stderr.String())
+		passwordStr := consts.PasswordStr
+		if len(passwordStr) == 0 {
+			var (
+				stdout, stderr bytes.Buffer
+			)
+			cmd := exec.Command("security", "find-generic-password", "-wa", "Microsoft Edge")
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
+			if err := cmd.Run(); err != nil {
+				fmt.Println(cmd.String())
+				// fmt.Printf("run security command failed: %w, message %s", err, stderr.String())
+			}
+			passwordByte = stdout.Bytes()
+		} else {
+			passwordByte = []byte(passwordStr)
 		}
-		passwordByte = stdout.Bytes()
 	}
 
 	secret := bytes.TrimSpace(passwordByte)

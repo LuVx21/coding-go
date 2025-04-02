@@ -1,38 +1,67 @@
 package api
 
 import (
-	"log"
 	"log/slog"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/lmittmann/tint"
+	"gitlab.com/greyxor/slogor"
+)
+
+const (
+	colorRed    = "\033[31m"
+	colorGreen  = "\033[32m"
+	colorYellow = "\033[33m"
+	colorBlue   = "\033[34m"
+	colorPurple = "\033[35m"
+	colorCyan   = "\033[36m"
+	colorGray   = "\033[37m"
+	colorWhite  = "\033[97m"
+	colorReset  = "\033[0m"
 )
 
 func Test_log_00(t *testing.T) {
-	var handler slog.Handler
-	handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level:     slog.LevelInfo,
+	handler1 := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level:     slog.LevelDebug,
 		AddSource: true,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			switch a.Key {
+			case slog.SourceKey:
+			case slog.LevelKey:
+				switch a.Value.String() {
+				case "DEBUG":
+				case "INFO":
+				case "WARN":
+				case "ERROR":
+				}
+			case slog.TimeKey:
+				if t, ok := a.Value.Any().(time.Time); ok {
+					a.Value = slog.StringValue(t.Format(time.DateTime + ".9999"))
+				}
+			}
+			return a
+		},
 	})
-	// handler = slogor.NewHandler(os.Stderr, slogor.Options{
-	// 	TimeFormat: time.DateTime + ".99999",
-	// 	Level:      slog.LevelInfo,
-	// 	ShowSource: false,
-	// })
-	handler = tint.NewHandler(os.Stderr, &tint.Options{
-		TimeFormat: time.DateTime + ".99999",
-		Level:      slog.LevelInfo,
+	handler2 := slogor.NewHandler(os.Stderr,
+		slogor.SetTimeFormat(time.DateTime+".9999"),
+		slogor.SetLevel(slog.LevelDebug),
+		slogor.ShowSource(),
+	)
+	handler3 := tint.NewHandler(os.Stderr, &tint.Options{
+		TimeFormat: time.DateTime + ".9999",
+		Level:      slog.LevelDebug,
 		AddSource:  true,
 	})
 
-	logger := slog.New(handler)
-	slog.SetDefault(logger)
-	slog.Info("haha")
+	for _, logger := range []*slog.Logger{slog.Default(), slog.New(handler1), slog.New(handler2), slog.New(handler3)} {
+		// logger := slog.New(h)
+		// slog.SetDefault(logger)
 
-	log.Println("haha")
-}
-
-func Test_log_01(t *testing.T) {
+		logger.Debug("这是一条调试信息")
+		logger.Info("这是一条普通信息")
+		logger.Warn("这是一条警告信息")
+		logger.Error("这是一条错误信息")
+	}
 }

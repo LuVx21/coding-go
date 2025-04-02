@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/coding-usage
 
-go 1.24.1
+go 1.24.2
 
 replace (
 	// github.com/luvx21/coding-go/coding-common => ../coding-common
@@ -34,6 +34,7 @@ require (
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/fatih/color v1.15.0
 	github.com/go-co-op/gocron/v2 v2.16.1
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-sql-driver/mysql v1.9.1
 	github.com/gocolly/colly v1.2.0
@@ -54,13 +55,13 @@ require (
 	github.com/levigross/grequests v0.0.0-20231203190023-9c307ef1f48d
 	github.com/lib/pq v1.10.9
 	github.com/linvon/cuckoo-filter v0.4.0
-	github.com/linxGnu/grocksdb v1.9.8
+	github.com/linxGnu/grocksdb v1.9.9
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250329115142-5476e919091b
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250329115142-5476e919091b
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250402100721-819de95017ea
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/panjf2000/ants/v2 v2.11.2
@@ -101,7 +102,6 @@ require (
 	github.com/alecthomas/chroma/v2 v2.15.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
-	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
 	github.com/charmbracelet/colorprofile v0.3.0 // indirect
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
@@ -111,15 +111,16 @@ require (
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/cloudwego/netpoll v0.6.5 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
-	github.com/gofrs/flock v0.8.1 // indirect
-	github.com/google/btree v1.1.2 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
-	github.com/rosedblabs/wal v1.3.8 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
@@ -272,7 +273,6 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/rosedblabs/rosedb/v2 v2.4.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
@@ -298,6 +298,7 @@ require (
 	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
+	gitlab.com/greyxor/slogor v1.6.1
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.57.0 // indirect
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect

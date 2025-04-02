@@ -3,6 +3,10 @@ package weibo_p
 import (
 	"context"
 
+	"luvx/gin/common/consts"
+	"luvx/gin/db"
+	"luvx/gin/service"
+
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
@@ -10,9 +14,6 @@ import (
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"luvx/gin/common/consts"
-	"luvx/gin/db"
-	"luvx/gin/service"
 )
 
 func RunnerRegister() []*service.Runner {
@@ -75,7 +76,10 @@ func Delete() {
 
 	filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
 	update := bson.D{{Key: "$set",
-		Value: bson.D{{Key: "invalid", Value: 1}},
+		Value: bson.D{
+			{Key: "invalid", Value: 1},
+			{Key: "read", Value: 1},
+		},
 	}}
 	dr, err := collection.UpdateMany(context.TODO(), filter, update)
 

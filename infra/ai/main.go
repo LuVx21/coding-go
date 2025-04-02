@@ -49,11 +49,11 @@ type Model struct {
 	Sp *ServiceProvider
 }
 
-func (m *Model) Request(question string) (*http.Response, error) {
+func (m *Model) Request(question string, stream bool) (*http.Response, error) {
 	r := &ChatRequest{
 		Model:       m.Id,
 		Messages:    []Message{{"user", question}},
-		Stream:      true,
+		Stream:      stream,
 		MaxTokens:   2048,
 		Temperature: 0.7,
 	}

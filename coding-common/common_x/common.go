@@ -1,7 +1,7 @@
 package common_x
 
 import (
-	"log"
+	"log/slog"
 	"sync"
 	"time"
 )
@@ -32,7 +32,7 @@ func RunCatching(fn func()) {
 func RunCatchingReturn[T any](fn func() T) T {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println(r)
+			slog.Warn("fast-fail", r)
 		}
 	}()
 	return fn()
@@ -58,12 +58,12 @@ func RunWithTime2[R1 any, R2 any](name string, f func() (R1, R2)) (R1, R2) {
 
 func TrackTime1(name string, start time.Time) {
 	elapsed := time.Since(start)
-	log.Println(name, "执行时间:", elapsed)
+	slog.Info(name, "执行时间", elapsed)
 }
 
 func TrackTime(name string) func() {
 	start := time.Now()
 	return func() {
-		log.Printf("%s 执行时间: %v", name, time.Since(start))
+		slog.Info(name, "执行时间", time.Since(start))
 	}
 }

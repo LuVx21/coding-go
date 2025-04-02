@@ -49,16 +49,12 @@ func ReadLines1(path string) ([]string, error) {
 }
 
 // ReadAll 全部内容
-func ReadAll(path string) (string, error) {
+func ReadAll(path string) ([]byte, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer file.Close()
 
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return "", err
-	}
-	return string(data), err
+	return io.ReadAll(file)
 }

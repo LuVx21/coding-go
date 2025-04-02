@@ -6,6 +6,7 @@ import (
 	"luvx/gin/controller/ai_c/models"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -117,10 +118,11 @@ func generateStreamResponse(request ai.ChatCompletionRequest, idx int) models.Ch
 // getAIResponse 生成AI回答
 func getAIResponse(messages []ai.Message) string {
 	if len(messages) == 0 {
-		return "Hello! How can I help you today?"
+		return "Hello! 我能为你做什么?"
 	}
-	lastMessage := messages[len(messages)-1]
-	return fmt.Sprintf("I received your message saying: '%s'. This is a simulated response from the testing API.", lastMessage.Content)
+	r := []string{"### 问题:" + messages[len(messages)-1].Content, "\n"}
+	r = append(r, responses...)
+	return strings.Join(r, "")
 }
 
 // calculateTokens 简单计算token数
