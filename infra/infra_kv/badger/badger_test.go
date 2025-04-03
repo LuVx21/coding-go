@@ -31,7 +31,7 @@ func Test_badger_00(t *testing.T) {
 
 	key, value := "foo", "bar"
 
-	SetStr(db, key, value)
+	SetStr(db, key, value, 0)
 
 	v, _ := GetStr(db, key)
 
@@ -49,7 +49,7 @@ func Test_badger_01(t *testing.T) {
 	key, value := "foo", "bar"
 
 	for i := range 1000 {
-		SetStr(db, key+strconv.Itoa(i), value)
+		SetStr(db, key+strconv.Itoa(i), value, 0)
 		// DeleteStr(db, key+strconv.Itoa(i))
 	}
 }

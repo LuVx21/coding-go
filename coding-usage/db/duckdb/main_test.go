@@ -2,41 +2,23 @@ package duckdb
 
 import (
 	"database/sql"
-	"errors"
-	"fmt"
-	"log"
 	"testing"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/dbs"
 	_ "github.com/marcboeker/go-duckdb"
 )
 
 func Test_duckdb_c(t *testing.T) {
 	home, _ := common_x.Dir()
-	dataSourceName := home + "/data/sqlite/identifier.db"
+	dataSourceName := home + "/data/duckdb/main.db"
 	db, _ := sql.Open("duckdb", dataSourceName)
 	defer db.Close()
 
-	_, err := db.Exec(`CREATE TABLE people (id INTEGER, name VARCHAR)`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = db.Exec(`INSERT INTO people VALUES (42, 'John')`)
-	if err != nil {
-		log.Fatal(err)
-	}
+	_, _ = db.Exec(`CREATE TABLE IF NOT EXISTS people (id INTEGER, name VARCHAR)`)
 
-	var (
-		id   int
-		name string
-	)
-	row := db.QueryRow(`SELECT id, name FROM people`)
-	err = row.Scan(&id, &name)
-	if errors.Is(err, sql.ErrNoRows) {
-		log.Println("no rows")
-	} else if err != nil {
-		log.Fatal(err)
-	}
+	_, _ = db.Exec(`INSERT INTO people VALUES (42, 'John')`)
 
-	fmt.Printf("id: %d, name: %s\n", id, name)
+	rows, _ := db.Query(`SELECT id, name FROM people;`)
+	dbs.PrintRows(rows)
 }

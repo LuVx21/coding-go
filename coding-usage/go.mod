@@ -10,6 +10,7 @@ replace (
 )
 
 require (
+	dubbo.apache.org/dubbo-go/v3 v3.3.0
 	github.com/Goldziher/go-utils v1.8.1
 	github.com/IBM/sarama v1.45.1
 	github.com/PuerkitoBio/goquery v1.10.2
@@ -20,9 +21,9 @@ require (
 	github.com/bytedance/sonic v1.13.2
 	github.com/cch123/elasticsql v1.0.1
 	github.com/charmbracelet/glamour v0.9.1
-	github.com/cloudwego/fastpb v0.0.5
 	github.com/cloudwego/hertz v0.9.6
 	github.com/cloudwego/kitex v0.12.3
+	github.com/cloudwego/prutal v0.1.0
 	github.com/deckarep/golang-set/v2 v2.8.0
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/docker/docker v28.0.1+incompatible
@@ -59,9 +60,9 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250402100721-819de95017ea
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250403144701-b7be35335668
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/panjf2000/ants/v2 v2.11.2
@@ -99,7 +100,11 @@ require (
 )
 
 require (
+	github.com/RoaringBitmap/roaring v1.2.3 // indirect
+	github.com/Workiva/go-datastructures v1.0.52 // indirect
 	github.com/alecthomas/chroma/v2 v2.15.0 // indirect
+	github.com/apache/dubbo-getty v1.4.10 // indirect
+	github.com/apache/dubbo-go-hessian2 v1.12.5 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
@@ -109,24 +114,53 @@ require (
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
 	github.com/charmbracelet/x/exp/golden v0.0.0-20240815200342-61de596daa2b // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
+	github.com/cloudwego/fastpb v0.0.5 // indirect
 	github.com/cloudwego/netpoll v0.6.5 // indirect
+	github.com/creasty/defaults v1.8.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
+	github.com/dubbogo/gost v1.14.0 // indirect
+	github.com/dubbogo/grpc-go v1.42.10 // indirect
+	github.com/dubbogo/triple v1.2.2-rc4 // indirect
+	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
+	github.com/influxdata/tdigest v0.0.1 // indirect
+	github.com/jinzhu/copier v0.3.5 // indirect
+	github.com/k0kubun/pp v3.0.1+incompatible // indirect
+	github.com/knadh/koanf v1.5.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
+	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
+	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/nyaruka/phonenumbers v1.0.55 // indirect
+	github.com/pelletier/go-toml v1.9.3 // indirect
+	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
+	github.com/shirou/gopsutil/v3 v3.23.12 // indirect
+	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
+	github.com/tklauser/go-sysconf v0.3.12 // indirect
+	github.com/tklauser/numcpus v0.6.1 // indirect
+	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
+	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
+	go.opentelemetry.io/contrib/propagators/b3 v1.10.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.34.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 require (
@@ -235,7 +269,7 @@ require (
 	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/klauspost/compress v1.18.0
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
@@ -262,7 +296,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
-	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
+	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/pjbgf/sha1cd v0.3.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -303,7 +337,7 @@ require (
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
+	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect

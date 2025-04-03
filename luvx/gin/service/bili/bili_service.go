@@ -11,6 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"luvx/gin/common/consts"
+	"luvx/gin/dao/common_kv_dao"
+	"luvx/gin/db"
+	"luvx/gin/service/common_kv"
+	"luvx/gin/service/cookie"
+
 	"github.com/bytedance/sonic"
 	gocache_store "github.com/eko/gocache/lib/v4/store"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -29,10 +35,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/exp/slices"
 	"golang.org/x/time/rate"
-	"luvx/gin/common/consts"
-	"luvx/gin/db"
-	"luvx/gin/service/common_kv"
-	"luvx/gin/service/cookie"
 )
 
 var (
@@ -43,7 +45,7 @@ var (
 		36, 20, 34, 44, 52,
 	}
 	fields = []string{"_id", "title", "pubtime", "bvid", "upper", "invalid", "from"}
-	cache  = consts.NewLoadableCache[[]byte](func(ctx context.Context, key any) ([]byte, []gocache_store.Option, error) {
+	cache  = consts.NewLoadableCache(func(ctx context.Context, key any) ([]byte, []gocache_store.Option, error) {
 		fmt.Println("自动加载缓存......", key)
 		imgKey, subKey := getWbiKeys()
 		return []byte(imgKey + "|" + subKey), nil, nil
@@ -54,7 +56,7 @@ var (
 
 func PullAll() {
 	key := "bili_season"
-	m := common_kv.Get(common_kv.MAP, key)
+	m := common_kv.Get(common_kv_dao.MAP, key)
 	v := m[key]
 	ff := make(map[string]bool)
 	_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
@@ -162,7 +164,7 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 
 func PullAllUpVideo() {
 	key := "bili_up"
-	m := common_kv.Get(common_kv.MAP, key)
+	m := common_kv.Get(common_kv_dao.MAP, key)
 	v := m[key]
 	ff := make(map[string]bool)
 	_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
@@ -182,7 +184,7 @@ func PullUpVideo(mid int64) []string {
 	_ = mongoClient.FindOne(context.TODO(), bson.M{"upper.mid": mid}, opts).Decode(&latest)
 
 	cursor, limit := 1, 30
-	iterator := iterators.NewCursorIteratorSimple[any, int](
+	iterator := iterators.NewCursorIteratorSimple(
 		cursor,
 		false,
 		func(_cursor int) []any {

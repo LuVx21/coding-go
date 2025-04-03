@@ -1,30 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/fatih/color"
 	color2 "github.com/gookit/color"
 )
-
-func Test_color_00(t *testing.T) {
-	// 格式: \033[显示方式;前景色;背景色m
-	// 31: 红色前景
-	fmt.Println("\033[31m这是红色文本\033[0m")
-
-	// 32: 绿色前景
-	fmt.Println("\033[32m这是绿色文本\033[0m")
-
-	// 33: 黄色前景
-	fmt.Println("\033[33m这是黄色文本\033[0m")
-
-	// 带背景色
-	fmt.Println("\033[31;42m红色文本绿色背景\033[0m")
-
-	// 加粗
-	fmt.Println("\033[1;31m加粗红色文本\033[0m")
-}
 
 func Test_color_01(t *testing.T) {
 	color.Red("这是红色文本")

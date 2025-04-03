@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/luvx21/coding-go/coding-usage/rpc/dubbo/proto;proto";
+option java_multiple_files = true;
+option java_package = "io.dubbo.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+
+package proto;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}

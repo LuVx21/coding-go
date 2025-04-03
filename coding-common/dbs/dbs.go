@@ -7,6 +7,13 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
+const (
+	DriverDuckdb  = "duckdb"
+	DriverMysql   = "mysql"
+	DriverSqlite3 = "sqlite3"
+	DriverSqlite  = "sqlite"
+)
+
 func PrintRows(_rows *sql.Rows) {
 	columns, _ := _rows.Columns()
 	values := make([]any, len(columns))

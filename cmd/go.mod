@@ -8,23 +8,22 @@ require (
 	github.com/charmbracelet/bubbletea v1.3.4
 	github.com/charmbracelet/glamour v0.9.1
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/go-sql-driver/mysql v1.9.1
+	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jedib0t/go-pretty/v6 v6.6.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250402100721-819de95017ea
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250402100721-819de95017ea
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250402100721-819de95017ea
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250402100721-819de95017ea
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250403144701-b7be35335668
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
-	github.com/tidwall/gjson v1.18.0
-	github.com/urfave/cli/v3 v3.1.0
+	github.com/urfave/cli/v3 v3.1.1
 	go.etcd.io/bbolt v1.4.0
 	golang.org/x/time v0.11.0
 )
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/alecthomas/chroma/v2 v2.15.0 // indirect
+	github.com/alecthomas/chroma/v2 v2.16.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/blockloop/scan v1.3.0 // indirect
@@ -55,15 +54,16 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
-	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/sync v0.12.0 // indirect
-	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/term v0.30.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0 // indirect
+	golang.org/x/net v0.39.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
+	golang.org/x/sys v0.32.0 // indirect
+	golang.org/x/term v0.31.0 // indirect
+	golang.org/x/text v0.24.0 // indirect
 )

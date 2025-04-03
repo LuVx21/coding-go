@@ -12,6 +12,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/ios"
+	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/luvx21/coding-go/infra/ai"
 )
 
@@ -67,7 +68,7 @@ func loadModels(path string) (map[int32]*ai.Model, string) {
 	rows, m := make([]table.Row, 0), make(map[int32]*ai.Model)
 	var no int32 = 1
 	for _, sp := range sps {
-		sp.ApiKey = os.Getenv(sp.ApiKey)
+		sp.ApiKey = os_x.Getenv(sp.ApiKey)
 		for _, id := range sp.ModelIds {
 			m[no] = &ai.Model{Id: id, Sp: &sp}
 			rows = append(rows, table.Row{no, id, sp.BaseUrl})

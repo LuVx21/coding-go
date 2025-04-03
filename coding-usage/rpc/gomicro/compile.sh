@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -z $(which protoc-gen-go) ]]; then
+  go install -ldflags="-w -s" google.golang.org/protobuf/cmd/protoc-gen-go@latest
+fi
+
 if [[ -z $(which protoc-gen-go-grpc) ]]; then
   go install -ldflags="-w -s" google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 fi

@@ -97,7 +97,7 @@ func list(ctx context.Context, c *cli.Command) error {
 	}
 	pairs, err := getAll(bucket)
 	if err != nil {
-		fmt_x.Errorln(err.Error())
+		// fmt_x.Errorln(err.Error())
 		return nil
 	}
 
@@ -150,13 +150,13 @@ func getCmd(_ context.Context, c *cli.Command, cp bool) error {
 
 	k, bucket := getBucket(c.Args().Get(0))
 	if v, err := get(bucket, k); err != nil {
-		fmt_x.Errorln(err.Error())
+		// fmt_x.Errorln(err.Error())
 	} else {
 		if cp {
 			clipboard.WriteAll(string(v))
 			fmt_x.Successf("剪贴板: %s\n", v)
 		} else {
-			fmt.Println(v)
+			fmt.Print(v)
 		}
 	}
 	return nil

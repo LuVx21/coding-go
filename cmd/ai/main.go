@@ -63,7 +63,7 @@ func main() {
 		file.WriteString(fmt.Sprintf("---\n\n### %s(%s) %s\n", question, curModel.Id, time.Now().Format("2006-01-02 15:04:05")))
 
 		res, err := curModel.Request(question, stream)
-		if err != nil {
+		if err != nil || res.StatusCode >= 300 {
 			fmt.Printf("请求接口失败,模型:%s, 服务商:%s\n", curModel.Id, curModel.Sp.BaseUrl)
 			continue
 		}

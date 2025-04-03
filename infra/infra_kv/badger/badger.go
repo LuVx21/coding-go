@@ -1,6 +1,8 @@
 package badger
 
 import (
+	"time"
+
 	"github.com/dgraph-io/badger/v4"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
@@ -50,22 +52,26 @@ func List(db *badger.DB) (map[string][]byte, error) {
 	return r, err
 }
 
-func SetStr(db *badger.DB, key, value string) error {
-	return Set(db, []byte(key), []byte(value))
+func SetStr(db *badger.DB, key, value string, exp time.Duration) error {
+	return Set(db, []byte(key), []byte(value), exp)
 }
 
-func Set(db *badger.DB, key, value []byte) error {
+func Set(db *badger.DB, key, value []byte, exp time.Duration) error {
 	err := db.Update(func(txn *badger.Txn) error {
-		return txn.Set(key, value)
+		entry := badger.NewEntry(key, value)
+		if exp > 0 {
+			entry.WithTTL(exp)
+		}
+		return txn.SetEntry(entry)
 	})
 	return err
 }
 
-func GetStr(db *badger.DB, key string) ([]byte, error) {
+func GetStr(db *badger.DB, key string) ([]byte, bool) {
 	return Get(db, []byte(key))
 }
 
-func Get(db *badger.DB, key []byte) ([]byte, error) {
+func Get(db *badger.DB, key []byte) ([]byte, bool) {
 	var v []byte
 	err := db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(key)
@@ -78,7 +84,10 @@ func Get(db *badger.DB, key []byte) ([]byte, error) {
 		})
 		return err
 	})
-	return v, err
+	if err != nil || len(v) == 0 {
+		return nil, false
+	}
+	return v, true
 }
 
 func BatchSet(db *badger.DB, m map[string][]byte) error {

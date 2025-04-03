@@ -46,8 +46,8 @@ func getAll(bucket string) (map[string]string, error) {
 func get(bucket, key string) (string, error) {
 	db := openDB()
 	defer db.Close()
-
-	return infra_bolt.Get(db, common_x.IfThen(len(bucket) != 0, bucket, BUCKET), key)
+	v, _ := infra_bolt.Get(db, common_x.IfThen(len(bucket) != 0, bucket, BUCKET), key)
+	return v, nil
 }
 
 func set(bucket, key, value string) error {

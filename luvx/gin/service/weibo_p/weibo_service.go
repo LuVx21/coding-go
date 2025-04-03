@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
-	commonkvdao "luvx/gin/dao/common_kv"
+	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/db"
 	"luvx/gin/model"
 	commonkvservice "luvx/gin/service/common_kv"
@@ -83,7 +83,7 @@ func PullHotBand() {
 			} else {
 				d := bson.D{
 					{Key: "_id", Value: worker.NextId()},
-					{Key: "_class", Value: "org.luvx.boot.tools.dao.mongo.weibo.HotBand"},
+					// {Key: "_class", Value: "org.luvx.boot.tools.dao.mongo.weibo.HotBand"},
 					{Key: "word", Value: word},
 					{Key: "category", Value: vv["category"]},
 					{Key: "rankMap", Value: map[string]string{now: cast_x.ToString(rank)}},
@@ -100,7 +100,7 @@ func PullHotBand() {
 
 func PullByUserAll() {
 	key := "weibo_user"
-	m := commonkvservice.Get(commonkvservice.MAP, key)
+	m := commonkvservice.Get(common_kv_dao.MAP, key)
 	v := m[key]
 	ff := make(map[string]bool)
 	_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
@@ -379,7 +379,7 @@ func getCookie() string {
 func Rss(uids ...int64) string {
 	_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
 		key := "rss_weibo_config"
-		m := commonkvservice.Get(commonkvservice.BEAN, key)
+		m := commonkvservice.Get(common_kv_dao.BEAN, key)
 		return m[key], nil
 	})
 	kv := _kv.(*model.CommonKeyValue)
@@ -397,7 +397,7 @@ func Rss(uids ...int64) string {
 		filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$in": uids}})
 		for _, uid := range uids {
 			if !slices.Contains(ignore, uid) {
-				commonkvdao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+				common_kv_dao.JsonArrayAppend(kv.ID, "$.ignore", uid)
 			}
 		}
 	}

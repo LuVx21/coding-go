@@ -114,20 +114,20 @@ func Set(db *bolt.DB, bucket, key, value string) error {
 	})
 }
 
-func Get(db *bolt.DB, bucket, key string) (string, error) {
+func Get(db *bolt.DB, bucket, key string) (string, bool) {
 	var v []byte
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
+		if b == nil {
+			return nil
+		}
 		v = b.Get([]byte(key))
 		return nil
 	})
-	if err != nil {
-		return "", fmt.Errorf("获取键值对错误,key: %s", key)
+	if err != nil || len(v) == 0 {
+		return "", false
 	}
-	if v == nil {
-		return "", fmt.Errorf("键值对不存在,key: %s", key)
-	}
-	return string(v), nil
+	return string(v), true
 }
 
 func Del(db *bolt.DB, bucket, key string) error {

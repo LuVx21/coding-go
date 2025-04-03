@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -23,6 +24,12 @@ func Test_00(t *testing.T) {
 	defer beforeAfter("Test_00")()
 	val, _ := rdb.Get(context.TODO(), "foo").Result()
 	fmt.Println("foo", "=", val)
+
+	r := rdb.Del(context.TODO(), "lock_"+"01")
+	fmt.Println(r)
+
+	b := rdb.SetNX(context.TODO(), "lock_"+"01", 1, time.Second*60)
+	fmt.Println(b)
 }
 
 func Test_map_00(t *testing.T) {

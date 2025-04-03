@@ -9,6 +9,24 @@ import (
 	"github.com/luvx21/coding-go/coding-common/text_x"
 )
 
+const (
+	// 格式: \033[显示方式;前景色;背景色m
+	prefix      = "\033["
+	colorRed    = prefix + "31m"
+	colorGreen  = prefix + "32m"
+	colorYellow = prefix + "33m"
+	colorBlue   = prefix + "34m"
+	colorPurple = prefix + "35m"
+	colorCyan   = prefix + "36m"
+	colorGray   = prefix + "37m"
+	colorWhite  = prefix + "97m"
+	colorReset  = prefix + "0m"
+	// 红色文本绿色背景
+	a = prefix + "31;42m"
+	// 加粗红色
+	b = prefix + "1;31m"
+)
+
 func PrintlnRow(item ...any) {
 	Println(nil, item)
 }

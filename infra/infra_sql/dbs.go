@@ -46,7 +46,7 @@ func RowsMap(ctx context.Context, db *sql.DB, query string, args ...any) ([]map[
 	cols := make([]any, len(colNames))
 	colPtrs := make([]any, len(colNames))
 
-	for i := 0; i < len(colNames); i++ {
+	for i := range colNames {
 		colPtrs[i] = &cols[i]
 	}
 
@@ -81,7 +81,7 @@ func RowMap(ctx context.Context, db *sql.DB, query string, args ...any) (map[str
 	cols := make([]any, len(colNames))
 	colPtrs := make([]any, len(colNames))
 
-	for i := 0; i < len(colNames); i++ {
+	for i := range colNames {
 		colPtrs[i] = &cols[i]
 	}
 

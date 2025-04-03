@@ -1,13 +1,13 @@
 services:
-  go_app:
+  app:
     image: luvx/go_app:latest
-    container_name: go_app
+    # container_name: go_app
     networks:
       - net_common
     build:
       dockerfile: Dockerfile
-    ports:
-      - "58090:8090"
+    # ports:
+    #   - "58090:8090"
     volumes:
       - $HOME/data:/root/data
     environment:
@@ -17,6 +17,16 @@ services:
       APP_PROXY: "host.docker.internal:7890"
       passwordStr: ${passwordStr}
 #    command: ["sleep", "infinity"]
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    networks:
+      - net_common
+    ports:
+      - "58090:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
 
 networks:
   net_common:

@@ -22,6 +22,7 @@ import (
 	lcommon "github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
+	"github.com/luvx21/coding-go/infra/logs"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -151,8 +152,7 @@ func masterKey() []byte {
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
 			if err := cmd.Run(); err != nil {
-				fmt.Println(cmd.String())
-				// fmt.Printf("run security command failed: %w, message %s", err, stderr.String())
+				logs.Log.Warnln("执行命令失败:", cmd.String(), stderr.String(), err)
 			}
 			passwordByte = stdout.Bytes()
 		} else {

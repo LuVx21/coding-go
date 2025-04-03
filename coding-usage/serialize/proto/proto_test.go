@@ -17,14 +17,23 @@ func Test_serialize_00(t *testing.T) {
 	person := &proto_gen.Person{
 		Name:    "Alice",
 		Age:     30,
-		Hobbies: []string{"reading", "hiking"},
+		Hobbies: []string{"reading", "hiking", "hiking", "hiking", "hiking"},
 	}
 
 	data, _ := proto.Marshal(person)
-	fmt.Printf("序列化结果: %x\n", data)
+	fmt.Printf("原始Protobuf数据大小: %d bytes\n", len(data))
+
+	// 3. 使用Zstd压缩
+	compressed, _ := compressZstd(data)
+	fmt.Printf("压缩后数据大小: %d bytes (%.1f%%)\n",
+		len(compressed),
+		float64(len(compressed))/float64(len(data))*100)
+
+	// 4. 解压缩
+	decompressed, _ := decompressZstd(compressed)
 
 	newPerson := &proto_gen.Person{}
-	_ = proto.Unmarshal(data, newPerson)
+	_ = proto.Unmarshal(decompressed, newPerson)
 	fmt.Printf("反序列化结果: %v\n", newPerson)
 }
 
