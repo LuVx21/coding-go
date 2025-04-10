@@ -13,6 +13,7 @@ import (
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/db"
 	"luvx/gin/model"
+	"luvx/gin/service"
 	commonkvservice "luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
 
@@ -166,6 +167,12 @@ func PullByUser(uid int64) {
 		}
 		logs.Log.Infoln("weibo PullByUser:", one.InsertedID)
 	}
+}
+
+func PullByGroupLock() {
+	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
+		PullByGroup()
+	})
 }
 
 func PullByGroup() {

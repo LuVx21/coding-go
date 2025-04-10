@@ -1,4 +1,4 @@
-module github.com/luvx21/coding-go/infra/nosql/redis
+module github.com/luvx21/coding-go/infra/nosql/infra_redis
 
 go 1.24.2
 

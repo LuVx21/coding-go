@@ -14,6 +14,7 @@ import (
 	"luvx/gin/common/consts"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/db"
+	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
 
@@ -163,19 +164,21 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 }
 
 func PullAllUpVideo() {
-	key := "bili_up"
-	m := common_kv.Get(common_kv_dao.MAP, key)
-	v := m[key]
-	ff := make(map[string]bool)
-	_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
-	for mid, flag := range ff {
-		if !flag {
-			continue
-		}
-		runs.Go(func() {
+	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, func() {
+		key := "bili_up"
+		m := common_kv.Get(common_kv_dao.MAP, key)
+		v := m[key]
+		ff := make(map[string]bool)
+		_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
+		for mid, flag := range ff {
+			if !flag {
+				continue
+			}
+			// runs.Go(func() {
 			PullUpVideo(cast_x.ToInt64(mid))
-		})
-	}
+			// })
+		}
+	})
 }
 
 func PullUpVideo(mid int64) []string {

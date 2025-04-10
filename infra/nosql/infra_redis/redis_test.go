@@ -29,7 +29,7 @@ func beforeAfter(caseName string) func() {
 func Test_lock_00(t *testing.T) {
 	defer beforeAfter("Test_lock_00")()
 
-	locker := NewRedisLocker[string](db)
+	locker := NewLocker[string](db)
 	go locker.LockRun("lock_foo", time.Second*30, func() {
 		fmt.Println("加锁成功，执行任务1")
 		time.Sleep(time.Second * 2)

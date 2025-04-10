@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/luvx21/coding-go/coding-common/ios"
-	"github.com/luvx21/coding-go/infra/infra_sql"
 	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/luvx21/coding-go/coding-common/dbs"
+	"github.com/luvx21/coding-go/coding-common/ios"
 )
 
 var (
@@ -31,7 +33,8 @@ func main() {
 	if len(lines) == 0 {
 		return
 	}
-	connect, _ := infra_sql.ConnectMySQL(*host, *port, *username, *password, *database)
+	dsn := dbs.MySQLConnectWithDefaultArgs(*host, *port, *username, *password, *database)
+	connect, _ := sql.Open(dbs.DriverMysql, dsn)
 	for _, line := range lines {
 		row := strings.Split(line, ",")
 		anies := cast(row)

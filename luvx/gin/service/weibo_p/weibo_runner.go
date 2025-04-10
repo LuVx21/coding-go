@@ -2,6 +2,7 @@ package weibo_p
 
 import (
 	"context"
+	"time"
 
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
@@ -22,12 +23,20 @@ func RunnerRegister() []*service.Runner {
 		return make([]*service.Runner, 0)
 	}
 	return []*service.Runner{
-		{Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() { common_x.RunCatching(PullHotBand) }},
-		{Name: "拉取分组微博", Crontab: "0 4/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroup) }},
-		{Name: "删除已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(Delete) }},
+		// {Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() {
+		// 	common_x.RunCatching(func() {
+		// 		service.RunnerLocker.LockRun("拉取微博热搜", time.Minute*10, PullHotBand)
+		// 	})
+		// }},
+		service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
+		{Name: "拉取分组微博", Crontab: "0 4/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
+		{Name: "删除weibo已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
 	}
 }
 
+func DeleteLock() {
+	service.RunnerLocker.LockRun("删除weibo已读", time.Minute*2, Delete)
+}
 func Delete() {
 	var feeds []map[string]any
 	db.MySQLClient.Table("freshrss.t_admin_feed").

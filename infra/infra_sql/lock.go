@@ -12,7 +12,7 @@ import (
 type DbLocker[T any] struct {
 	Client       *sql.DB
 	TableCreated bool
-	// mu     sync.Mutex
+	// mu           sync.Mutex
 }
 
 func NewLocker[T any](c *sql.DB) *DbLocker[T] {
@@ -21,11 +21,13 @@ func NewLocker[T any](c *sql.DB) *DbLocker[T] {
 
 func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	// if !l.mu.TryLock() {
+	// 	slog.Debug("原生锁")
 	// 	return false
 	// }
 	// defer l.mu.Unlock()
 
 	if err := l.prepare(); err != nil {
+		slog.Debug("lock表准备", "err", err)
 		return false
 	}
 
@@ -34,6 +36,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	_ = row.Scan(&expAt)
 	// 现有锁未过期
 	if expAt > 0 && time.Now().UnixNano() < expAt*1e6 {
+		slog.Debug("现有锁未过期", "expAt", expAt*1e6)
 		return false
 	}
 
@@ -43,6 +46,9 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	}
 	endAt := time.Now().Add(exp).UnixNano() / 1e6
 	_, err := l.Client.Exec(_sql, endAt, key)
+	if err != nil {
+		slog.Debug("加锁sql执行失败", "key", key, "sql", _sql, "error", err)
+	}
 	return err == nil
 }
 
@@ -82,6 +88,7 @@ func (l *DbLocker[T]) prepare() error {
 		return fmt.Errorf("暂不支持的数据库类型:%s", driverType)
 	}
 	if _, err := l.Client.Exec(sqlText); err != nil {
+		slog.Debug("建表失败", "err", err)
 		return fmt.Errorf("建表失败:%s", sqlText)
 	}
 	l.TableCreated = true
@@ -99,7 +106,7 @@ func (l *DbLocker[T]) Unlock(key T) bool {
 }
 func (l *DbLocker[T]) LockRun(key T, exp time.Duration, fn func()) {
 	if l.TryLock(key, exp) {
-		// defer l.Unlock(key)
+		defer l.Unlock(key)
 		fn()
 	} else {
 		slog.Warn("加锁失败", "key", key)
