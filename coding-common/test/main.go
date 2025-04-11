@@ -2,6 +2,7 @@ package test
 
 import (
 	"errors"
+	"fmt"
 	"runtime"
 	"strings"
 	"testing"
@@ -47,4 +48,24 @@ func printCallerName() string {
 	name := runtime.FuncForPC(pc).Name()
 	index := strings.LastIndex(name, "/") + 1
 	return name[index:]
+}
+
+func BeforeTest(caseName string, prepare func()) func() {
+	return BeforeAfterTest(caseName, prepare, nil)
+}
+func AfterTest(caseName string, post func()) func() {
+	return BeforeAfterTest(caseName, nil, post)
+}
+func BeforeAfterTest(caseName string, prepare, post func()) func() {
+	fmt.Println(caseName, "----------测试用例开始----------")
+	if prepare != nil {
+		prepare()
+	}
+
+	return func() {
+		if post != nil {
+			post()
+		}
+		fmt.Println(caseName, "----------测试用例结束----------")
+	}
 }

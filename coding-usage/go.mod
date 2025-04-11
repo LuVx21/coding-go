@@ -36,6 +36,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/go-co-op/gocron/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.26.0
+	github.com/go-redis/redis_rate/v10 v10.0.1
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-sql-driver/mysql v1.9.1
 	github.com/gocolly/colly v1.2.0
@@ -61,6 +62,7 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
 	github.com/luvx21/coding-go/coding-common v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250403144701-b7be35335668
 	github.com/luvx21/coding-go/infra/logs v0.0.0-20250403144701-b7be35335668
 	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250403144701-b7be35335668
 	github.com/marcboeker/go-duckdb v1.8.5
@@ -107,6 +109,7 @@ require (
 	github.com/apache/dubbo-go-hessian2 v1.12.5 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
+	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
 	github.com/charmbracelet/colorprofile v0.3.0 // indirect
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect

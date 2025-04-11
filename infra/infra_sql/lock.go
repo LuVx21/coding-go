@@ -35,8 +35,8 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	var expAt int64
 	_ = row.Scan(&expAt)
 	// 现有锁未过期
-	if expAt > 0 && time.Now().UnixNano() < expAt*1e6 {
-		slog.Debug("现有锁未过期", "expAt", expAt*1e6)
+	if expAt > 0 && time.Now().UnixMilli() < expAt {
+		slog.Debug("现有锁未过期", "expAt", expAt)
 		return false
 	}
 
@@ -44,7 +44,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	if expAt > 0 {
 		_sql = "update common_lock set value = ? where lock_key = ?"
 	}
-	endAt := time.Now().Add(exp).UnixNano() / 1e6
+	endAt := time.Now().Add(exp).UnixMilli()
 	_, err := l.Client.Exec(_sql, endAt, key)
 	if err != nil {
 		slog.Debug("加锁sql执行失败", "key", key, "sql", _sql, "error", err)
