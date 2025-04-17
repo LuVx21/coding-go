@@ -90,9 +90,30 @@
         "baseUrl": "https://openrouter.ai/api",
         "apiKey": "OPENROUTER_KEY",
         "modelIds": [
+            "microsoft/mai-ds-r1:free",
             "deepseek/deepseek-chat-v3-0324:free",
             "deepseek/deepseek-r1:free",
             "deepseek/deepseek-r1-zero:free"
+        ]
+    },
+    {
+        "baseUrl": "https://my-openai-gemini-kohl-iota.vercel.app",
+        "apiKey": "GEMINI_KEY",
+        "modelIds": [
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-thinking-exp",
+            "gemini-2.5-pro-exp-03-25",
+            "gemini-2.5-pro-preview-03-25"
+        ]
+    },
+    {
+        "baseUrl": "https://api.qnaigc.com",
+        "apiKey": "QINIU_KEY",
+        "modelIds": [
+            "deepseek-v3",
+            "deepseek-r1",
+            "deepseek-r1-search",
+            "deepseek-r1-32b"
         ]
     }
 ]

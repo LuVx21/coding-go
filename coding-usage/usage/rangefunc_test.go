@@ -68,7 +68,7 @@ func Test_rangefunc_00(t *testing.T) {
 
 func Test_rangefunc_01(t *testing.T) {
 	var fn = func(fun BiPredicate[int, byte]) {
-		for i := 0; i < 26; i++ {
+		for i := range 26 {
 			if !fun(i, byte('a'+i)) {
 				return
 			}

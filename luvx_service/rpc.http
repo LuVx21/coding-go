@@ -1,0 +1,8 @@
+@host = localhost:18888
+
+###
+GRPC {{host}}/proto.Greeter/SayHello
+
+{
+  "name": "开始"
+}

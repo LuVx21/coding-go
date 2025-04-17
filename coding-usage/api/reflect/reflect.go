@@ -15,7 +15,7 @@ func main() {
 	}
 
 	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		vField := v.Field(i)
 		fmt.Println(vField.Interface())
 

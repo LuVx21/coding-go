@@ -80,9 +80,7 @@ func loadModels(path string) (map[int32]*ai.Model, string) {
 	t := table.NewWriter()
 	t.SetTitle("所有模型")
 	t.AppendHeader(table.Row{"No", "模型", "服务商"})
-	for _, row := range rows {
-		t.AppendRow(row, rowConfigAutoMerge)
-	}
+	t.AppendRows(rows, rowConfigAutoMerge)
 	t.SetColumnConfigs([]table.ColumnConfig{
 		{Number: 3, AutoMerge: true, Align: text.AlignRight},
 	})

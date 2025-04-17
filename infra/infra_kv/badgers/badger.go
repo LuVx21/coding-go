@@ -1,18 +1,66 @@
-package badger
+package badgers
 
 import (
+	"context"
 	"time"
 
 	"github.com/dgraph-io/badger/v4"
+	"github.com/dgraph-io/badger/v4/pb"
+	"github.com/dgraph-io/ristretto/v2/z"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
+	"google.golang.org/protobuf/proto"
 )
 
-func ListByPrefix(db *badger.DB) (map[string][]byte, error) {
+func ListKeyByPrefixStream(db *badger.DB, prefix []byte) ([][]byte, error) {
+	r := make([][]byte, 0)
+	stream := db.NewStream()
+	stream.NumGo = 16
+	if len(prefix) > 0 {
+		stream.Prefix = prefix
+	}
+	stream.Send = func(buf *z.Buffer) error {
+		return buf.SliceIterate(func(s []byte) error {
+			kv := new(pb.KV)
+			if err := proto.Unmarshal(s, kv); err != nil {
+				return err
+			}
+			if kv.StreamDone == true {
+				return nil
+			}
+			r = append(r, kv.Key)
+			return nil
+		})
+	}
+	err := stream.Orchestrate(context.Background())
+	return r, err
+}
+
+func ListByPrefixStream(db *badger.DB, prefix []byte) (map[string][]byte, error) {
+	r := make(map[string][]byte)
+	stream := db.NewStream()
+	stream.NumGo = 16
+	stream.Prefix = prefix
+	stream.Send = func(buf *z.Buffer) error {
+		return buf.SliceIterate(func(s []byte) error {
+			kv := new(pb.KV)
+			if err := proto.Unmarshal(s, kv); err != nil {
+				return err
+			}
+			if kv.StreamDone == true {
+				return nil
+			}
+			r[string(kv.Key)] = kv.Value
+			return nil
+		})
+	}
+	err := stream.Orchestrate(context.Background())
+	return r, err
+}
+func ListByPrefix(db *badger.DB, prefix []byte) (map[string][]byte, error) {
 	r := make(map[string][]byte)
 	err := db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix := []byte("1234")
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
 			item := it.Item()
 			k := item.Key()
@@ -65,6 +113,18 @@ func Set(db *badger.DB, key, value []byte, exp time.Duration) error {
 		return txn.SetEntry(entry)
 	})
 	return err
+}
+
+func Exist(db *badger.DB, keys ...string) map[string]bool {
+	r := make(map[string]bool, len(keys))
+	_ = db.View(func(txn *badger.Txn) error {
+		for _, k := range keys {
+			item, err := txn.Get([]byte(k))
+			r[k] = (len(k) > 0 && item != nil && err != badger.ErrKeyNotFound)
+		}
+		return nil
+	})
+	return r
 }
 
 func GetStr(db *badger.DB, key string) ([]byte, bool) {

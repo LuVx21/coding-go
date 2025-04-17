@@ -12,3 +12,7 @@ func Test_00(t *testing.T) {
 
 	fmt.Println(deepseek, siliconflow, volces)
 }
+
+func Test_ai(t *testing.T) {
+	fmt.Println(Models("api.deepseek.com", "DEEPSEEK_KEY"))
+}

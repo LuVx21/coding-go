@@ -1,5 +1,7 @@
 package jsonpicker
 
+import "slices"
+
 type Map struct {
 	innerMap map[any]any
 }
@@ -56,12 +58,7 @@ func (m *Map) EntrySet() []MapEntry {
 
 func (m *Map) ContainsValue(value any) bool {
 	values := m.Values()
-	for _, e := range values.innerSlice {
-		if e == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(values.innerSlice, value)
 }
 
 func NewMap() *Map {

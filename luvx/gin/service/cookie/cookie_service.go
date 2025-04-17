@@ -24,6 +24,7 @@ import (
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
 	"github.com/luvx21/coding-go/infra/logs"
 	"golang.org/x/crypto/pbkdf2"
+	"maps"
 )
 
 var (
@@ -40,9 +41,7 @@ func GetCookieStrByHost(hosts ...string) string {
 	resultMap := make(map[string]string)
 	for _, host := range hosts {
 		tt := GetCookieByHostCache(host)
-		for k, v := range tt {
-			resultMap[k] = v
-		}
+		maps.Copy(resultMap, tt)
 	}
 	return maps_x.Join(resultMap, "=", "; ")
 }
@@ -98,7 +97,7 @@ order by host_key, name
 ;
 `
 	var args string
-	for i := 0; i < len(hosts); i++ {
+	for i := range hosts {
 		args += lcommon.IfThen(i == 0, "", ", ") + fmt.Sprintf("'%s'", hosts[i])
 	}
 	_sql = fmt.Sprintf(_sql, args)

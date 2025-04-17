@@ -54,6 +54,9 @@ func Register0(r *gin.Engine) {
 
 	cache := r.Group("/cache")
 	cache.GET("clear", controller.ClearCache)
+
+	kv := r.Group("/kv")
+	kv.GET("get", controller.KvGet)
 }
 
 func RegisterUser(r *gin.Engine) {

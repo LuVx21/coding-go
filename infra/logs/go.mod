@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250412082033-7367dd329551
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.3
 )
@@ -24,4 +24,5 @@ require (
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/term v0.31.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )

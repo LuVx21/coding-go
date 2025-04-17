@@ -74,7 +74,7 @@ func (root *TreeNode[T]) String1() string {
 		var isBreak bool = true
 		size := len(queue)
 		row := make([]T, 0)
-		for i := 0; i < size; i++ {
+		for range size {
 			node := queue[len(queue)-1]
 			queue = queue[:len(queue)-1]
 			if node == nil {

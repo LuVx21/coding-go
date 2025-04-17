@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"slices"
 )
 
 // Collection 主体
@@ -269,7 +270,7 @@ func (c *Collection[T]) Remove(index int) *Collection[T] {
 		return c
 	}
 
-	c.value = append(c.value[:index], c.value[index+1:]...)
+	c.value = slices.Delete(c.value, index, index+1)
 	return c
 }
 
@@ -453,7 +454,7 @@ func (c *Collection[T]) Merge(arr *Collection[T]) *Collection[T] {
 	}
 
 	res := c.Copy()
-	for i := 0; i < arr.Count(); i++ {
+	for i := range arr.Count() {
 		res.value = append(res.value, arr.Index(i))
 	}
 	return res
@@ -532,7 +533,7 @@ func (c *Collection[T]) Pad(count int, def T) *Collection[T] {
 		return c.Copy()
 	}
 	res := make([]T, count)
-	for i := 0; i < len(c.value); i++ {
+	for i := range c.value {
 		res[i] = c.value[i]
 	}
 	for i := len(c.value); i < count; i++ {
@@ -615,10 +616,7 @@ func (c *Collection[T]) Split(size int) []*Collection[T] {
 	}
 	var res []*Collection[T]
 	for i := 0; i < len(c.value); i += size {
-		end := i + size
-		if end > len(c.value) {
-			end = len(c.value)
-		}
+		end := min(i+size, len(c.value))
 		res = append(res, NewCollection(c.value[i:end]))
 	}
 	return res

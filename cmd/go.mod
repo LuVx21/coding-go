@@ -4,19 +4,19 @@ go 1.24.2
 
 require (
 	github.com/atotto/clipboard v0.1.4
-	github.com/charmbracelet/bubbles v0.20.0
+	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.4
 	github.com/charmbracelet/glamour v0.9.1
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jedib0t/go-pretty/v6 v6.6.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250403144701-b7be35335668
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250403144701-b7be35335668
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250403144701-b7be35335668
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250403144701-b7be35335668
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250412082033-7367dd329551
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250412082033-7367dd329551
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250412082033-7367dd329551
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
-	github.com/urfave/cli/v3 v3.1.1
+	github.com/tursodatabase/go-libsql v0.0.0-20250416102726-983f7e9acb0e
+	github.com/urfave/cli/v3 v3.2.0
 	go.etcd.io/bbolt v1.4.0
 	golang.org/x/time v0.11.0
 )
@@ -24,9 +24,9 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/alecthomas/chroma/v2 v2.16.0 // indirect
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
-	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/charmbracelet/colorprofile v0.3.0 // indirect
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
@@ -36,8 +36,8 @@ require (
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
+	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

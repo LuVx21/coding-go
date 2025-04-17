@@ -3,6 +3,7 @@ package jsonpicker
 import (
 	"encoding/json"
 	"reflect"
+	"slices"
 )
 
 type KeyStringMap struct {
@@ -50,7 +51,7 @@ func deepGet(j IJsonValue, key string) IJsonValue {
 		if maps.Len() == 0 {
 			return nil
 		} else {
-			for i := 0; i < maps.Len(); i++ {
+			for i := range maps.Len() {
 				jj := JsonValue{value: maps.GetAt(i)}
 				rr := deepGet(jj, key)
 				if rr != nil && rr.Value() != nil {
@@ -117,7 +118,7 @@ func mapDeepGet(m *KeyStringMap, key string) IJsonValue {
 		if maps.Len() == 0 {
 			return nil
 		} else {
-			for i := 0; i < maps.Len(); i++ {
+			for i := range maps.Len() {
 				jj := ConvKSMap(maps.GetAt(i))
 				rr := mapDeepGet(jj, key)
 				if rr != nil && rr.Value() != nil {
@@ -176,12 +177,7 @@ func (m KeyStringMap) EntrySet() []KSMapEntry {
 
 func (m KeyStringMap) ContainsValue(value any) bool {
 	values := m.Values()
-	for _, e := range values.innerSlice {
-		if e == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(values.innerSlice, value)
 }
 
 func NewKSMap() *KeyStringMap {

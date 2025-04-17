@@ -7,7 +7,7 @@ import (
 
 	"github.com/dgraph-io/badger/v4"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
-	infra_badger "github.com/luvx21/coding-go/infra/infra_kv/badger"
+	infra_badger "github.com/luvx21/coding-go/infra/infra_kv/badgers"
 )
 
 type BadgerLocker[T any] struct {

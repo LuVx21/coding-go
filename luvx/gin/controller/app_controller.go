@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"luvx_service_sdk/proto_gen/proto_kv"
 	"sync"
 
 	"luvx/gin/common/consts"
@@ -9,10 +10,11 @@ import (
 	"luvx/gin/db"
 	"luvx/gin/model"
 	"luvx/gin/service/cookie"
+	"luvx/gin/service/rpc"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/set"
+	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
 	"go.mongodb.org/mongo-driver/bson"
@@ -88,10 +90,8 @@ func HealthyCheck(c *gin.Context) {
 	})
 }
 
-var ignoreHeaders = set.Set[string]{
-	"x-frame-options": struct{}{},
-	"X-Frame-Options": struct{}{},
-}
+var ignoreHeaders = sets.NewSet("x-frame-options", "X-Frame-Options")
+
 
 func Redirect(c *gin.Context) {
 	toUrl := c.Query("url")
@@ -124,4 +124,10 @@ func ClearCache(c *gin.Context) {
 	_ = cookie.ClearCache()
 
 	responsex.R(c, "ok")
+}
+
+func KvSet(c *gin.Context) {}
+func KvGet(c *gin.Context) {
+	gr, _ := rpc.KvRpcClient.Get(context.Background(), &proto_kv.Key{Key: c.Query("key")})
+	responsex.R(c, string(gr.Value))
 }

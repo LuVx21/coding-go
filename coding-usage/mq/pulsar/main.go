@@ -104,7 +104,7 @@ func consumer(client pulsar.Client) {
 		consumer, _ := client.Subscribe(options)
 		defer consumer.Close()
 
-		for i := 0; i < 100; i++ {
+		for range 100 {
 			if msg, err := consumer.Receive(context.Background()); err != nil {
 				log.Fatal(err)
 			} else {

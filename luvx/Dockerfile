@@ -16,7 +16,6 @@ FROM ${REGISTRY}alpine:3.21
 WORKDIR /app
 ENV log_LogDir=/root/data/logs TZ=Asia/Shanghai
 COPY --from=builder /build/luvx .
-COPY config/config-dev.yml config/config-dev.yml
 
 # 将时区设置为东八区
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \

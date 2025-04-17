@@ -104,7 +104,7 @@ func (param SpiderParam) Visit() []PageContent {
 			return result
 		}
 		_max := min(len(indexList), paramConfig.CountInPage)
-		for k := 0; k < _max; k++ {
+		for k := range _max {
 			element := indexList[k]
 			title := strings.TrimSpace(getValue1(element, paramConfig.IndexItemTitleRule))
 			href := getValue1(element, paramConfig.IndexItemUrlRule)
@@ -155,8 +155,8 @@ func request(name, pageUrl string) (*goquery.Document, error) {
 
 func getValueListAfterSelect(element *goquery.Selection, rule QueryRule) []string {
 	elementQuery := rule.ElementQuery
-	split := strings.Split(elementQuery, "|")
-	for _, eq := range split {
+	split := strings.SplitSeq(elementQuery, "|")
+	for eq := range split {
 		result := make([]string, 0, 8)
 		element.Find(eq).Each(func(i int, s *goquery.Selection) {
 			value := getValue(s, rule.ValueQuery)
@@ -177,8 +177,8 @@ func getValue1(element *goquery.Selection, rule QueryRule) string {
 	if strings_x.IsBlank(elementQuery) {
 		return getValue(element, rule.ValueQuery)
 	}
-	split := strings.Split(elementQuery, "|")
-	for _, eq := range split {
+	split := strings.SplitSeq(elementQuery, "|")
+	for eq := range split {
 		first := element.Find(eq).First()
 		if first == nil {
 			continue

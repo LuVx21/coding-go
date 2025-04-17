@@ -33,7 +33,7 @@ func main() {
 		demoFunc()
 		wg.Done()
 	}
-	for i := 0; i < runTimes; i++ {
+	for range runTimes {
 		wg.Add(1)
 		_ = ants.Submit(syncCalculateSum)
 	}
@@ -49,7 +49,7 @@ func main() {
 	})
 	defer p.Release()
 	// Submit tasks one by one.
-	for i := 0; i < runTimes; i++ {
+	for i := range runTimes {
 		wg.Add(1)
 		_ = p.Invoke(int32(i))
 	}
@@ -65,7 +65,7 @@ func main() {
 	// There are two load-balancing algorithms for pools: ants.RoundRobin and ants.LeastTasks.
 	mp, _ := ants.NewMultiPool(10, -1, ants.RoundRobin)
 	defer mp.ReleaseTimeout(5 * time.Second)
-	for i := 0; i < runTimes; i++ {
+	for range runTimes {
 		wg.Add(1)
 		_ = mp.Submit(syncCalculateSum)
 	}
@@ -79,7 +79,7 @@ func main() {
 		wg.Done()
 	}, ants.LeastTasks)
 	defer mpf.ReleaseTimeout(5 * time.Second)
-	for i := 0; i < runTimes; i++ {
+	for i := range runTimes {
 		wg.Add(1)
 		_ = mpf.Invoke(int32(i))
 	}

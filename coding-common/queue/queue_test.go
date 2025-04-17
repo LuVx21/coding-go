@@ -40,7 +40,7 @@ func Test_block_queue(t *testing.T) {
 	q := blockingqueue.New[int]()
 
 	go func() {
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			q.Offer(i)
 			fmt.Println("Produced:", i)
 			time.Sleep(500 * time.Millisecond)
@@ -48,7 +48,7 @@ func Test_block_queue(t *testing.T) {
 	}()
 
 	go func() {
-		for i := 0; i < 5; i++ {
+		for range 5 {
 			item := q.Poll()
 			fmt.Println("Consumed:", item)
 		}

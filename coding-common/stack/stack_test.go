@@ -34,7 +34,7 @@ func Test_block_stack(t *testing.T) {
 
 	// 生产者
 	go func() {
-		for i := 0; i < 5; i++ {
+		for i := range 5 {
 			s.Push(i)
 			fmt.Println("Pushed:", i)
 			time.Sleep(500 * time.Millisecond)
@@ -43,7 +43,7 @@ func Test_block_stack(t *testing.T) {
 
 	// 消费者
 	go func() {
-		for i := 0; i < 5; i++ {
+		for range 5 {
 			item, _ := s.Pop()
 			fmt.Println("Popped:", item)
 		}

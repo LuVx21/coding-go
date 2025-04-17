@@ -115,7 +115,7 @@ func (m *tui) View() string {
 }
 
 func sendOpenAIRequest(m *tui, query string) error {
-	res, err := curModel.Request(query, true)
+	res, err := curModel.Request(true, query)
 	if err != nil {
 		fmt.Printf("请求接口失败,模型:%s, 服务商:%s\n", curModel.Id, curModel.Sp.BaseUrl)
 		return err

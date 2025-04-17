@@ -1,191 +1,208 @@
 package maps_x
 
 import (
-    "fmt"
-    "github.com/luvx21/coding-go/coding-common/reflects"
-    "golang.org/x/exp/maps"
-    "reflect"
+	"fmt"
+	"reflect"
+	"strings"
+
+	"github.com/luvx21/coding-go/coding-common/reflects"
+	"golang.org/x/exp/maps"
+	maps0 "maps"
 )
 
 func Merge[M ~map[K]V, K comparable, V any](m1, m2 M, replace bool) M {
-    r := make(M, len(m1)+len(m2))
-    for sk, sv := range m1 {
-        r[sk] = sv
-    }
-    for sk, sv := range m2 {
-        if _, ok := r[sk]; !ok || replace {
-            r[sk] = sv
-        }
-    }
-    return r
+	r := make(M, len(m1)+len(m2))
+	maps0.Copy(r, m1)
+	for sk, sv := range m2 {
+		if _, ok := r[sk]; !ok || replace {
+			r[sk] = sv
+		}
+	}
+	return r
 }
 
 func Clone[M ~map[K]V, K comparable, V any](m M) M {
-    return Filter(m, func(k K, v V) bool { return true })
+	return Filter(m, func(k K, v V) bool { return true })
 }
 
 func Filter[M ~map[K]V, K comparable, V any](m M, f func(K, V) bool) M {
-    r := make(M, len(m))
-    for k, v := range m {
-        if f(k, v) {
-            r[k] = v
-        }
-    }
-    return r
+	r := make(M, len(m))
+	for k, v := range m {
+		if f(k, v) {
+			r[k] = v
+		}
+	}
+	return r
 }
 
 func Join[M ~map[K]V, K comparable, V any](m M, kvLink, eLink string) string {
-    var result string
-    keys := maps.Keys(m)
-    for i, k := range keys {
-        v := m[k]
-        result += fmt.Sprintf("%v%s%v", k, kvLink, v)
-        if i < len(keys)-1 {
-            result += eLink
-        }
-    }
-    return result
+	return JoinMapper(m, kvLink, eLink, nil, nil)
+}
+
+// JoinMapper kvLink: kv连接符, eLink: entry连接符, keyMapper,valueMapper: k,v的映射器
+func JoinMapper[M ~map[K]V, K comparable, V any](m M,
+	kvLink, eLink string,
+	keyMapper func(K) string, valueMapper func(V) string) string {
+	var sb strings.Builder
+	var result string
+	keys := maps.Keys(m)
+	for i, k := range keys {
+		v := m[k]
+		var kk, vv any = k, v
+		if keyMapper != nil {
+			kk = keyMapper(k)
+		}
+		if valueMapper != nil {
+			vv = valueMapper(v)
+		}
+		sb.WriteString(fmt.Sprintf("%v%s%v", kk, kvLink, vv))
+		if i < len(keys)-1 {
+			result += eLink
+			sb.WriteString(eLink)
+		}
+	}
+	return sb.String()
 }
 
 func RemoveIf[M ~map[K]V, K comparable, V any](m M, f func(K, V) bool) {
-    for k, v := range m {
-        if f(k, v) {
-            delete(m, k)
-        }
-    }
+	for k, v := range m {
+		if f(k, v) {
+			delete(m, k)
+		}
+	}
 }
 
 func GetOrDefault[M ~map[K]V, K comparable, V any](m M, k K, defaultV V) V {
-    if v, exist := m[k]; exist {
-        return v
-    } else {
-        return defaultV
-    }
+	if v, exist := m[k]; exist {
+		return v
+	} else {
+		return defaultV
+	}
 }
 
 func Compute[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V) V {
-    var zero V
-    oldValue, exist := m[k]
-    newValue := f(k, oldValue)
+	var zero V
+	oldValue, exist := m[k]
+	newValue := f(k, oldValue)
 
-    if reflects.IsNil(newValue) {
-        if !reflects.IsNil(oldValue) || exist {
-            delete(m, k)
-            return zero
-        } else {
-            return zero
-        }
-    } else {
-        m[k] = newValue
-        return newValue
-    }
+	if reflects.IsNil(newValue) {
+		if !reflects.IsNil(oldValue) || exist {
+			delete(m, k)
+			return zero
+		} else {
+			return zero
+		}
+	} else {
+		m[k] = newValue
+		return newValue
+	}
 }
 
 func ComputeIfAbsent[M ~map[K]V, K comparable, V any](m M, k K, f func(K) V) V {
-    oldValue := m[k]
-    if reflects.IsNil(oldValue) {
-        newValue := f(k)
-        if !reflects.IsNil(newValue) {
-            m[k] = newValue
-            return newValue
-        }
-    }
-    return oldValue
+	oldValue := m[k]
+	if reflects.IsNil(oldValue) {
+		newValue := f(k)
+		if !reflects.IsNil(newValue) {
+			m[k] = newValue
+			return newValue
+		}
+	}
+	return oldValue
 }
 
 func ComputeIfPresent[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V) V {
-    var zero V
-    oldValue := m[k]
-    if !reflects.IsNil(oldValue) {
-        newValue := f(k, oldValue)
-        if !reflects.IsNil(newValue) {
-            m[k] = newValue
-            return newValue
-        } else {
-            delete(m, k)
-            return zero
-        }
-    } else {
-        return oldValue
-    }
+	var zero V
+	oldValue := m[k]
+	if !reflects.IsNil(oldValue) {
+		newValue := f(k, oldValue)
+		if !reflects.IsNil(newValue) {
+			m[k] = newValue
+			return newValue
+		} else {
+			delete(m, k)
+			return zero
+		}
+	} else {
+		return oldValue
+	}
 }
 
 func GetInt[M ~map[K]any, K comparable](m M, key K, _default int) (int, error) {
-    val, err := GetByKey(m, key, reflect.Int, _default)
-    if err != nil {
-        return _default, err
-    }
+	val, err := GetByKey(m, key, reflect.Int, _default)
+	if err != nil {
+		return _default, err
+	}
 
-    return val.(int), err
+	return val.(int), err
 }
 
 func GetInt64[M ~map[K]any, K comparable](m M, key K, _default int64) (int64, error) {
-    val, err := GetByKey[M, K](m, key, reflect.Int64, _default)
-    if err != nil {
-        return _default, err
-    }
+	val, err := GetByKey[M, K](m, key, reflect.Int64, _default)
+	if err != nil {
+		return _default, err
+	}
 
-    return val.(int64), err
+	return val.(int64), err
 }
 
 func GetFloat[M ~map[K]any, K comparable](m M, key K, _default float64) (float64, error) {
-    val, err := GetByKey(m, key, reflect.Float64, _default)
-    if err != nil {
-        return _default, err
-    }
+	val, err := GetByKey(m, key, reflect.Float64, _default)
+	if err != nil {
+		return _default, err
+	}
 
-    return val.(float64), err
+	return val.(float64), err
 }
 
 func GetMap[M ~map[K]any, K, NK comparable, NV any](m M, key K, _default map[NK]NV) (map[NK]NV, error) {
-    val, err := GetByKey(m, key, reflect.Map, _default)
-    if err != nil {
-        return _default, err
-    }
+	val, err := GetByKey(m, key, reflect.Map, _default)
+	if err != nil {
+		return _default, err
+	}
 
-    return val.(map[NK]NV), nil
+	return val.(map[NK]NV), nil
 }
 
 func GetString[M ~map[K]any, K comparable](m M, key K, _default string) (string, error) {
-    val, err := GetByKey(m, key, reflect.String, _default)
-    if err != nil {
-        return _default, err
-    }
+	val, err := GetByKey(m, key, reflect.String, _default)
+	if err != nil {
+		return _default, err
+	}
 
-    return val.(string), err
+	return val.(string), err
 }
 
 func GetSlice[M ~map[K]any, K comparable, E any](m M, key K, _default []E) ([]E, error) {
-    val, err := GetByKey(m, key, reflect.Slice, _default)
-    if err != nil {
-        return _default, err
-    }
-    return val.([]E), err
+	val, err := GetByKey(m, key, reflect.Slice, _default)
+	if err != nil {
+		return _default, err
+	}
+	return val.([]E), err
 }
 
 func GetInterface[M ~map[K]any, K comparable](m M, key K, _default any) (any, error) {
-    val, ok := m[key]
-    if !ok {
-        val = _default
-    }
+	val, ok := m[key]
+	if !ok {
+		val = _default
+	}
 
-    return val, nil
+	return val, nil
 }
 
 func GetByKey[M ~map[K]any, K comparable](m M, key K, vType reflect.Kind, _default any) (any, error) {
-    if m == nil || len(m) == 0 {
-        return _default, nil
-    }
+	if m == nil || len(m) == 0 {
+		return _default, nil
+	}
 
-    val, ok := m[key]
-    if !ok {
-        return _default, nil
-    }
+	val, ok := m[key]
+	if !ok {
+		return _default, nil
+	}
 
-    vk := reflect.ValueOf(val).Kind()
-    if vk != vType {
-        return nil, fmt.Errorf("非法值类型-> 实际:%s 预期:%s", vk.String(), vType.String())
-    }
+	vk := reflect.ValueOf(val).Kind()
+	if vk != vType {
+		return nil, fmt.Errorf("非法值类型-> 实际:%s 预期:%s", vk.String(), vType.String())
+	}
 
-    return val, nil
+	return val, nil
 }

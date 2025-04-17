@@ -19,7 +19,7 @@ func ToMap(in any, tagName string) (map[string]any, error) {
 	result := make(map[string]any)
 	t := v.Type()
 	// 遍历结构体字段
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		vf := v.Field(i)
 		field := t.Field(i)
 		if vf.Kind() == reflect.Pointer {
@@ -59,7 +59,7 @@ func ToSingleMap(in any, tag string) (map[string]any, error) {
 		}
 		queue = queue[1:]
 		t := v.Type()
-		for i := 0; i < v.NumField(); i++ {
+		for i := range v.NumField() {
 			field := v.Field(i)
 			kind := field.Kind()
 			ti := t.Field(i)

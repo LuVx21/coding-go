@@ -20,3 +20,8 @@ func JsonStringToArray[E any, S ~[]E](s string) (S, error) {
 	err := json.Unmarshal([]byte(s), &slice)
 	return slice, err
 }
+
+func ToJsonString(a any) string {
+	bytes, _ := json.Marshal(a)
+	return string(bytes)
+}

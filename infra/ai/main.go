@@ -9,10 +9,6 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
-const (
-	AI_KEY = ""
-)
-
 type ServiceProvider struct {
 	BaseUrl  string   `json:"baseUrl"`
 	ApiKey   string   `json:"apiKey"`
@@ -21,6 +17,10 @@ type ServiceProvider struct {
 
 func NewServiceProvider(key, token string, modelIds ...string) *ServiceProvider {
 	return &ServiceProvider{BaseUrl: key, ApiKey: token, ModelIds: modelIds}
+}
+
+func (sp *ServiceProvider) OnlineModels() []Model {
+	return nil
 }
 
 func (sp *ServiceProvider) ToModels() []Model {
@@ -49,10 +49,11 @@ type Model struct {
 	Sp *ServiceProvider
 }
 
-func (m *Model) Request(question string, stream bool) (*http.Response, error) {
+func (m *Model) Request(stream bool, questions ...string) (*http.Response, error) {
+	messages := slices_x.Transfer(func(question string) Message { return Message{"user", question} }, questions...)
 	r := &ChatRequest{
 		Model:       m.Id,
-		Messages:    []Message{{"user", question}},
+		Messages:    messages,
 		Stream:      stream,
 		MaxTokens:   2048,
 		Temperature: 0.7,

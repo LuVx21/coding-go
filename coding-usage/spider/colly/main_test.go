@@ -14,10 +14,15 @@ import (
 	"github.com/luvx21/coding-go/infra/logs"
 )
 
-func Test01(t *testing.T) {
+func Test01(tt *testing.T) {
+	t := &http.Transport{}
+	t.RegisterProtocol("file", http.NewFileTransport(http.Dir("/")))
+
 	c := colly.NewCollector()
+	c.WithTransport(t)
 
 	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36 Edg/129.0.0.0'")
 		fmt.Println("Visiting", r.URL.String())
 	})
 
@@ -44,6 +49,8 @@ func Test01(t *testing.T) {
 		}
 	})
 
+	// path := ""
+	// c.Visit("file://" + path)
 	c.Visit("")
 }
 

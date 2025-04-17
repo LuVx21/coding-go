@@ -6,6 +6,12 @@ import (
 	"os/exec"
 )
 
+const (
+	ENV_HTTP_PROXY  = "http_proxy"
+	ENV_HTTPS_PROXY = "https_proxy"
+	ENV_ALL_PROXY   = "all_proxy"
+)
+
 func Getenv(key string) string {
 	v, b := LookupEnv(key, "")
 	if !b {

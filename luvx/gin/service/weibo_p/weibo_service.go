@@ -3,6 +3,7 @@ package weibo_p
 import (
 	"context"
 	"fmt"
+	"luvx_service_sdk/proto_gen/proto_kv"
 	"math"
 	"regexp"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 	"luvx/gin/service"
 	commonkvservice "luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
+	"luvx/gin/service/rpc"
 
 	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
@@ -23,12 +25,14 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	. "github.com/luvx21/coding-go/coding-common/common_x/pairs"
+	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/ids"
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/maths_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
+	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/logs"
@@ -170,9 +174,7 @@ func PullByUser(uid int64) {
 }
 
 func PullByGroupLock() {
-	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
-		PullByGroup()
-	})
+	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, PullByGroup)
 }
 
 func PullByGroup() {
@@ -206,7 +208,7 @@ func PullByGroup() {
 			return i <= 0
 		},
 	)
-	arr := make([]any, 0)
+	feeds := make([]any, 0)
 	iterator.ForEachRemaining(func(item any) {
 		feed := item.(map[string]any)
 		id := cast_x.ToInt64(feed["id"])
@@ -217,13 +219,33 @@ func PullByGroup() {
 		if ret != nil {
 			f := ret.(map[string]any)
 			feed["retweeted_status"] = parseAndSaveFeed(f, true)
-			arr = append(arr, f)
+			feeds = append(feeds, f)
 		}
 		parseAndSaveFeed(feed, false)
-		arr = append(arr, feed)
+		feeds = append(feeds, feed)
 	})
 
-	arrs := slices_x.Partition(arr, 5)
+	runs.Go(func() {
+		if rpc.KvRpcClient != nil {
+			urls := slices_x.FlatMap(feeds, func(feed any) []string { return feed.(map[string]any)["pic_ids"].([]string) })
+			toSave := sets.NewSet(urls...)
+			for _url := range *toSave {
+				_, err := rpc.KvRpcClient.Get(context.TODO(), &proto_kv.Key{Key: _url})
+				if err == nil {
+					continue
+				}
+
+				_ = consts.RateLimiter.Wait(context.TODO())
+				_, body, errors := consts.GoRequest.Get(_url).EndBytes()
+				if len(errors) > 0 {
+					continue
+				}
+				_, _ = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
+			}
+		}
+	})
+
+	arrs := slices_x.Partition(feeds, 5)
 	for i := len(arrs) - 1; i >= 0; i-- {
 		arr := arrs[i]
 		if many, e := collection.InsertMany(context.TODO(), arr); e != nil {
@@ -244,11 +266,11 @@ func PullByGroup() {
 func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	id := cast_x.ToInt64(feed["id"])
 	feed["_id"] = id
-	var r bson.M
-	_ = collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&r)
-	if r != nil {
-		return id
-	}
+	// var r bson.M
+	// _ = collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&r)
+	// if r != nil {
+	// 	return id
+	// }
 
 	// feed["extra"] = map[string]any{
 	//    "retweeted": retweeted,

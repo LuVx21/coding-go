@@ -16,3 +16,6 @@ func Test_any_00(t *testing.T) {
 		return String(v)
 	})
 }
+
+func Test_any_01(t *testing.T) {
+}

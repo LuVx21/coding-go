@@ -58,7 +58,7 @@ func Apply(t any) error {
 }
 
 func parseFields(v reflect.Value) error {
-	for i := 0; i < v.NumField(); i++ {
+	for i := range v.NumField() {
 		err := parseField(v.Field(i), v.Type().Field(i))
 		if err != nil {
 			return err

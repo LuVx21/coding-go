@@ -15,3 +15,8 @@ cgo_check:
 	go list -f '{{if .CgoFiles}}{{.ImportPath}}{{end}}' all
 	# go install github.com/visualfc/cgo-check@latest
 	# cgo-check ./...
+
+deploy:
+	sed -i '' 's|=> \.\./|=> ./|g' go.mod
+	docker compose up --build -d --scale app=2
+	sed -i '' 's|=> ./|=> \.\./|g' go.mod

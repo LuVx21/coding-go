@@ -3,6 +3,7 @@ package jsonpicker
 import (
 	"fmt"
 	"reflect"
+	"slices"
 )
 
 type Slice struct {
@@ -75,12 +76,7 @@ func (rs Slice) GetAt(index int) any {
 }
 
 func (rs Slice) Contains(p any) bool {
-	for _, r := range rs.innerSlice {
-		if r == p {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(rs.innerSlice, p)
 }
 
 func (rs *Slice) Append(v any) {
@@ -91,7 +87,7 @@ func (rs *Slice) Extend(il any) {
 	switch reflect.TypeOf(il).Kind() {
 	case reflect.Slice, reflect.Array:
 		s := reflect.ValueOf(il)
-		for i := 0; i < s.Len(); i++ {
+		for i := range s.Len() {
 			rs.Append(s.Index(i).Interface())
 		}
 	default:
@@ -102,7 +98,7 @@ func (rs *Slice) Extend(il any) {
 func (rs *Slice) Remove(v any) {
 	idx := rs.IndexOf(v)
 	if idx != -1 {
-		rs.innerSlice = append(rs.innerSlice[:idx], rs.innerSlice[idx+1:]...)
+		rs.innerSlice = slices.Delete(rs.innerSlice, idx, idx+1)
 	}
 }
 
@@ -110,7 +106,7 @@ func (rs *Slice) RemoveAll(v any) {
 	for {
 		idx := rs.IndexOf(v)
 		if idx != -1 {
-			rs.innerSlice = append(rs.innerSlice[:idx], rs.innerSlice[idx+1:]...)
+			rs.innerSlice = slices.Delete(rs.innerSlice, idx, idx+1)
 		} else {
 			break
 		}
@@ -122,7 +118,7 @@ func ConvSlice(il any) (ret *Slice) {
 	switch reflect.TypeOf(il).Kind() {
 	case reflect.Slice, reflect.Array:
 		s := reflect.ValueOf(il)
-		for i := 0; i < s.Len(); i++ {
+		for i := range s.Len() {
 			ret.Append(s.Index(i).Interface())
 		}
 	default:

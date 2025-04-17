@@ -1,0 +1,16 @@
+services:
+  rpc:
+    image: luvx/rpc_service:latest
+    container_name: rpc_service
+    networks:
+      - net_common
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "18888:18888"
+    volumes:
+      - $HOME/data:/root/data
+
+networks:
+  net_common:
+    external: true

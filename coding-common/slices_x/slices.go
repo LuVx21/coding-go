@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"sort"
 
+	"slices"
+
 	. "github.com/luvx21/coding-go/coding-common/common_x/funcs"
 	. "github.com/luvx21/coding-go/coding-common/common_x/pairs"
 	. "github.com/luvx21/coding-go/coding-common/common_x/types_x"
@@ -197,33 +199,12 @@ func AllTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
 	return true
 }
 func AnyTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
-	for _, value := range s {
-		if fn(value) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(s, fn)
 }
 
-func In[S ~[]E, E comparable](value E, safelist ...E) bool {
-	for i := range safelist {
-		if value == safelist[i] {
-			return true
-		}
-	}
-	return false
-}
 func AllIn[S ~[]E, E comparable](values S, safelist ...E) bool {
 	for i := range values {
-		if !In[S, E](values[i], safelist...) {
-			return false
-		}
-	}
-	return true
-}
-func NotIn[S ~[]E, E comparable](value E, blocklist ...E) bool {
-	for i := range blocklist {
-		if value == blocklist[i] {
+		if !slices.Contains(safelist, values[i]) {
 			return false
 		}
 	}
@@ -236,7 +217,7 @@ func IsSorted[S ~[]E, E constraints.Ordered](s S) bool {
 	})
 }
 func Sort[S ~[]E, E constraints.Ordered](s S) S {
-	return SortBy[S, E](s, func(i, j E) bool { return i < j })
+	return SortBy(s, func(i, j E) bool { return i < j })
 }
 
 // SortBy 新slice
@@ -258,12 +239,10 @@ func FirstN[S ~[]E, E any](ss S, n int) (r S) {
 	return
 }
 func LastN[S ~[]E, E any](s S, n int) (r S) {
-	var lastIndex = len(s) - 1
-	for i := lastIndex; i >= 0 && n > 0; i-- {
-		r = append(r, s[i])
-		n--
+	if len(s) < n {
+		n = len(s)
 	}
-	return
+	return s[len(s)-n:]
 }
 
 func Filter[S ~[]E, E any](s S, predicate Predicate[E]) (r S) {
@@ -276,10 +255,7 @@ func Filter[S ~[]E, E any](s S, predicate Predicate[E]) (r S) {
 }
 
 func Flat[S ~[]E, E any](s []S) (r S) {
-	for _, e := range s {
-		r = append(r, e...)
-	}
-	return r
+	return FlatMap(s, func(s S) []E { return s })
 }
 func FlatMap[S ~[]E, E, O any](s S, transfer func(E) []O) (r []O) {
 	for _, e := range s {
@@ -310,7 +286,7 @@ func Reduce[S ~[]E, E any, O any](ss S, reducer BiFunction[E, O, O]) (el O) {
 func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []Pair[E1, E2] {
 	minLen := min(len(ss1), len(ss2))
 	var r []Pair[E1, E2]
-	for i := 0; i < minLen; i++ {
+	for i := range minLen {
 		r = append(r, NewPair(ss1[i], ss2[i]))
 	}
 	return r

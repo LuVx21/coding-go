@@ -68,3 +68,7 @@ Content-Type: application/json
 
 ### cache
 GET http://{{host}}/cache/clear
+
+### kv
+
+GET http://{{host}}/kv/get?key=foo

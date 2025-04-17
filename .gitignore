@@ -3,6 +3,7 @@ wailsjs/
 go.sum
 go.work
 go.work.sum
+*_gen
 # -------------------------Customer-------------------------
 .git/
 .svn/
