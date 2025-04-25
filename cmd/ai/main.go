@@ -2,42 +2,43 @@ package main
 
 import (
 	"bufio"
+	"crypto/tls"
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"math/rand"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/c-bata/go-prompt"
 	"github.com/charmbracelet/glamour"
+	"github.com/go-sql-driver/mysql"
 	"github.com/luvx21/coding-go/cmds/ai/utils"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
-	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
+	"github.com/luvx21/coding-go/coding-common/dbs"
 	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/luvx21/coding-go/infra/ai"
 	"github.com/luvx21/coding-go/infra/logs/slogs"
-	"github.com/tursodatabase/go-libsql"
 )
 
-var (
-	dbName       = os_x.Getenv("TURSO_DB") + "-" + os_x.Getenv("TURSO_ORG")
-	tursoDbToken = os_x.Getenv("LIBSQL_TOKEN")
-)
+var ()
 
 const (
-	sqlite_ddl = `
+	sql_ddl = `
 	CREATE TABLE IF NOT EXISTS ai_record
 	(
-		id       INTEGER PRIMARY KEY AUTOINCREMENT,
-		session  TEXT    NOT NULL DEFAULT '',
-		question TEXT    NOT NULL DEFAULT '',
-		answer   TEXT    NOT NULL DEFAULT '',
-		model    TEXT    NOT NULL DEFAULT '',
-		time     TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP
-	);
+		id       BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id',
+		session  VARCHAR(255)        NOT NULL COMMENT '',
+		question VARCHAR(2046)       NOT NULL COMMENT '',
+		answer   TEXT                NOT NULL COMMENT '',
+		model    VARCHAR(255)        NOT NULL COMMENT '',
+		time     VARCHAR(255)        NOT NULL COMMENT '',
+		PRIMARY KEY (id)
+	) ENGINE = InnoDB
+	DEFAULT CHARSET = utf8mb4 comment 'ai chat'
 	`
 )
 
@@ -71,12 +72,17 @@ func main() {
 
 	for {
 		curModel = utils.SelectModel(curModel)
-		fmt.Print("\n\n\033[32m请输入您的问题(q:退出,models:切换模型,session:切换保存文件)" + curModel.Id + ": \033[0m")
-		question, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		// fmt.Print("\n\n\033[32m请输入您的问题(q:退出,models:切换模型,session:切换保存文件)" + curModel.Id + ": \033[0m")
+		// question, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		question := prompt.Input("请输入您的问题(q:退出,models:切换模型,session:切换保存文件)"+curModel.Id+": ", func(d prompt.Document) []prompt.Suggest { return nil })
 		question = strings.TrimSpace(question)
 
 		if question == "q" {
 			break
+		} else if question == ".help" {
+			fmt.Println("=============================")
+			fmt.Print("q: 退出\nmodels: 切换模型\nsession xxx: 切换保存文件\n")
+			continue
 		} else if question == "" {
 			continue
 		} else if question == "models" {
@@ -90,7 +96,7 @@ func main() {
 		}
 
 		now := time.Now().Format("2006-01-02 15:04:05")
-		file.WriteString(fmt.Sprintf("---\n\n### %s(%s) %s\n", question, curModel.Id, now))
+		file.WriteString(fmt.Sprintf("\n---\n\n### %s(%s) %s\n", question, curModel.Id, now))
 
 		res, err := curModel.Request(stream, question)
 		if err != nil || res.StatusCode >= 300 {
@@ -107,10 +113,11 @@ func main() {
 			if content != "" {
 				answer.WriteString(content)
 				file.WriteString(content)
-				if !stream {
-					content, _ = render.Render(content)
+				if rand.Intn(3)%3 <= 1 {
+					fmt.Print("\033[H\033[2J") // 清屏
+					content, _ = render.Render(answer.String())
+					fmt.Print(content)
 				}
-				fmt.Print(content)
 			}
 		}
 		if err := scanner.Err(); err != nil {
@@ -118,30 +125,34 @@ func main() {
 			continue
 		}
 		runs.Go(func() {
-			saveToLibsql(curSession, question, answer.String(), curModel.Id, now)
+			saveToDb(curSession, question, answer.String(), curModel.Id, now)
 		})
 	}
 }
 
-func saveToLibsql(session, question, answer, model, now string) {
-	if len(dbName) == 0 || dbName == "-" {
-		return
-	}
-	if db == nil {
-		home, _ := common_x.Dir()
-		dbPath := filepath.Join(home+"/data/sqlite/libsql", dbName)
+func saveToDb(session, question, answer, model, now string) {
+	if db == nil || db.Ping() != nil {
+		tidbHost, tidbPort := os_x.Getenv("TIDB_HOST"), os_x.Getenv("TIDB_PORT")
+		tidbUsername, tidbPassword := os_x.Getenv("TIDB_USERNAME"), os_x.Getenv("TIDB_PASSWORD")
 
-		connector, _ := libsql.NewEmbeddedReplicaConnector(dbPath, fmt.Sprintf("libsql://%s.turso.io", dbName),
-			libsql.WithAuthToken(tursoDbToken), libsql.WithSyncInterval(time.Second*10),
-		)
+		mysql.RegisterTLSConfig("tidb", &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			ServerName: tidbHost,
+		})
 
-		db = sql.OpenDB(connector)
+		dsn := dbs.MySQLConnect(tidbHost, cast_x.ToInt(tidbPort), tidbUsername, tidbPassword, "boot", map[string]string{"tls": "tidb"})
+		var err error
+		db, err = sql.Open(dbs.DriverMysql, dsn)
+		if err != nil {
+			slog.Error("TIDB连接错误", "err", err)
+			return
+		}
 	}
 	_, err := db.Exec("insert into ai_record(session, question, answer, model, time) values(?,?,?,?,?)", session, question, answer, model, now)
 	if err != nil {
 		logger.Warn("写数据异常", "err", err.Error())
-		if strings.Contains(err.Error(), "no such table") {
-			db.Exec(sqlite_ddl)
+		if strings.Contains(err.Error(), "no such table") || strings.Contains(err.Error(), "doesn't exist") {
+			db.Exec(sql_ddl)
 		}
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -28,21 +29,6 @@ type tui struct {
 	textarea  textarea.Model
 	markdown  *strings.Builder
 	isLoading bool
-}
-
-func initialModel() *tui {
-	ti := textarea.New()
-	ti.Placeholder = "Ask AI..."
-	ti.Focus()
-	// ti.ShowLineNumbers = false
-	ti.SetHeight(6)
-	ti.SetWidth(120)
-
-	return &tui{
-		textarea:  ti,
-		markdown:  &strings.Builder{},
-		isLoading: false,
-	}
 }
 
 func (m *tui) Init() tea.Cmd {
@@ -153,9 +139,27 @@ func renderMarkdown(text string) string {
 	return out
 }
 
+func initialModel() *tui {
+	ti := textarea.New()
+	ti.Placeholder = "Ask AI..."
+	ti.Focus()
+	// ti.ShowLineNumbers = false
+	ti.SetHeight(6)
+	ti.SetWidth(120)
+
+	return &tui{
+		textarea:  ti,
+		markdown:  &strings.Builder{},
+		isLoading: false,
+	}
+}
+
 func main() {
 	curModel = utils.SelectModel(curModel)
-	p := tea.NewProgram(initialModel())
+	p := tea.NewProgram(initialModel(),
+		tea.WithMouseCellMotion(), // 允许鼠标支持
+		tea.WithContext(context.Background()),
+	)
 	program = p
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("程序错误: %v", err)

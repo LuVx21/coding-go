@@ -1,21 +1,22 @@
 package syncx
 
 import (
-    "sync"
+	"sync"
 )
 
 type Pool[T any] struct {
-    pool sync.Pool
+	pool sync.Pool
 }
 
-func NewPool[T any](fn func() T) Pool[T] {
-    ff := func() any { return fn() }
-    return Pool[T]{sync.Pool{New: ff}}
+func NewPool[T any](fn func() T) *Pool[T] {
+	return &Pool[T]{sync.Pool{
+		New: func() any { return fn() },
+	}}
 }
 
 func (p *Pool[T]) Get() T {
-    return p.pool.Get().(T)
+	return p.pool.Get().(T)
 }
 func (p *Pool[T]) Put(x T) {
-    p.pool.Put(x)
+	p.pool.Put(x)
 }

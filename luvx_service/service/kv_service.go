@@ -12,6 +12,7 @@ import (
 	"github.com/dgraph-io/badger/v4"
 	"github.com/dgraph-io/badger/v4/options"
 	"github.com/klauspost/compress/zstd"
+	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/infra_kv"
 	badgers "github.com/luvx21/coding-go/infra/infra_kv/badgers"
@@ -35,11 +36,14 @@ func (s *KVServiceImpl) Put(ctx context.Context, req *kv.PutRequest) (resp *kv.P
 	key, bytes, exp := req.Entry.Key, req.Entry.Value, req.Expire
 	bytes = encoder.EncodeAll(bytes, nil)
 
-	err = badgers.Set(db, []byte(key), bytes, time.Duration(exp)*time.Second)
-	msg := "ok"
-	if err != nil {
-		msg = "fail"
-	}
+	msg, err := retry.SupplyWithRetry("rpc-server kv put", func() string {
+		err = badgers.Set(db, []byte(key), bytes, time.Duration(exp)*time.Second)
+		if err != nil {
+			panic("fast-fail retry:" + err.Error())
+		}
+		return "ok"
+	}, 5, 3*time.Second)
+
 	return &kv.PutResponse{Message: msg}, err
 }
 func (s *KVServiceImpl) Get(ctx context.Context, req *kv.Key) (resp *kv.Entry, err error) {

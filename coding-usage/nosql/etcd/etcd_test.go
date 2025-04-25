@@ -70,6 +70,7 @@ func Test_etcd_02(t *testing.T) {
 func Test_etcd_03(t *testing.T) {
 	defer beforeAfter("Test_etcd_03")()
 	resp, _ := cli.Get(context.TODO(), "", clientv3.WithFromKey())
+	fmt.Println(resp.Count)
 	for _, kv := range resp.Kvs {
 		fmt.Printf("%s = %s\n", kv.Key, kv.Value)
 	}

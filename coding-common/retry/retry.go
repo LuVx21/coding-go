@@ -9,6 +9,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/times_x"
 )
 
+// SupplyWithRetry fn: 内部异常或错误, 使用panic
 func SupplyWithRetry[T any](
 	name string, fn func() T,
 	maxRetryTimes int32, retryPeriod time.Duration,

@@ -13,6 +13,7 @@ type ServiceProvider struct {
 	BaseUrl  string   `json:"baseUrl"`
 	ApiKey   string   `json:"apiKey"`
 	ModelIds []string `json:"modelIds"`
+	Enable   bool
 }
 
 func NewServiceProvider(key, token string, modelIds ...string) *ServiceProvider {

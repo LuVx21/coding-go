@@ -13,3 +13,19 @@ func Get(bizType common_kv_dao.CommonKVBizType, keys ...string) map[string]*mode
 	}
 	return m
 }
+
+func GetByCursor(cursorID int, limit int, bizType common_kv_dao.CommonKVBizType, keys ...string) ([]*model.CommonKeyValue, int, error) {
+	return common_kv_dao.GetByCursor(cursorID, limit, int32(bizType), keys...)
+}
+
+func Create(kv *model.CommonKeyValue) error {
+	return common_kv_dao.Create(kv)
+}
+
+func Delete(ids []int) error {
+	return common_kv_dao.Delete(ids)
+}
+
+func Update(kv *model.CommonKeyValue) error {
+	return common_kv_dao.Update(kv)
+}

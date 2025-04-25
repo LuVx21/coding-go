@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/luvx21/coding-go/coding-common/web"
 	"luvx/gin/common/errorx"
+
+	"github.com/luvx21/coding-go/coding-common/web"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +44,7 @@ func R(ctx *gin.Context, data any) {
 	ctx.JSON(httpStatus, result)
 }
 
-func newResponse(ctx context.Context, data any) *response {
+func newResponse(_ context.Context, data any) *response {
 	switch value := data.(type) {
 	case *errorx.CodeError:
 		return &response{

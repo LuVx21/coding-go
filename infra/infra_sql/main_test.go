@@ -34,6 +34,7 @@ func Test_lock_00(t *testing.T) {
 		time.Sleep(sleep)
 		fmt.Println("任务执行完成1")
 	})
+	time.Sleep(time.Second * 1)
 	go locker.LockRun("lock_foo", time.Second*30, func() {
 		fmt.Println("加锁成功，执行任务2")
 		time.Sleep(sleep)

@@ -15,8 +15,8 @@ func Test_group_cache(t *testing.T) {
 	pool := groupcache.NewHTTPPoolOpts("http://localhost:8080", &groupcache.HTTPPoolOptions{})
 
 	// 2. 定义缓存组
-	var cacheGroup *groupcache.Group
-	cacheGroup = groupcache.NewGroup("example-group", 64<<20, groupcache.GetterFunc(
+	// var cacheGroup *groupcache.Group
+	cacheGroup := groupcache.NewGroup("example-group", 64<<20, groupcache.GetterFunc(
 		func(ctx context.Context, key string, dest groupcache.Sink) error {
 			// 当缓存未命中时，从数据源获取数据（此处模拟从数据库或其他来源）
 			fmt.Printf("缓存未命中, 加载缓存, key: %s\n", key)

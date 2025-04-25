@@ -2,10 +2,11 @@ package cast_x
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type testStep struct {

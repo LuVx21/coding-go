@@ -15,7 +15,10 @@ import (
 )
 
 func main() {
-	svr := grpc.NewServer()
+	svr := grpc.NewServer(
+		grpc.MaxRecvMsgSize(20*1024*1024),
+		grpc.MaxSendMsgSize(20*1024*1024),
+	)
 	reflection.Register(svr)
 
 	kv.RegisterKVServer(svr, new(service.KVServiceImpl))

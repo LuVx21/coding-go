@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	where "github.com/pywee/gobson-where"
@@ -49,8 +50,15 @@ func Test_insert(t *testing.T) {
 func Test_find(t *testing.T) {
 	defer beforeAfter("Test_find")()
 
+	day, _ := time.ParseInLocation(time.DateOnly, "2025-05-05", time.UTC)
+	day = day.Add(time.Hour * -8)
+
 	filter := bson.D{bson.E{Key: "age", Value: 0}}
+	filter = append(filter, bson.E{Key: "name", Value: "/" + "foo" + "/"})
 	filter = append(filter, bson.E{Key: "password", Value: "bar_0"})
+	filter = append(filter, bson.E{Key: "birthday", Value: bson.M{
+		"$gte": day, "$lt": day.AddDate(0, 0, 1),
+	}})
 
 	opts := options.Find().SetSort(bson.M{"_id": -1}).SetLimit(100)
 	rowsMap, _ := mongodb.RowsMap(context.Background(), collection, filter, opts)

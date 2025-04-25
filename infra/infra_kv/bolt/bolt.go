@@ -100,6 +100,10 @@ func List(db *bolt.DB, bucket string) (map[string]string, error) {
 }
 
 func Set(db *bolt.DB, bucket, key, value string) error {
+	return Set(db, bucket, key, string(value))
+}
+
+func SetByte(db *bolt.DB, bucket, key string, value []byte) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
@@ -109,12 +113,17 @@ func Set(db *bolt.DB, bucket, key, value string) error {
 				return fmt.Errorf("创建分区错误: %s", err)
 			}
 		}
-		e := b.Put([]byte(key), []byte(value))
+		e := b.Put([]byte(key), value)
 		return e
 	})
 }
 
 func Get(db *bolt.DB, bucket, key string) (string, bool) {
+	bytes, err := GetByte(db, bucket, key)
+	return string(bytes), err
+}
+
+func GetByte(db *bolt.DB, bucket, key string) ([]byte, bool) {
 	var v []byte
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
@@ -125,18 +134,21 @@ func Get(db *bolt.DB, bucket, key string) (string, bool) {
 		return nil
 	})
 	if err != nil || len(v) == 0 {
-		return "", false
+		return nil, false
 	}
-	return string(v), true
+	return v, true
 }
 
 func Del(db *bolt.DB, bucket, key string) error {
+	return DelByte(db, bucket, []byte(key))
+}
+func DelByte(db *bolt.DB, bucket string, key []byte) error {
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucket))
 		if b == nil {
 			return nil
 		}
-		e := b.Delete([]byte(key))
+		e := b.Delete(key)
 		return e
 	})
 }

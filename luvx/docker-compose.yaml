@@ -6,8 +6,8 @@ services:
       - net_common
     build:
       dockerfile: Dockerfile
-    # ports:
-    #   - "58090:8090"
+    ports:
+      - "58090:8090"
     volumes:
       - $HOME/data:/root/data
       - ./config/config-dev.yml:/app/config/config-dev.yml
@@ -19,15 +19,15 @@ services:
       passwordStr: ${passwordStr}
 #    command: ["sleep", "infinity"]
 
-  nginx:
-    image: nginx:1-alpine
-    container_name: nginx
-    networks:
-      - net_common
-    ports:
-      - "58090:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+  # nginx:
+  #   image: nginx:1-alpine
+  #   container_name: nginx
+  #   networks:
+  #     - net_common
+  #   ports:
+  #     - "58090:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
 
 networks:
   net_common:

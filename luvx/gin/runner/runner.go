@@ -4,16 +4,16 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-co-op/gocron/v2"
-	"github.com/google/uuid"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
-	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
 	"luvx/gin/service/rss"
 	"luvx/gin/service/weibo_p"
+
+	"github.com/go-co-op/gocron/v2"
+	"github.com/google/uuid"
+	"github.com/luvx21/coding-go/coding-common/cast_x"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 	)
 	afterListener = gocron.AfterJobRuns(
 		func(jobID uuid.UUID, jobName string) {
-			logs.Log.Infoln("任务:", jobName, "完成")
+			// logs.Log.Infoln("任务:", jobName, "完成")
 		},
 	)
 )

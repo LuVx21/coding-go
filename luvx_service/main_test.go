@@ -48,7 +48,7 @@ func Test_01(t *testing.T) {
 
 	fmt.Println("---------------------------")
 	set := sets.NewSet(lr.Keys...)
-	fmt.Println(set, set.Len())
+	fmt.Println(set.Len())
 	fmt.Println("---------------------------")
 }
 func Test_02(t *testing.T) {

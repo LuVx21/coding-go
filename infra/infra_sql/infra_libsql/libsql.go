@@ -51,7 +51,12 @@ type Request struct {
 	Stmt Stmt   `json:"stmt,omitzero"`
 }
 
-func ExecSql(org, dbName string, close bool, sqls ...string) []Result {
+func ExecSqlArg(org, dbName string, close bool, sql string, args ...Arg) []ResultMeta {
+	request := Request{Type: "execute", Stmt: Stmt{Sql: sql, Args: args}}
+	return Exec(org, dbName, close, request)
+}
+
+func ExecSql(org, dbName string, close bool, sqls ...string) []ResultMeta {
 	stmts := slices_x.Transfer(func(sql string) Request {
 		return Request{Type: "execute", Stmt: Stmt{Sql: sql}}
 	}, sqls...)
@@ -59,7 +64,7 @@ func ExecSql(org, dbName string, close bool, sqls ...string) []Result {
 }
 
 // Exec close: 本次执行后是否关闭连接
-func Exec(org, dbName string, close bool, stmts ...Request) []Result {
+func Exec(org, dbName string, close bool, stmts ...Request) []ResultMeta {
 	if !close && len(stmts) == 0 {
 		return nil
 	}
@@ -67,25 +72,24 @@ func Exec(org, dbName string, close bool, stmts ...Request) []Result {
 	if close {
 		new_stmts = append(new_stmts, CloseRequest)
 	}
-	_, body, _ := GoRequest.Post(fmt.Sprintf(pipeline_url, dbName, org)).
+	_, body, err := GoRequest.Post(fmt.Sprintf(pipeline_url, dbName, org)).
 		Set("Authorization", "Bearer "+os_x.Getenv("LIBSQL_TOKEN")).
 		Set("Content-Type", "application/json").
 		SendMap(map[string][]Request{"requests": new_stmts}).
 		End()
+	if err != nil {
+		slog.Error("发起执行sql异常", "sql", new_stmts)
+		return nil
+	}
 
 	var r R
 	if err := json.Unmarshal([]byte(body), &r); err != nil {
 		return nil
 	}
 
-	result := make([]Result, len(stmts))
+	result := make([]ResultMeta, len(stmts))
 	for i := range stmts {
-		r := r.Results[i]
-		if r.Type != "ok" {
-			slog.Warn("sql执行结果异常", "sql", stmts[i], "结果", r)
-			continue
-		}
-		result[i] = r.Response.Result
+		result[i] = r.Results[i]
 	}
 	return result
 }
@@ -124,12 +128,17 @@ type Result struct {
 	Cols []ColMeta
 	Rows [][]Cell
 }
+type ResultMeta struct {
+	Type     string // ok或error
+	Response struct {
+		Type   string // execute close
+		Result Result
+	}
+	Error struct { // 执行出错时
+		Message string
+		Code    string
+	}
+}
 type R struct {
-	Results []struct {
-		Type     string // ok
-		Response struct {
-			Type   string // execute close
-			Result Result
-		}
-	} `json:"results"`
+	Results []ResultMeta `json:"results"`
 }

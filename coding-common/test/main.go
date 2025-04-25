@@ -57,7 +57,7 @@ func AfterTest(caseName string, post func()) func() {
 	return BeforeAfterTest(caseName, nil, post)
 }
 func BeforeAfterTest(caseName string, prepare, post func()) func() {
-	fmt.Println(caseName, "----------测试用例开始----------")
+	fmt.Println("--------------------测试用例", caseName, "开始--------------------")
 	if prepare != nil {
 		prepare()
 	}
@@ -66,6 +66,6 @@ func BeforeAfterTest(caseName string, prepare, post func()) func() {
 		if post != nil {
 			post()
 		}
-		fmt.Println(caseName, "----------测试用例结束----------")
+		fmt.Println("--------------------测试用例", caseName, "结束--------------------")
 	}
 }

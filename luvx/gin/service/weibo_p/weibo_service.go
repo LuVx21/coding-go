@@ -3,6 +3,7 @@ package weibo_p
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"luvx_service_sdk/proto_gen/proto_kv"
 	"math"
 	"regexp"
@@ -44,9 +45,10 @@ import (
 
 var (
 	fields = []string{"_id", "user", "mblogid", "created_at", "text_raw", "text", "retweeted_status", "pic_ids",
-		"invalid", "read", "extra",
+		"invalid", "read", "extra", "groupId",
 	}
-	collection = db.MongoDatabase.Collection("weibo_feed")
+	// collection = db.MongoDatabase.Collection("weibo_feed")
+	collection = db.GetCollection("weibo_feed")
 )
 
 func PullHotBand() {
@@ -174,11 +176,12 @@ func PullByUser(uid int64) {
 }
 
 func PullByGroupLock() {
-	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, PullByGroup)
+	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
+		PullByGroup(4670120389774996)
+	})
 }
 
-func PullByGroup() {
-	var groupId int64 = 4670120389774996
+func PullByGroup(groupId int64) {
 	opts := options.FindOne().SetSort(bson.M{"_id": -1})
 	var latest bson.M
 	_ = collection.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
@@ -222,6 +225,7 @@ func PullByGroup() {
 			feeds = append(feeds, f)
 		}
 		parseAndSaveFeed(feed, false)
+		feed["groupId"] = groupId
 		feeds = append(feeds, feed)
 	})
 
@@ -240,7 +244,10 @@ func PullByGroup() {
 				if len(errors) > 0 {
 					continue
 				}
-				_, _ = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
+				_, err = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
+				if err != nil {
+					slog.Warn("rpc put", "err", err.Error())
+				}
 			}
 		}
 	})
@@ -251,7 +258,7 @@ func PullByGroup() {
 		if many, e := collection.InsertMany(context.TODO(), arr); e != nil {
 			for j := len(arr) - 1; j >= 0; j-- {
 				if one, err := collection.InsertOne(context.TODO(), arr[j]); err != nil {
-					logs.Log.Infoln("weibo insert1:", err)
+					// logs.Log.Infoln("weibo insert1:", err)
 					continue
 				} else {
 					logs.Log.Infoln("weibo insert1:", one.InsertedID)
@@ -404,34 +411,53 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
 func getCookie() string {
 	return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 }
-
-func Rss(uids ...int64) string {
-	_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
-		key := "rss_weibo_config"
-		m := commonkvservice.Get(common_kv_dao.BEAN, key)
-		return m[key], nil
-	})
-	kv := _kv.(*model.CommonKeyValue)
-
-	config := rssWeiboConfig{}
-	_ = jsons.JsonStringToObject(kv.CommonValue, &config)
-	ignore := config.Ignore
-
+func filter(groupId int64, word string, day time.Time, uids ...int64) (bson.D, *options.FindOptions) {
 	filter := bson.D{bson.E{Key: "invalid", Value: 0}}
-	if len(uids) == 1 && uids[0] == 0 {
-		if len(ignore) > 0 {
-			filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}})
-		}
+	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(100)
+	if groupId > 0 {
+		filter = append(filter, bson.E{Key: "groupId", Value: groupId})
+	}
+	if len(word) > 0 {
+		filter = append(filter, bson.E{Key: "text", Value: "转发微博"})
+		return filter, opts
+	}
+
+	if day.Year() > 2000 {
+		day = day.Add(time.Hour * -8)
+		filter = append(filter, bson.E{Key: "created_at", Value: bson.M{
+			"$gte": day, "$lt": day.AddDate(0, 0, 1),
+		}})
+		opts = opts.SetSort(bson.M{"created_at": 1}).SetLimit(80)
 	} else {
-		filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$in": uids}})
-		for _, uid := range uids {
-			if !slices.Contains(ignore, uid) {
-				common_kv_dao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+		_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
+			key := "rss_weibo_config"
+			m := commonkvservice.Get(common_kv_dao.BEAN, key)
+			return m[key], nil
+		})
+		kv := _kv.(*model.CommonKeyValue)
+
+		config := rssWeiboConfig{}
+		_ = jsons.JsonStringToObject(kv.CommonValue, &config)
+		ignore := config.Ignore
+
+		if len(uids) == 1 && uids[0] == 0 {
+			if len(ignore) > 0 {
+				filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}})
+			}
+		} else {
+			filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$in": uids}})
+			for _, uid := range uids {
+				if !slices.Contains(ignore, uid) {
+					common_kv_dao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+				}
 			}
 		}
 	}
+	return filter, opts
+}
+func Rss(groupId int64, word string, day time.Time, uids ...int64) string {
+	filter, opts := filter(groupId, word, day, uids...)
 
-	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(100)
 	cursor, _ := collection.Find(context.Background(), filter, opts)
 	defer cursor.Close(context.Background())
 
@@ -467,7 +493,7 @@ func a(jo JsonObject) string {
 				uName = i.(JsonObject)["name"].(string)
 			}
 			uName += common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
-			_contentHtml = fmt.Sprintf("%s<hr/>转发自:@%s<br/>%s", _contentHtml, uName, contentHtml(retweet))
+			_contentHtml = fmt.Sprintf("%s<hr/>转发自:  @%s<br/>%s", _contentHtml, uName, contentHtml(retweet))
 		}
 	}
 	deleteUrl := addDelete(_id)

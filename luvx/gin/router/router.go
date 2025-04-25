@@ -5,6 +5,7 @@ import (
 	"luvx/gin/common/responsex"
 	"luvx/gin/controller"
 	"luvx/gin/controller/ai_c"
+	"luvx/gin/controller/common_kv_controller"
 	"luvx/gin/controller/rss_p"
 	"luvx/gin/controller/useful_c"
 	"luvx/gin/controller/weibo_p"
@@ -51,6 +52,10 @@ func Register0(r *gin.Engine) {
 
 	useful := r.Group("/useful")
 	useful.POST("/compare", useful_c.Compare)
+	useful.GET("/common_key_value", common_kv_controller.GetCommonKeyValue)
+	useful.POST("/common_key_value", common_kv_controller.CreateCommonKeyValue)
+	useful.DELETE("/common_key_value", common_kv_controller.DeleteCommonKeyValue)
+	useful.PUT("/common_key_value/:id", common_kv_controller.UpdateCommonKeyValue)
 
 	cache := r.Group("/cache")
 	cache.GET("clear", controller.ClearCache)

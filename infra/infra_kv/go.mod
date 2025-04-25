@@ -1,11 +1,11 @@
 module github.com/luvx21/coding-go/infra/infra_kv
 
-go 1.24.2
+go 1.24.3
 
 require (
 	github.com/dgraph-io/badger/v4 v4.7.0
 	github.com/dgraph-io/ristretto/v2 v2.2.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250412082033-7367dd329551
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250425103139-89c5a0232b81
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.0
 	google.golang.org/protobuf v1.36.6

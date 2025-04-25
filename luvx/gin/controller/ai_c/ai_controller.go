@@ -24,6 +24,7 @@ func HandleChatCompletion(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println("ai-流式", request.Stream)
 	// 模拟处理逻辑
 	if request.Stream {
 		// 流式响应处理
@@ -92,6 +93,15 @@ var responses = []string{
 	"| a    | b    | c    |\n",
 	"| :--- | :--- | :--- |\n",
 	"| aa   | bb   | cc   |\n",
+	"\n",
+	"```sql\n",
+	"select *\n",
+	"from user\n",
+	"where true\n",
+	"  and id >= 10\n",
+	"ordery by id desc\n",
+	"limit 100\n",
+	"```\n",
 }
 
 // generateStreamResponse 生成流格式的响应

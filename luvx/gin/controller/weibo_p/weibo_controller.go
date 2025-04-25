@@ -3,12 +3,14 @@ package weibo_p
 import (
 	"net/http"
 	"strings"
+	"time"
+
+	"luvx/gin/common/responsex"
+	"luvx/gin/service/weibo_p"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
-	"luvx/gin/common/responsex"
-	"luvx/gin/service/weibo_p"
 )
 
 func PullByUser(c *gin.Context) {
@@ -28,11 +30,15 @@ func PullByGroup(c *gin.Context) {
 }
 
 func Rss(c *gin.Context) {
-	uidStr := c.Param("uid")
-	uids := slices_x.Transfer(func(i string) int64 {
-		return cast_x.ToInt64(i)
-	}, strings.Split(uidStr, ",")...)
-	rss := weibo_p.Rss(uids...)
+	groupIdStr, word, dayStr, uidStr := c.Query("groupId"), c.Query("word"), c.Query("day"), c.Param("uid")
+	groupId := cast_x.ToInt64(groupIdStr)
+	var day time.Time
+	if len(dayStr) > 0 {
+		day, _ = time.Parse(time.DateOnly, dayStr)
+	}
+	uids := slices_x.Transfer(func(i string) int64 { return cast_x.ToInt64(i) }, strings.Split(uidStr, ",")...)
+
+	rss := weibo_p.Rss(groupId, word, day, uids...)
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
 }

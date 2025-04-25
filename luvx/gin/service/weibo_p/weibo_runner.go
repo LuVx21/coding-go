@@ -30,7 +30,7 @@ func RunnerRegister() []*service.Runner {
 		// }},
 		service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
 		{Name: "拉取分组微博", Crontab: "0 4/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
-		{Name: "删除weibo已读", Crontab: "0 1/3 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
+		{Name: "删除weibo已读", Crontab: "0 1/2 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
 	}
 }
 
@@ -47,7 +47,7 @@ func Delete() {
  select guid
  from freshrss.t_admin_entry
  where true
-    and id <= (select id
+    and guid <= (select guid
               from freshrss.t_admin_entry
               where true
                 and id_feed = ?
@@ -83,19 +83,22 @@ func Delete() {
 	guids = append(guids, ids...)
 	mysqlGuids = append(mysqlGuids, idsStr...)
 
-	filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-	update := bson.D{{Key: "$set",
-		Value: bson.D{
-			{Key: "invalid", Value: 1},
-			{Key: "read", Value: 1},
-		},
-	}}
-	dr, err := collection.UpdateMany(context.TODO(), filter, update)
+	if len(guids) > 0 {
+		filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
+		update := bson.D{{Key: "$set",
+			Value: bson.D{
+				{Key: "invalid", Value: 1},
+				{Key: "read", Value: 1},
+			},
+		}}
+		dr, err := collection.UpdateMany(context.TODO(), filter, update)
 
-	// dr, err := collection.DeleteMany(context.TODO(), filter)
-	if err != nil {
-		return
+		// dr, err := collection.DeleteMany(context.TODO(), filter)
+		if err != nil {
+			return
+		}
+		logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
 	}
-	logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
-	db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ?", mysqlGuids)
+
+	db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
 }

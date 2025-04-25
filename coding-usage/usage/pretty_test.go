@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -48,4 +49,20 @@ func Test_merge_00(tt *testing.T) {
 	})
 	t.Style().Options.SeparateRows = true
 	t.Render()
+}
+
+func Test_custom_00(tt *testing.T) {
+	leftUp, upMid, rightUp := "╭", "┬", "╮"
+	leftMid, midMid, rightMid := "├", "┼", "┤"
+	leftDown, downMid, rightDown := "╰", "┴", "╯"
+	split, line := "│", "─"
+
+	colWidth := 4
+	s, ctx := strings.Repeat(line, colWidth), strings.Repeat(" ", colWidth)
+	fmt.Println(leftUp + s + upMid + s + rightUp)
+	fmt.Println(split + ctx + split + ctx + split)
+	fmt.Println(leftMid + s + midMid + s + rightMid)
+	fmt.Println(split + ctx + split + ctx + split)
+	fmt.Println(split + ctx + split + ctx + split)
+	fmt.Println(leftDown + s + downMid + s + rightDown)
 }

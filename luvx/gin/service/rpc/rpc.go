@@ -15,7 +15,12 @@ var (
 )
 
 func init() {
-	RpcConn, err := grpc.NewClient("rpc_service:18888", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	RpcConn, err := grpc.NewClient("rpc_service:18888", grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultCallOptions(
+			grpc.MaxCallRecvMsgSize(50*1024*1024),
+			grpc.MaxCallSendMsgSize(50*1024*1024),
+		),
+	)
 	if err != nil {
 		slog.Error("RPC连接失败", "err", err)
 		return

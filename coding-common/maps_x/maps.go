@@ -5,9 +5,10 @@ import (
 	"reflect"
 	"strings"
 
+	maps0 "maps"
+
 	"github.com/luvx21/coding-go/coding-common/reflects"
 	"golang.org/x/exp/maps"
-	maps0 "maps"
 )
 
 func Merge[M ~map[K]V, K comparable, V any](m1, m2 M, replace bool) M {
@@ -81,26 +82,23 @@ func GetOrDefault[M ~map[K]V, K comparable, V any](m M, k K, defaultV V) V {
 }
 
 func Compute[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V) V {
-	var zero V
 	oldValue, exist := m[k]
 	newValue := f(k, oldValue)
 
 	if reflects.IsNil(newValue) {
 		if !reflects.IsNil(oldValue) || exist {
 			delete(m, k)
-			return zero
-		} else {
-			return zero
 		}
-	} else {
-		m[k] = newValue
-		return newValue
+		var zero V
+		return zero
 	}
+	m[k] = newValue
+	return newValue
 }
 
 func ComputeIfAbsent[M ~map[K]V, K comparable, V any](m M, k K, f func(K) V) V {
-	oldValue := m[k]
-	if reflects.IsNil(oldValue) {
+	oldValue, exist := m[k]
+	if !exist || reflects.IsNil(oldValue) {
 		newValue := f(k)
 		if !reflects.IsNil(newValue) {
 			m[k] = newValue
@@ -111,20 +109,18 @@ func ComputeIfAbsent[M ~map[K]V, K comparable, V any](m M, k K, f func(K) V) V {
 }
 
 func ComputeIfPresent[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V) V {
-	var zero V
-	oldValue := m[k]
-	if !reflects.IsNil(oldValue) {
+	oldValue, exist := m[k]
+	if exist {
 		newValue := f(k, oldValue)
-		if !reflects.IsNil(newValue) {
-			m[k] = newValue
-			return newValue
-		} else {
+		if reflects.IsNil(newValue) {
 			delete(m, k)
+			var zero V
 			return zero
 		}
-	} else {
-		return oldValue
+		m[k] = newValue
+		return newValue
 	}
+	return oldValue
 }
 
 func GetInt[M ~map[K]any, K comparable](m M, key K, _default int) (int, error) {

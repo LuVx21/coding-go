@@ -8,6 +8,24 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
+func PutIfAbsent(cli *clientv3.Client, key, value string) (*clientv3.TxnResponse, bool) {
+	tr, err := cli.Txn(context.Background()).
+		If(clientv3.Compare(clientv3.Version(key), "=", 0)). // 判断 key 不存在（版本号为 0）
+		Then(clientv3.OpPut(key, value)).                    // 不存在则 Put
+		Else(clientv3.OpGet(key)).                           // 存在则忽略（这里可以选择不操作或返回当前值）
+		Commit()
+	return tr, err == nil && tr.Succeeded
+}
+
+func Set(cli *clientv3.Client, key, value string, ttl int64) error {
+	leaseResp, err := cli.Grant(context.Background(), 10)
+	if err != nil {
+		return err
+	}
+	_, err = cli.Put(context.Background(), key, value, clientv3.WithLease(leaseResp.ID))
+	return err
+}
+
 func IterateAll(cli *clientv3.Client) (map[string][]byte, error) {
 	ctx := context.Background()
 	var lastKey []byte

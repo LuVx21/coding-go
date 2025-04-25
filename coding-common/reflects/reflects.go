@@ -11,6 +11,7 @@ func IsZeroRef[T any](v T) bool {
 	return reflect.ValueOf(&v).Elem().IsZero()
 }
 
+// IsNil TODO 有问题, 空指针进来, 返回的是false
 func IsNil(v any) bool {
 	valueOf := reflect.ValueOf(&v).Elem()
 	k := valueOf.Kind()

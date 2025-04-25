@@ -25,7 +25,7 @@ var (
 func NewLoadableCache[T any](loadFunc gocache.LoadFunction[T]) *gocache.LoadableCache[T] {
 	bigcacheClient, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(5*time.Minute))
 	bigcacheStore := bigcachestore.NewBigcache(bigcacheClient)
-	return gocache.NewLoadable[T](loadFunc, gocache.New[T](bigcacheStore))
+	return gocache.NewLoadable(loadFunc, gocache.New[T](bigcacheStore))
 }
 
 func UUID() string {

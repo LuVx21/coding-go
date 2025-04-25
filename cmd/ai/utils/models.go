@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/c-bata/go-prompt"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -31,8 +31,9 @@ func SelectModel(curModel *ai.Model) *ai.Model {
 	fmt.Println(allModelsInfo)
 
 	for {
-		fmt.Print("\n\033[32m请选择模型编号(默认1): \033[0m")
-		input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+		input := prompt.Input("请选择模型编号(默认1): ", func(d prompt.Document) []prompt.Suggest { return nil })
+		// fmt.Print("\n\033[32m请选择模型编号(默认1): \033[0m")
+		// input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 		input = strings.TrimSpace(input)
 
 		no := common_x.IfThen(input == "", 1, cast_x.ToInt32(input))
@@ -68,6 +69,9 @@ func loadModels(path string) (map[int32]*ai.Model, string) {
 	rows, m := make([]table.Row, 0), make(map[int32]*ai.Model)
 	var no int32 = 1
 	for _, sp := range sps {
+		if !sp.Enable {
+			continue
+		}
 		sp.ApiKey = os_x.Getenv(sp.ApiKey)
 		for _, id := range sp.ModelIds {
 			m[no] = &ai.Model{Id: id, Sp: &sp}
