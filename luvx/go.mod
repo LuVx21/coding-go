@@ -1,18 +1,18 @@
 module luvx
 
-go 1.24.3
+go 1.24.5
 
 replace (
-	// luvx_service_sdk => ../luvx_service_sdk
-	// github.com/luvx21/coding-go/coding-common => ../coding-common
-	// github.com/luvx21/coding-go/infra/logs => ../infra/logs
-	// github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
+	luvx_service_sdk => ../luvx_service_sdk
+// github.com/luvx21/coding-go/coding-common => ../coding-common
+// github.com/luvx21/coding-go/infra/logs => ../infra/logs
+// github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
 )
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/allegro/bigcache/v3 v3.1.0
-	github.com/bytedance/sonic v1.13.2
+	github.com/bytedance/sonic v1.13.3
 	github.com/eko/gocache/lib/v4 v4.2.0
 	github.com/eko/gocache/store/bigcache/v4 v4.2.2
 	github.com/gin-gonic/gin v1.10.1
@@ -20,24 +20,24 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250425103139-89c5a0232b81
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250530051707-5479787d6d4f
 	github.com/parnurzeal/gorequest v0.3.0
-	github.com/redis/go-redis/v9 v9.8.0
+	github.com/redis/go-redis/v9 v9.10.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
 	github.com/valyala/fasthttp v1.62.0
-	go.mongodb.org/mongo-driver v1.17.3
-	golang.org/x/crypto v0.38.0
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6
-	golang.org/x/sync v0.14.0
-	golang.org/x/time v0.11.0
-	google.golang.org/grpc v1.72.1
-	gorm.io/driver/mysql v1.5.7
+	go.mongodb.org/mongo-driver v1.17.4
+	golang.org/x/crypto v0.39.0
+	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476
+	golang.org/x/sync v0.15.0
+	golang.org/x/time v0.12.0
+	google.golang.org/grpc v1.73.0
+	gorm.io/driver/mysql v1.6.0
 	gorm.io/gen v0.3.27
-	gorm.io/gorm v1.26.1
+	gorm.io/gorm v1.30.0
 	gorm.io/plugin/dbresolver v1.6.0
 	luvx_service_sdk v0.0.0-00010101000000-000000000000
 	modernc.org/sqlite v1.37.1
@@ -114,7 +114,7 @@ require (
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.14.0 // indirect
-	github.com/spf13/cast v1.8.0 // indirect
+	github.com/spf13/cast v1.9.2 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/spf13/viper v1.20.1 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
@@ -123,7 +123,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
+	github.com/ugorji/go/codec v1.2.14 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
@@ -131,21 +131,21 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.uber.org/mock v0.5.2 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/arch v0.17.0 // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/arch v0.18.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250519155744-55703ea1f237 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
-	modernc.org/libc v1.65.8 // indirect
+	modernc.org/libc v1.65.10 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )

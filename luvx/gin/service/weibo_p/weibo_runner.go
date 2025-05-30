@@ -52,7 +52,7 @@ func Delete() {
               where true
                 and id_feed = ?
               order by guid desc
-              limit 1,1)
+              limit 1)
    and id_feed = ?
    and is_read = 1
    and is_favorite = 0

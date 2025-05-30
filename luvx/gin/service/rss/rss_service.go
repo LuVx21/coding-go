@@ -6,20 +6,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
-	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
-	"github.com/luvx21/coding-go/coding-common/slices_x"
-	"github.com/luvx21/coding-go/infra/logs"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"luvx/gin/common/consts"
 	"luvx/gin/common/responsex"
 	"luvx/gin/db"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/soup"
+
+	"github.com/gin-gonic/gin"
+	"github.com/luvx21/coding-go/coding-common/cast_x"
+	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/runs"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
+	"github.com/luvx21/coding-go/infra/logs"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const ()
@@ -85,11 +87,11 @@ func PullByKey() {
 	service.RunnerLocker.LockRun("rss_spider", time.Minute*10, func() {
 		m := common_kv.Get(8)
 		for k, v := range m {
-			// runs.Go(func() {
-			logs.Log.Infoln("spider拉取:", k)
-			items := spiderIndexPage(k, v.CommonValue)
-			_, _ = collection.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
-			// })
+			runs.Go(func() {
+				logs.Log.Infoln("spider拉取:", k)
+				items := spiderIndexPage(k, v.CommonValue)
+				_, _ = collection.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
+			})
 		}
 	})
 }

@@ -1,14 +1,14 @@
 module luvx_service
 
-go 1.24.3
+go 1.24.5
 
 replace luvx_service_sdk => ../luvx_service_sdk
 
 require (
 	github.com/dgraph-io/badger/v4 v4.7.0
 	github.com/klauspost/compress v1.18.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250425103139-89c5a0232b81
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250530051707-5479787d6d4f
 	go.etcd.io/etcd/client/v3 v3.6.0
 	google.golang.org/grpc v1.72.1
 	google.golang.org/protobuf v1.36.6

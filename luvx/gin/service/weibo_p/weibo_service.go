@@ -45,7 +45,7 @@ import (
 
 var (
 	fields = []string{"_id", "user", "mblogid", "created_at", "text_raw", "text", "retweeted_status", "pic_ids",
-		"invalid", "read", "extra", "groupId",
+		"invalid", "read", "extra", "groupId", "mix_media_info", "page_info",
 	}
 	// collection = db.MongoDatabase.Collection("weibo_feed")
 	collection = db.GetCollection("weibo_feed")
@@ -56,12 +56,13 @@ func PullHotBand() {
 
 	c.OnRequest(func(r *colly.Request) {
 		logs.Log.Infoln("请求:", r.URL.String())
+		r.Headers.Add("Referer", "https://weibo.com/hot/search")
 	})
 
 	c.OnResponse(func(r *colly.Response) {
 		ff := make(map[string]any)
 		_ = sonic.Unmarshal(r.Body, &ff)
-
+		fmt.Println("结果:", ff)
 		client := db.MongoDatabase.Collection("weibo_hot_band")
 		bandList := ff["data"].(map[string]any)["band_list"].([]any)
 		now := times_x.TimeNowDate()
@@ -102,6 +103,11 @@ func PullHotBand() {
 		// fmt.Println("Visited", r.Request.URL.String())
 	})
 
+	c.OnError(func(r *colly.Response, err error) {
+		logs.Log.Errorln("请求异常:", r.Request.URL.RequestURI(), err.Error())
+	})
+
+	// https://weibo.com/ajax/side/hotSearch
 	_ = c.Visit("https://weibo.com/ajax/statuses/hot_band")
 }
 
@@ -178,13 +184,14 @@ func PullByUser(uid int64) {
 func PullByGroupLock() {
 	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
 		PullByGroup(4670120389774996)
+		PullByGroup(3639801313908027)
 	})
 }
 
 func PullByGroup(groupId int64) {
 	opts := options.FindOne().SetSort(bson.M{"_id": -1})
 	var latest bson.M
-	_ = collection.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
+	_ = collection.FindOne(context.TODO(), bson.M{"groupId": groupId}, opts).Decode(&latest)
 
 	var cursor int64 = 0
 	iterator := iterators.NewCursorIterator(
@@ -352,6 +359,7 @@ func requestLongText(mblogid string) string {
 		Set("User-Agent", consts.UserAgent).
 		Set("Host", "weibo.com").
 		Set("Cookie", getCookie()).
+		Set("referer", "https://weibo.com/mygroups?gid=4670120389774996").
 		End()
 	return gjson.Get(body, "data.longTextContent").String()
 }
@@ -369,6 +377,7 @@ func requestPageOfUser(uid int64, cursor int) []any {
 		Set("User-Agent", consts.UserAgent).
 		Set("Host", "weibo.com").
 		Set("Cookie", getCookie()).
+		Set("referer", "https://weibo.com/mygroups?gid=4670120389774996").
 		End()
 
 	ff, _ := jsons.JsonStringToMap[string, any, map[string]any](body)
@@ -394,6 +403,7 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
 		Set("User-Agent", consts.UserAgent).
 		Set("Host", "weibo.com").
 		Set("Cookie", getCookie()).
+		Set("referer", "https://weibo.com/mygroups?gid=4670120389774996").
 		End()
 	isJson := sonic.ValidString(body)
 	logs.Log.Infof("请求: %s 响应:%v", pUrl, isJson)
@@ -411,9 +421,14 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
 func getCookie() string {
 	return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 }
-func filter(groupId int64, word string, day time.Time, uids ...int64) (bson.D, *options.FindOptions) {
+func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.D, *options.FindOptions) {
+	size, ok := args["size"]
+	if !ok {
+		size = 100
+	}
+
 	filter := bson.D{bson.E{Key: "invalid", Value: 0}}
-	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(100)
+	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(cast_x.ToInt64(size))
 	if groupId > 0 {
 		filter = append(filter, bson.E{Key: "groupId", Value: groupId})
 	}
@@ -427,7 +442,8 @@ func filter(groupId int64, word string, day time.Time, uids ...int64) (bson.D, *
 		filter = append(filter, bson.E{Key: "created_at", Value: bson.M{
 			"$gte": day, "$lt": day.AddDate(0, 0, 1),
 		}})
-		opts = opts.SetSort(bson.M{"created_at": 1}).SetLimit(80)
+		opts = opts.SetSort(bson.M{"created_at": 1}).SetLimit(cast_x.ToInt64(size))
+		DeleteLock()
 	} else {
 		_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
 			key := "rss_weibo_config"
@@ -455,8 +471,15 @@ func filter(groupId int64, word string, day time.Time, uids ...int64) (bson.D, *
 	}
 	return filter, opts
 }
-func Rss(groupId int64, word string, day time.Time, uids ...int64) string {
-	filter, opts := filter(groupId, word, day, uids...)
+func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) string {
+	filter, opts := filter(args, groupId, word, day, uids...)
+
+	if cast_x.ToBool(args["deleteBefore"]) {
+		DeleteLock()
+	}
+	if cast_x.ToBool(args["pullBefore"]) {
+		PullByGroupLock()
+	}
 
 	cursor, _ := collection.Find(context.Background(), filter, opts)
 	defer cursor.Close(context.Background())
@@ -492,8 +515,9 @@ func a(jo JsonObject) string {
 			if i != nil {
 				uName = i.(JsonObject)["name"].(string)
 			}
-			uName += common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
-			_contentHtml = fmt.Sprintf("%s<hr/>转发自:  @%s<br/>%s", _contentHtml, uName, contentHtml(retweet))
+			t := uName + strings.Repeat(consts.Ensp, 4) + time.UnixMilli(cast_x.ToInt64(retweet["created_at"])).Format(time.DateTime) +
+				common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
+			_contentHtml = fmt.Sprintf("%s<hr/>转发自:  @%s<br/>%s", _contentHtml, t, contentHtml(retweet))
 		}
 	}
 	deleteUrl := addDelete(_id)

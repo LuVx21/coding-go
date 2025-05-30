@@ -1,6 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-FROM ${REGISTRY}golang:1.24-alpine3.21 AS builder
+FROM ${REGISTRY}golang:1.24-alpine3.22 AS builder
 
 RUN apk add --no-cache upx
 WORKDIR /build
@@ -11,7 +11,7 @@ RUN go mod download && go mod tidy && go build -ldflags="-w -s" -v -o luvx main.
 
 # -------------------------------------------
 
-FROM ${REGISTRY}alpine:3.21
+FROM ${REGISTRY}alpine:3.22
 
 WORKDIR /app
 ENV log_LogDir=/root/data/logs TZ=Asia/Shanghai

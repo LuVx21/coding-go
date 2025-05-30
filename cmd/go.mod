@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/cmds
 
-go 1.24.3
+go 1.24.5
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -10,10 +10,10 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jedib0t/go-pretty/v6 v6.6.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250425103139-89c5a0232b81
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250530051707-5479787d6d4f
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/urfave/cli/v3 v3.2.0

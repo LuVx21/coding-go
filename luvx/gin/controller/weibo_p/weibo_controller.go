@@ -30,15 +30,28 @@ func PullByGroup(c *gin.Context) {
 }
 
 func Rss(c *gin.Context) {
-	groupIdStr, word, dayStr, uidStr := c.Query("groupId"), c.Query("word"), c.Query("day"), c.Param("uid")
+	uidStr := c.Param("uid")
+	groupIdStr, word, dayStr := c.Query("groupId"), c.Query("word"), c.Query("day")
+
 	groupId := cast_x.ToInt64(groupIdStr)
 	var day time.Time
 	if len(dayStr) > 0 {
 		day, _ = time.Parse(time.DateOnly, dayStr)
 	}
+
+	args := map[string]any{
+		"groupId": groupId,
+		"word":    word,
+		"day":     day,
+
+		"size":         c.Query("size"),
+		"deleteBefore": c.Query("deleteBefore"),
+		"pullBefore":   c.Query("pullBefore"),
+	}
+
 	uids := slices_x.Transfer(func(i string) int64 { return cast_x.ToInt64(i) }, strings.Split(uidStr, ",")...)
 
-	rss := weibo_p.Rss(groupId, word, day, uids...)
+	rss := weibo_p.Rss(args, groupId, word, day, uids...)
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
 }

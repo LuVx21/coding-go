@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/coding-usage
 
-go 1.24.3
+go 1.24.5
 
 replace github.com/luvx21/coding-go/coding-common => ../coding-common
 
@@ -55,10 +55,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20250425103139-89c5a0232b81
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250425103139-89c5a0232b81
+	github.com/luvx21/coding-go/coding-common v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20250530051707-5479787d6d4f
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20250530051707-5479787d6d4f
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/panjf2000/ants/v2 v2.11.2
@@ -89,7 +89,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.21
 	go.mongodb.org/mongo-driver v1.17.3
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.14.0
+	golang.org/x/sync v0.15.0
 	golang.org/x/time v0.11.0
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
@@ -350,15 +350,15 @@ require (
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
+	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250218202821-56aae31c358a // indirect

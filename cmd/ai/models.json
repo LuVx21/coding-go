@@ -132,7 +132,7 @@
         "apiKey": "KLUSTER_KEY",
         "modelIds": [
             "Qwen/Qwen3-235B-A22B-FP8",
-            "deepseek-ai/DeepSeek-R1",
+            "deepseek-ai/DeepSeek-R1-0528",
             "deepseek-ai/DeepSeek-V3-0324"
         ],
         "enable": true
@@ -142,7 +142,7 @@
         "apiKey": "GMI_KEY",
         "modelIds": [
             "Qwen/Qwen3-235B-A22B-FP8",
-            "deepseek-ai/DeepSeek-R1",
+            "deepseek-ai/DeepSeek-R1-0528",
             "deepseek-ai/DeepSeek-V3-0324"
         ],
         "enable": true
