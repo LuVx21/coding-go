@@ -1,6 +1,6 @@
 module luvx_service_sdk
 
-go 1.24.5
+go 1.25
 
 require (
 	google.golang.org/grpc v1.72.0

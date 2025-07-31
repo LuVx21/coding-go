@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"fmt"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/luvx21/coding-go/infra/logs"
 
 	"github.com/gin-gonic/gin"
@@ -21,8 +21,7 @@ func requestLog(c *gin.Context) {
 	if raw != "" {
 		path = path + "?" + raw
 	}
-	TimeStamp := time.Now()
-	Cost := TimeStamp.Sub(start)
+	Cost := time.Since(start)
 	if Cost > time.Minute {
 		Cost = Cost.Truncate(time.Second)
 	}
@@ -31,7 +30,7 @@ func requestLog(c *gin.Context) {
 		"Path":      path,
 		"Method":    c.Request.Method,
 		"ClientIP":  c.ClientIP(),
-		"Cost":      fmt.Sprintf("%s", Cost),
+		"Cost":      Cost.String(),
 		"Status":    c.Writer.Status(),
 		"Proto":     c.Request.Proto,
 		"UserAgent": c.Request.UserAgent(),
@@ -40,5 +39,6 @@ func requestLog(c *gin.Context) {
 	}
 
 	// logx.WithContext(c).Serve(requestMap)
-	logs.Log.Warnln(requestMap)
+	j, _ := sonic.Marshal(requestMap)
+	logs.Log.Warnln(string(j))
 }

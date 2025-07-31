@@ -24,7 +24,7 @@ func ListKeyByPrefixStream(db *badger.DB, prefix []byte) ([][]byte, error) {
 			if err := proto.Unmarshal(s, kv); err != nil {
 				return err
 			}
-			if kv.StreamDone == true {
+			if kv.StreamDone {
 				return nil
 			}
 			r = append(r, kv.Key)
@@ -46,7 +46,7 @@ func ListByPrefixStream(db *badger.DB, prefix []byte) (map[string][]byte, error)
 			if err := proto.Unmarshal(s, kv); err != nil {
 				return err
 			}
-			if kv.StreamDone == true {
+			if kv.StreamDone {
 				return nil
 			}
 			r[string(kv.Key)] = kv.Value

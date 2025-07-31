@@ -5,7 +5,15 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/luvx21/coding-go/coding-common/cmp_x"
 )
+
+func IsDigit(r rune) bool         { return cmp_x.BetweenAnd(r, '0', '9') }
+func IsLowerLetter(r rune) bool   { return cmp_x.BetweenAnd(r, 'a', 'z') }
+func IsUpperLetter(r rune) bool   { return cmp_x.BetweenAnd(r, 'A', 'Z') }
+func IsLetter(r rune) bool        { return IsLowerLetter(r) || IsUpperLetter(r) }
+func IsLetterOrDigit(r rune) bool { return IsDigit(r) || IsLetter(r) }
 
 func IsBlank[T ~string](cs T) bool {
 	if len(cs) == 0 {

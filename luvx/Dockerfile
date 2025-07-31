@@ -1,6 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-FROM ${REGISTRY}golang:1.24-alpine3.22 AS builder
+FROM ${REGISTRY}golang:1.25-alpine3.22 AS builder
 
 RUN apk add --no-cache upx
 WORKDIR /build

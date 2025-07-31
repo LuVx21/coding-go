@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"testing"
+	"time"
 
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/dgraph-io/ristretto/v2/z"
@@ -98,5 +99,30 @@ func Test_badger_03(t *testing.T) {
 
 	if err := stream.Orchestrate(context.Background()); err != nil {
 		slog.Error("stream orchestrate error", "err", err)
+	}
+}
+
+func Test_badger_04(t *testing.T) {
+	defer beforeAfter("Test_badger_04")()
+
+	ticker := time.NewTicker(5 * time.Minute)
+	defer ticker.Stop()
+	for range ticker.C {
+	again:
+		err := db.RunValueLogGC(0.7)
+		if err == nil {
+			goto again
+		}
+	}
+}
+
+func Test_badger_05(t *testing.T) {
+	defer beforeAfter("Test_badger_05")()
+
+	for {
+		err := db.RunValueLogGC(0.05)
+		if err == badger.ErrNoRewrite {
+			break
+		}
 	}
 }

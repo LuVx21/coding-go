@@ -5,9 +5,17 @@ import (
 
 	"github.com/luvx21/coding-go/coding-common/configs_x"
 	"github.com/luvx21/coding-go/infra/logs"
+	"github.com/spf13/viper"
 )
 
-var AppConfig Config
+const (
+	RemoteMongoUri = "mongodb.remote.uri"
+)
+
+var (
+	AppConfig Config
+	Viper     *viper.Viper
+)
 
 func init() {
 	var env = *flag.String("env", "dev", "go run main.go -env dev")
@@ -26,6 +34,6 @@ func init() {
 	}
 
 	logs.Log.Infoln("加载配置文件...", configName)
-	viper := configs_x.LoadConfig(configName, "$HOME/OneDrive/Code/coding-go/luvx/config")
-	viper.Unmarshal(&AppConfig)
+	Viper = configs_x.LoadConfig(configName, "$HOME/OneDrive/Code/coding-go/luvx/config")
+	Viper.Unmarshal(&AppConfig)
 }

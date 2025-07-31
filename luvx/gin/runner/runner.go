@@ -6,8 +6,10 @@ import (
 
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
+	"luvx/gin/runner/docker"
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
+	"luvx/gin/service/keeplive"
 	"luvx/gin/service/rss"
 	"luvx/gin/service/weibo_p"
 
@@ -55,6 +57,8 @@ func callRunnerRegister(s gocron.Scheduler) {
 	runners = append(runners, weibo_p.RunnerRegister()...)
 	runners = append(runners, rss.RunnerRegister()...)
 	runners = append(runners, bili.RunnerRegister()...)
+	runners = append(runners, keeplive.RunnerRegister()...)
+	runners = append(runners, docker.RunnerRegister()...)
 	for _, r := range runners {
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),

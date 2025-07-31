@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var MongoDatabase *mongo.Database
+var MongoDatabase, RemoteMongoDatabase *mongo.Database
 var collectionMap = make(map[string]*mongo.Collection)
 
 func init() {
@@ -24,6 +24,13 @@ func init() {
 	}
 
 	MongoDatabase = client.Database(_config.Database)
+
+	clientOptions = options.Client().ApplyURI(config.Viper.GetString(config.RemoteMongoUri))
+	remoteClient, err := mongo.Connect(context.TODO(), clientOptions)
+	RemoteMongoDatabase = remoteClient.Database(_config.Database)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GetCollection(name string) *mongo.Collection {

@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/infra/logs
 
-go 1.24.5
+go 1.25
 
 require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/jonboulle/clockwork v0.5.0 // indirect
-	github.com/lestrrat-go/strftime v1.1.0 // indirect
+	github.com/lestrrat-go/strftime v1.1.1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
@@ -21,8 +21,8 @@ require (
 	github.com/onsi/gomega v1.37.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
-	golang.org/x/crypto v0.39.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/crypto v0.43.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/term v0.36.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )

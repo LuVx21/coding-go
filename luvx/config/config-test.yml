@@ -3,6 +3,7 @@ log:
   mainLog: main-%Y-%m-%d.log
   errorLog: error-%Y-%m-%d.log
 
+# ------------------------------------------------------------------------------------------------
 mysql:
   host: luvx
   port: 53306
@@ -21,6 +22,8 @@ redis:
 mongodb:
   uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
   database: boot
+  remote:
+    uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
 
 turso:
   dbname: xxx
@@ -29,3 +32,32 @@ turso:
 server:
   port: ":8090"
   debug: true
+
+# ------------------------------------------------------------------------------------------------
+
+switch:
+  a: true
+
+webclient:
+  header:
+    weibo:
+      referer: https://weibo.com/mygroups?gid=xxx
+    bili:
+      referer: https://bilibili.com/
+
+keeplive:
+  vercel:
+    type: redis
+    host: xxx
+    username: default
+    password: xxx
+  upstash:
+    type: redis
+    host: xxx
+    username: default
+    password: xxx
+
+docker:
+  rss:
+    rsshub: https://rsshub.umzzz.com
+    images: buildpack-deps:latest,golang:latest

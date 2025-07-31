@@ -29,7 +29,8 @@ func RunnerRegister() []*service.Runner {
 		// 	})
 		// }},
 		service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
-		{Name: "拉取分组微博", Crontab: "0 4/4 * * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
+		{Name: "拉取分组微博-日", Crontab: "0 4/4 6-23 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
+		{Name: "拉取分组微博-夜", Crontab: "0 4/20 0-5 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
 		{Name: "删除weibo已读", Crontab: "0 1/2 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
 	}
 }

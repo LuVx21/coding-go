@@ -44,6 +44,7 @@ func Rss(c *gin.Context) {
 		"word":    word,
 		"day":     day,
 
+		"asc":          c.Query("asc"),
 		"size":         c.Query("size"),
 		"deleteBefore": c.Query("deleteBefore"),
 		"pullBefore":   c.Query("pullBefore"),

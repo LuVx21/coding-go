@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: 安装Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
       - name: 安装staticcheck
@@ -25,7 +25,7 @@ jobs:
         run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
         shell: bash
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Fmt

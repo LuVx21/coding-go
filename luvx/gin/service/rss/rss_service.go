@@ -3,6 +3,7 @@ package rss
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +28,7 @@ import (
 const ()
 
 var (
-	collection = db.MongoDatabase.Collection("rss_feed1")
+	collection = db.MongoDatabase.Collection("rss_feed")
 )
 
 func Rss(spiderKey string) string {
@@ -36,7 +37,7 @@ func Rss(spiderKey string) string {
 	cursor, _ := collection.Find(context.Background(), filter, opts)
 	defer cursor.Close(context.Background())
 
-	result := make([]*ItemRss, 0)
+	result := make([]*RssItem, 0)
 	for cursor.Next(context.Background()) {
 		var jo JsonObject
 		_ = cursor.Decode(&jo)
@@ -45,7 +46,7 @@ func Rss(spiderKey string) string {
 	return ToRssXml(result, spiderKey)
 }
 
-func parse2RssItem(m JsonObject) *ItemRss {
+func parse2RssItem(m JsonObject) *RssItem {
 	_id := m["_id"].(int64)
 	contents := m["content"].(primitive.A)
 
@@ -62,12 +63,12 @@ func parse2RssItem(m JsonObject) *ItemRss {
 	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceHost+`:58090/rss/delete/%v">删除<a/>`, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
-	return &ItemRss{
+	return &RssItem{
 		Title:       m["title"].(string),
 		Description: contentHtml,
 		PubDate:     m["pubDate"].(string),
 		Link:        m["url"].(string),
-		Guid:        _id,
+		Guid:        strconv.FormatInt(_id, 10),
 		Author:      "未知",
 	}
 }

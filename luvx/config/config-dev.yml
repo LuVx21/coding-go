@@ -27,3 +27,9 @@ turso:
 server:
   port: ":8090"
   debug: true
+
+docker:
+  rss:
+    # https://rsshub.umzzz.com/dockerhub/build/library/buildpack-deps/latest
+    rsshub: https://rsshub.umzzz.com
+    images: buildpack-deps:latest,golang:latest

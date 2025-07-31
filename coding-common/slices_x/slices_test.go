@@ -8,6 +8,7 @@ import (
 type user struct {
 	names []string
 }
+type users = []user
 
 func Test_Partition(t *testing.T) {
 	ints := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -33,15 +34,18 @@ func Test_02(t *testing.T) {
 }
 
 func Test_flatmap(t *testing.T) {
-	users := []user{
+	us := []user{
 		{names: []string{"a", "b"}},
 		{names: []string{"c", "d"}},
 	}
 
-	names := FlatMap(users, func(u user) []string {
+	names := FlatMap(us, func(u user) []string {
 		return Transfer(func(s string) string { return s + s }, u.names...)
 	})
 	fmt.Println(names)
+
+	aa := Flat([]users{us})
+	fmt.Println(aa, len(aa))
 }
 
 func Test_groupby(t *testing.T) {

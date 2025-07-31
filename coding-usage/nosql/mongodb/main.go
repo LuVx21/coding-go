@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/luvx21/coding-go/coding-usage/nosql"
+	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,27 +21,7 @@ var (
 func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
 	clientOptions := options.Client().ApplyURI(uri)
 
-	// 输出查询语句
-	var logMonitor = event.CommandMonitor{
-		Started: func(ctx context.Context, event *event.CommandStartedEvent) {
-			if event.CommandName != "ping" {
-				log.Println("---------------------------------------Started---------------------------------------")
-				log.Printf("库:%s 命令:%s sql:%+v", event.DatabaseName, event.CommandName, event.Command)
-				log.Println("-------------------------------------------------------------------------------------")
-			}
-		},
-		Succeeded: func(ctx context.Context, event *event.CommandSucceededEvent) {
-			if event.CommandName != "ping" {
-				log.Println("---------------------------------------Succeed---------------------------------------")
-				log.Printf("查询语句:%s 耗时:%dms", event.CommandName, event.Duration/1000/1000)
-				log.Println("-------------------------------------------------------------------------------------")
-			}
-		},
-		Failed: func(ctx context.Context, event *event.CommandFailedEvent) {
-			log.Fatalf("查询语句:%s 耗时:%dms", event.CommandName, event.Duration/1000/1000)
-		},
-	}
-	clientOptions.SetMonitor(&logMonitor)
+	clientOptions.SetMonitor(&mongodb.LogMonitor)
 
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {

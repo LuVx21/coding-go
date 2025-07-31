@@ -20,7 +20,11 @@ func Get(bizType int32, keys ...string) []*model.CommonKeyValue {
 	// tx := client.Debug()
 	tx = tx.Where("biz_type = ? and invalid = 0", bizType)
 	if len(keys) > 0 {
-		tx = tx.Where("common_key in ?", keys)
+		if len(keys) == 1 {
+			tx = tx.Where("common_key = ?", keys[0])
+		} else {
+			tx = tx.Where("common_key in ?", keys)
+		}
 	}
 	_ = tx.Find(&kvs).Error
 	return kvs

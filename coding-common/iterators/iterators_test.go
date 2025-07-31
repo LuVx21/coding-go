@@ -2,10 +2,11 @@ package iterators
 
 import (
 	"fmt"
-	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
 	"log"
 	"strconv"
 	"testing"
+
+	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
 )
 
 type Item struct {
@@ -44,7 +45,7 @@ func dao3(pageNo int, limit int) []Item {
 
 func Test_00(t *testing.T) {
 	const limit = 10
-	iterator := NewCursorIterator[Item, int, pairs.Pair[[]Item, int]](
+	iterator := NewCursorIterator(
 		0,
 		false,
 		func(id int) pairs.Pair[[]Item, int] {
@@ -72,7 +73,7 @@ func Test_00(t *testing.T) {
 
 func Test_01(t *testing.T) {
 	const limit = 10
-	iterator := NewCursorIteratorSimple[Item, int](
+	iterator := NewCursorIteratorSimple(
 		0,
 		false,
 		func(id int) []Item {
@@ -97,20 +98,19 @@ func Test_01(t *testing.T) {
 
 func Test_page(t *testing.T) {
 	const limit = 10
-	iterator :=
-		NewPageIterator[Item, pairs.Pair[[]Item, int]](
-			0,
-			false,
-			func(pageNo int) pairs.Pair[[]Item, int] {
-				return dao2(pageNo, limit)
-			},
-			func(p pairs.Pair[[]Item, int]) []Item {
-				return p.K
-			},
-			func(pageNo int) bool {
-				return pageNo < 0 || pageNo > 5
-			},
-		)
+	iterator := NewPageIterator(
+		0,
+		false,
+		func(pageNo int) pairs.Pair[[]Item, int] {
+			return dao2(pageNo, limit)
+		},
+		func(p pairs.Pair[[]Item, int]) []Item {
+			return p.K
+		},
+		func(pageNo int) bool {
+			return pageNo < 0 || pageNo > 5
+		},
+	)
 
 	// NewPageIteratorSimple[Item](
 	//    0,

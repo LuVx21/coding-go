@@ -100,11 +100,11 @@ func FilterTransfer[I, O any](filter Predicate[I], f Function[I, O], s ...I) []O
 
 // ToAnySlice 入参类型可随意
 func ToAnySlice(s ...any) []any {
-	return ToAnySliceE[any](s...)
+	return ToAnySliceE(s...)
 }
 
 func IsEmpty[S ~[]E, E any](s S) (bool, S) {
-	if s == nil || len(s) == 0 {
+	if len(s) == 0 {
 		return true, s
 	}
 	return false, s
@@ -254,6 +254,7 @@ func Filter[S ~[]E, E any](s S, predicate Predicate[E]) (r S) {
 	return
 }
 
+// 双层切片
 func Flat[S ~[]E, E any](s []S) (r S) {
 	return FlatMap(s, func(s S) []E { return s })
 }

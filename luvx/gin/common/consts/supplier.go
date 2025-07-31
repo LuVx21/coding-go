@@ -30,7 +30,7 @@ func NewLoadableCache[T any](loadFunc gocache.LoadFunction[T]) *gocache.Loadable
 
 func UUID() string {
 	value := uuid.New()
-	return strings.ToLower(strings.Replace(value.String(), "-", "", -1))
+	return strings.ToLower(strings.ReplaceAll(value.String(), "-", ""))
 }
 
 func GetRateLimiter(_url string) *rate.Limiter {

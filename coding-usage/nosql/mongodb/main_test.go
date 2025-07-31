@@ -68,7 +68,7 @@ func Test_find(t *testing.T) {
 func Test_update(t *testing.T) {
 	defer beforeAfter("Test_update")()
 
-	filter := bson.D{bson.E{Key: "_id", Value: 0}}
+	filter := bson.D{{Key: "_id", Value: 99999}, {Key: "age", Value: 99998}}
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "age", Value: 18},
@@ -77,6 +77,11 @@ func Test_update(t *testing.T) {
 	}
 	many, err := collection.UpdateMany(context.TODO(), filter, update)
 	fmt.Println(many, err)
+}
+func Test_delete(t *testing.T) {
+	defer beforeAfter("Test_delete")()
+
+	collection.DeleteOne(context.Background(), bson.D{{Key: "_id", Value: 99999}, {Key: "age", Value: 99998}})
 }
 
 func Test_00(t *testing.T) {
