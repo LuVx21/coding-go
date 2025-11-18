@@ -9,8 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
 	"slices"
+
+	"github.com/pkg/errors"
 )
 
 // Collection 主体
@@ -29,7 +30,7 @@ type tCount struct {
 }
 
 // 是结构体或者指针
-func (c *Collection[T]) isStructOrPointer() bool {
+func (c *Collection[T]) IsStructOrPointer() bool {
 	switch c.typ.Kind() {
 	case reflect.Struct:
 		return true
@@ -48,7 +49,7 @@ func (c *Collection[T]) isComparable() bool {
 }
 
 // 是可以加法运算的（到float）
-func (c *Collection[T]) isAddable() bool {
+func (c *Collection[T]) IsAddable() bool {
 	switch c.typ.Kind() {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Float32, reflect.Float64:
 		return true
@@ -240,7 +241,7 @@ func (c *Collection[T]) SetCompare(cfun func(a any, b any) int) *Collection[T] {
 
 // Copy 复制一个新的Collection
 func (c *Collection[T]) Copy() *Collection[T] {
-	coll := NewCollection[T](c.value).SetErr(c.err)
+	coll := NewCollection(c.value).SetErr(c.err)
 	return coll
 }
 
@@ -284,7 +285,7 @@ func (c *Collection[T]) Insert(index int, item T) *Collection[T] {
 	arr = append(arr, c.value[:index]...)
 	arr = append(arr, item)
 	arr = append(arr, c.value[index:]...)
-	return NewCollection[T](arr)
+	return NewCollection(arr)
 }
 
 // Search 查找元素
@@ -327,7 +328,7 @@ func (c *Collection[T]) Unique() *Collection[T] {
 			res = append(res, c.value[i])
 		}
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Filter 过滤
@@ -347,7 +348,7 @@ func (c *Collection[T]) Filter(f func(item T, key int) bool) *Collection[T] {
 			res = append(res, v)
 		}
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Reject 过滤
@@ -362,7 +363,7 @@ func (c *Collection[T]) Reject(f func(item T, key int) bool) *Collection[T] {
 			res = append(res, v)
 		}
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // First 获取第一个元素
@@ -473,7 +474,7 @@ func (c *Collection[T]) Map(f func(item T, key int) T) *Collection[T] {
 	for i, v := range c.value {
 		res = append(res, f(v, i))
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Reduce 求和
@@ -524,7 +525,7 @@ func (c *Collection[T]) Nth(n int, offset int) *Collection[T] {
 	for i := offset; i < len(c.value); i += n {
 		res = append(res, c.value[i])
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Pad 填充
@@ -533,13 +534,11 @@ func (c *Collection[T]) Pad(count int, def T) *Collection[T] {
 		return c.Copy()
 	}
 	res := make([]T, count)
-	for i := range c.value {
-		res[i] = c.value[i]
-	}
+	copy(res, c.value)
 	for i := len(c.value); i < count; i++ {
 		res[i] = def
 	}
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Pop 弹出最后一个元素
@@ -564,7 +563,7 @@ func (c *Collection[T]) Prepend(item T) *Collection[T] {
 	res := make([]T, 0, len(c.value)+1)
 	res = append(res, item)
 	res = append(res, c.value...)
-	return NewCollection[T](res)
+	return NewCollection(res)
 }
 
 // Random 随机取一个元素
@@ -573,7 +572,7 @@ func (c *Collection[T]) Random() T {
 	if len(c.value) == 0 {
 		return zero
 	}
-	rand.Seed(time.Now().UnixNano())
+	rand.New(rand.NewSource(time.Now().UnixNano()))
 	return c.value[rand.Intn(len(c.value))]
 }
 
@@ -759,7 +758,7 @@ func (c *Collection[T]) SortBy(key string) *Collection[T] {
 		case reflect.Float32, reflect.Float64:
 			return val1.Float() < val2.Float()
 		case reflect.Bool:
-			return val1.Bool() == false && val2.Bool() == true
+			return !val1.Bool() && val2.Bool()
 		default:
 			c.SetErr(errors.New("key has uncomparable type"))
 		}
@@ -789,7 +788,7 @@ func (c *Collection[T]) SortByDesc(key string) *Collection[T] {
 		case reflect.Float32, reflect.Float64:
 			return val1.Float() > val2.Float()
 		case reflect.Bool:
-			return val1.Bool() == true && val2.Bool() == false
+			return val1.Bool() && !val2.Bool()
 		default:
 			c.SetErr(errors.New("key has uncomparable type"))
 		}

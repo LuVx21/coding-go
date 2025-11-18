@@ -53,6 +53,7 @@ func cast(row []string) []any {
 	return anies
 }
 
+//lint:ignore U1000 忽略
 func readLines(lines []string) []string {
 	var start = false
 	rr := make([]string, 0)

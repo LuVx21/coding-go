@@ -1,42 +1,40 @@
 package configs_x
 
 import (
-    "fmt"
-    "github.com/fsnotify/fsnotify"
-    viper_p "github.com/spf13/viper"
-    "os"
+	"fmt"
+	"os"
+
+	"github.com/fsnotify/fsnotify"
+	viper_p "github.com/spf13/viper"
 )
 
 func LoadConfig(configName string, paths ...string) *viper_p.Viper {
-    viper := viper_p.New()
-    viper.SetConfigName(configName)
-    viper.SetConfigType("yml")
-    viper.AddConfigPath(".")
-    viper.AddConfigPath("./config")
-    viper.AddConfigPath("$GOPATH/config")
-    for _, path := range paths {
-        viper.AddConfigPath(path)
-    }
-    err := viper.ReadInConfig()
-    if err != nil {
-        panic(fmt.Errorf("加载配置文件异常: %s\n", err))
-    }
+	viper := viper_p.New()
+	viper.SetConfigName(configName)
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("./config")
+	viper.AddConfigPath("$GOPATH/config")
+	for _, path := range paths {
+		viper.AddConfigPath(path)
+	}
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("加载配置文件异常: %s", err))
+	}
 
-    viper.OnConfigChange(func(e fsnotify.Event) {
-        fmt.Println("Config file changed:", e.Name)
-    })
-    viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		fmt.Println("Config file changed:", e.Name)
+	})
+	viper.WatchConfig()
 
-    return viper
+	return viper
 }
 
 func Exists(path string) bool {
-    _, err := os.Stat(path)
-    if err != nil {
-        if os.IsExist(err) {
-            return true
-        }
-        return false
-    }
-    return true
+	_, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	}
+	return true
 }

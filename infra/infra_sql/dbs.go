@@ -34,10 +34,10 @@ func Row[T any](ctx context.Context, db *sql.DB, query string, args ...any) (T, 
 
 func RowsMap(ctx context.Context, db *sql.DB, query string, args ...any) ([]map[string]any, error) {
 	rows, err := db.QueryContext(ctx, query, args...)
-	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	colNames, err := rows.Columns()
 	if err != nil {
@@ -69,10 +69,10 @@ func RowsMap(ctx context.Context, db *sql.DB, query string, args ...any) ([]map[
 
 func RowMap(ctx context.Context, db *sql.DB, query string, args ...any) (map[string]any, error) {
 	rows, err := db.QueryContext(ctx, query, args...)
-	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	colNames, err := rows.Columns()
 	if err != nil {

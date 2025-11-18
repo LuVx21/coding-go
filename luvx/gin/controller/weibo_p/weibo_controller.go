@@ -15,7 +15,7 @@ import (
 
 func PullByUser(c *gin.Context) {
 	uid := c.Query("uid")
-	if "0" == uid {
+	if uid == "0" {
 		weibo_p.PullByUserAll()
 	} else {
 		weibo_p.PullByUser(cast_x.ToInt64(uid))

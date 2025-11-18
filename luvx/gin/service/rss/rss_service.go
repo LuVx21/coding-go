@@ -16,7 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
-	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/logs"
@@ -39,14 +39,14 @@ func Rss(spiderKey string) string {
 
 	result := make([]*RssItem, 0)
 	for cursor.Next(context.Background()) {
-		var jo JsonObject
+		var jo alias_x.JsonObject
 		_ = cursor.Decode(&jo)
 		result = append(result, parse2RssItem(jo))
 	}
 	return ToRssXml(result, spiderKey)
 }
 
-func parse2RssItem(m JsonObject) *RssItem {
+func parse2RssItem(m alias_x.JsonObject) *RssItem {
 	_id := m["_id"].(int64)
 	contents := m["content"].(primitive.A)
 

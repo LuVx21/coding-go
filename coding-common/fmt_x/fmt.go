@@ -15,12 +15,12 @@ const (
 	colorRed    = prefix + "31m"
 	colorGreen  = prefix + "32m"
 	colorYellow = prefix + "33m"
-	colorBlue   = prefix + "34m"
-	colorPurple = prefix + "35m"
-	colorCyan   = prefix + "36m"
-	colorGray   = prefix + "37m"
-	colorWhite  = prefix + "97m"
-	colorReset  = prefix + "0m"
+	// colorBlue   = prefix + "34m"
+	// colorPurple = prefix + "35m"
+	// colorCyan   = prefix + "36m"
+	// colorGray   = prefix + "37m"
+	// colorWhite  = prefix + "97m"
+	colorReset = prefix + "0m"
 	// 红色文本绿色背景
 	a = prefix + "31;42m"
 	// 加粗红色
@@ -85,7 +85,7 @@ func Println0[T any](rows ...[]T) {
 	for _, row := range strRows {
 		sb.WriteString("|")
 		for i, col := range row {
-			for _ = range width[i] - text_x.Width(col) {
+			for range width[i] - text_x.Width(col) {
 				sb.WriteString(" ")
 			}
 			sb.WriteString(col)

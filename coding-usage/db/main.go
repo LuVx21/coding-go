@@ -1,11 +1,11 @@
 package db
 
 var (
-    Token = ""
+	Token = ""
 
-    MysqlHost     = ""
-    MysqlPort     = 3306
-    MysqlUser     = ""
-    MysqlPassword = ""
-    MysqlDbname   = ""
+	MysqlHost     = ""
+	MysqlPort     = 3306
+	MysqlUser     = ""
+	MysqlPassword = ""
+	MysqlDbname   = ""
 )

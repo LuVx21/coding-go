@@ -1,15 +1,15 @@
 package main
 
 import (
-    "log"
-    "time"
+	"log"
+	"time"
 )
 
 func Task() {
-    // 模拟耗时任务
-    log.Print("task start")
-    time.Sleep(time.Second * 3)
-    log.Print("task done")
+	// 模拟耗时任务
+	log.Print("task start")
+	time.Sleep(time.Second * 3)
+	log.Print("task done")
 }
 
 func main() {

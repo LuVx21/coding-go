@@ -8,16 +8,16 @@ const TableNameCommonKeyValue = "common_key_value"
 
 // CommonKeyValue 通用kv结构
 type CommonKeyValue struct {
-    ID          int64  `gorm:"column:id;primaryKey;autoIncrement:true;comment:自增id" json:"id"` // 自增id
-    BizType     int32  `gorm:"column:biz_type;not null;comment:业务标识" json:"biz_type"`        // 业务标识
-    CommonKey   string `gorm:"column:common_key;not null;comment:键" json:"common_key"`          // 键
-    CommonValue string `gorm:"column:common_value;not null;comment:值" json:"common_value"`      // 值
-    Invalid     int32  `gorm:"column:invalid;not null;comment:失效" json:"invalid"`              // 失效
-    CreateTime  int64  `gorm:"column:create_time;not null;comment:创建时间" json:"create_time"`  // 创建时间
-    UpdateTime  int64  `gorm:"column:update_time;not null;comment:修改时间" json:"update_time"`  // 修改时间
+	ID          int64  `gorm:"column:id;primaryKey;autoIncrement:true;comment:自增id" json:"id"` // 自增id
+	BizType     int32  `gorm:"column:biz_type;not null;comment:业务标识" json:"biz_type"`          // 业务标识
+	CommonKey   string `gorm:"column:common_key;not null;comment:键" json:"common_key"`         // 键
+	CommonValue string `gorm:"column:common_value;not null;comment:值" json:"common_value"`     // 值
+	Invalid     int32  `gorm:"column:invalid;not null;comment:失效" json:"invalid"`              // 失效
+	CreateTime  int64  `gorm:"column:create_time;not null;comment:创建时间" json:"create_time"`    // 创建时间
+	UpdateTime  int64  `gorm:"column:update_time;not null;comment:修改时间" json:"update_time"`    // 修改时间
 }
 
 // TableName CommonKeyValue's table name
 func (*CommonKeyValue) TableName() string {
-    return TableNameCommonKeyValue
+	return TableNameCommonKeyValue
 }

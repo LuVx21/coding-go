@@ -100,7 +100,7 @@ func List(db *bolt.DB, bucket string) (map[string]string, error) {
 }
 
 func Set(db *bolt.DB, bucket, key, value string) error {
-	return Set(db, bucket, key, string(value))
+	return SetByte(db, bucket, key, []byte(value))
 }
 
 func SetByte(db *bolt.DB, bucket, key string, value []byte) error {

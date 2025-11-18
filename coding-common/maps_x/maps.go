@@ -186,7 +186,7 @@ func GetInterface[M ~map[K]any, K comparable](m M, key K, _default any) (any, er
 }
 
 func GetByKey[M ~map[K]any, K comparable](m M, key K, vType reflect.Kind, _default any) (any, error) {
-	if m == nil || len(m) == 0 {
+	if len(m) == 0 {
 		return _default, nil
 	}
 

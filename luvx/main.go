@@ -1,9 +1,9 @@
 package main
 
 import (
-    "luvx/gin"
+	"luvx/gin"
 )
 
 func main() {
-    gin.WebStart()
+	gin.WebStart()
 }

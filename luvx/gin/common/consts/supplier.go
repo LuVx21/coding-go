@@ -11,15 +11,15 @@ import (
 	gocache "github.com/eko/gocache/lib/v4/cache"
 	bigcachestore "github.com/eko/gocache/store/bigcache/v4"
 	"github.com/google/uuid"
-	. "github.com/luvx21/coding-go/coding-common/maps_x"
+	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"golang.org/x/time/rate"
 )
 
 var (
 	rateLimiterMu  sync.Mutex
-	rateLimiterMap = Map[string, *rate.Limiter]{}
+	rateLimiterMap = maps_x.Map[string, *rate.Limiter]{}
 	onceMu         sync.Mutex
-	onceMap        = Map[string, *sync.Once]{}
+	onceMap        = maps_x.Map[string, *sync.Once]{}
 )
 
 func NewLoadableCache[T any](loadFunc gocache.LoadFunction[T]) *gocache.LoadableCache[T] {

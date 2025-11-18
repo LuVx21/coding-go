@@ -47,9 +47,11 @@ func exec() {
 
 	s.Start()
 
-	select {
-	case <-time.After(time.Minute):
-	}
+	time.Sleep(time.Minute)
+
+	// select {
+	// case <-time.After(time.Minute):
+	// }
 }
 
 func callRunnerRegister(s gocron.Scheduler) {

@@ -1,12 +1,12 @@
 package soup
 
 import (
-    "fmt"
-    "testing"
+	"fmt"
+	"testing"
 )
 
 func Test_00(t *testing.T) {
-    _json := `
+	_json := `
 {
     "index": {
         "pageCount": 1,
@@ -36,8 +36,8 @@ func Test_00(t *testing.T) {
     "spiderKey": "xxx"
 }
 `
-    of := Of(_json)
-    fmt.Printf("%#v\n", of)
-    visit := of.Visit()
-    fmt.Println(visit[0].Content)
+	of := Of(_json)
+	fmt.Printf("%#v\n", of)
+	visit := of.Visit()
+	fmt.Println(visit[0].Content)
 }

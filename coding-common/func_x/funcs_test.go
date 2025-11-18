@@ -1,7 +1,7 @@
 package func_x
 
 import (
-    "testing"
+	"testing"
 )
 
 func Test_00(t *testing.T) {

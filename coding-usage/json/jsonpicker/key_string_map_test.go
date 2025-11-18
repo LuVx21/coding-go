@@ -1,7 +1,7 @@
 package jsonpicker
 
 import (
-    "testing"
+	"testing"
 )
 
 func TestConvJson2Map(t *testing.T) {

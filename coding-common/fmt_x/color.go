@@ -48,7 +48,7 @@ func Sinfof(format string, a ...any) string {
 
 // Fwarningf writes yellow colored text in manner of fmt.Fprintf
 func Fwarningf(w io.Writer, format string, a ...any) (n int, err error) {
-	n, err = fmt.Fprint(w, aurora.Sprintf(aurora.Brown(format), a...))
+	n, err = fmt.Fprint(w, aurora.Sprintf(aurora.Yellow(format), a...))
 	return
 }
 
@@ -60,7 +60,7 @@ func Warningf(format string, a ...any) (n int, err error) {
 
 // Swarningf returns yellow colored string in manner of fmt.Sprintf
 func Swarningf(format string, a ...any) string {
-	return aurora.Sprintf(aurora.Brown(format), a...)
+	return aurora.Sprintf(aurora.Yellow(format), a...)
 }
 
 // Ferrorf writes red colored text in manner of fmt.Fprintf
@@ -116,7 +116,7 @@ func Sinfo(a ...any) string {
 
 // Fwarning prints yellow colored text in manner of fmt.Fprint
 func Fwarning(w io.Writer, a ...any) (n int, err error) {
-	n, err = fmt.Fprint(w, aurora.Brown(fmt.Sprint(a...)))
+	n, err = fmt.Fprint(w, aurora.Yellow(fmt.Sprint(a...)))
 	return
 }
 
@@ -128,7 +128,7 @@ func Warning(a ...any) (n int, err error) {
 
 // Swarning returns yellow colored string in manner of fmt.Sprint
 func Swarning(a ...any) string {
-	return fmt.Sprint(aurora.Brown(fmt.Sprint(a...)))
+	return fmt.Sprint(aurora.Yellow(fmt.Sprint(a...)))
 }
 
 // Ferror prints red colored text in manner of fmt.Fprint
@@ -184,7 +184,7 @@ func Sinfoln(a ...any) string {
 
 // Fwarningln prints yellow colored text in manner of fmt.Fprintln
 func Fwarningln(w io.Writer, a ...any) (n int, err error) {
-	n, err = fmt.Fprintln(w, aurora.Brown(fmt.Sprint(a...)))
+	n, err = fmt.Fprintln(w, aurora.Yellow(fmt.Sprint(a...)))
 	return
 }
 
@@ -196,7 +196,7 @@ func Warningln(a ...any) (n int, err error) {
 
 // Swarningln returns yellow colored string in manner of fmt.Sprintln
 func Swarningln(a ...any) string {
-	return fmt.Sprintln(aurora.Brown(fmt.Sprint(a...)))
+	return fmt.Sprintln(aurora.Yellow(fmt.Sprint(a...)))
 }
 
 // Ferrorln prints red colored text in manner of fmt.Fprintln

@@ -39,9 +39,9 @@ func dao2(pageNo int, limit int) pairs.Pair[[]Item, int] {
 	return dao0((pageNo-1)*limit, limit)
 }
 
-func dao3(pageNo int, limit int) []Item {
-	return dao2(pageNo, limit).K
-}
+// func dao3(pageNo int, limit int) []Item {
+// 	return dao2(pageNo, limit).K
+// }
 
 func Test_00(t *testing.T) {
 	const limit = 10

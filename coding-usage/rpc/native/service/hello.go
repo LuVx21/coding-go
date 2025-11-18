@@ -1,15 +1,15 @@
 package service
 
 const (
-    HelloSayHi = "hello.SayHi"
+	HelloSayHi = "hello.SayHi"
 )
 
 type Person struct {
-    Name string
-    Age  int
+	Name string
+	Age  int
 }
 
 type Res struct {
-    Msg  string
-    Code int
+	Msg  string
+	Code int
 }

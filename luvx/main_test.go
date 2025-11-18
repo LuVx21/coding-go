@@ -1,16 +1,16 @@
 package main
 
 import (
-    "testing"
+	"testing"
 )
 
 func Test01(t *testing.T) {
-    var tests []struct {
-        name string
-    }
+	var tests []struct {
+		name string
+	}
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-        })
-    }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+		})
+	}
 }

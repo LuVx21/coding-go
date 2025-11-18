@@ -46,7 +46,7 @@ const (
 )
 
 var (
-	onSuccessValid = []string{"none", "delete"}
+	onSuccessValid = []string{"none", "delete"} //lint:ignore U1000 忽略
 )
 
 type config struct {

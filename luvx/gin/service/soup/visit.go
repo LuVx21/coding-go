@@ -3,17 +3,19 @@ package soup
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"net/url"
 	"slices"
 	"strings"
 	"time"
+
+	"luvx/gin/common/consts"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/luvx21/coding-go/infra/logs"
-	"luvx/gin/common/consts"
 )
 
 func (param SpiderParam) content(title, _url string) PageContent {
@@ -144,7 +146,12 @@ func request(name, pageUrl string) (*goquery.Document, error) {
 	f := func() *goquery.Document {
 		limiter := consts.GetRateLimiter(pageUrl)
 		_ = limiter.Wait(context.Background())
-		dd, e := goquery.NewDocument(pageUrl)
+		res, e := http.Get(pageUrl)
+		if e != nil {
+			return nil
+		}
+		defer res.Body.Close()
+		dd, e := goquery.NewDocumentFromReader(res.Body)
 		if e != nil {
 			panic(e)
 		}

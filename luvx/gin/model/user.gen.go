@@ -5,22 +5,22 @@
 package model
 
 import (
-    "time"
+	"time"
 )
 
 const TableNameUser = "user"
 
 // User mapped from table <user>
 type User struct {
-    ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-    UserName   string    `gorm:"column:user_name;not null" json:"user_name"`
-    Password   string    `gorm:"column:password;not null" json:"password"`
-    Age        int32     `gorm:"column:age" json:"age"`
-    Birthday   time.Time `gorm:"column:birthday" json:"birthday"`
-    UpdateTime time.Time `gorm:"column:update_time;not null;default:CURRENT_TIMESTAMP" json:"update_time"`
+	ID         int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	UserName   string    `gorm:"column:user_name;not null" json:"user_name"`
+	Password   string    `gorm:"column:password;not null" json:"password"`
+	Age        int32     `gorm:"column:age" json:"age"`
+	Birthday   time.Time `gorm:"column:birthday" json:"birthday"`
+	UpdateTime time.Time `gorm:"column:update_time;not null;default:CURRENT_TIMESTAMP" json:"update_time"`
 }
 
 // TableName User's table name
 func (*User) TableName() string {
-    return TableNameUser
+	return TableNameUser
 }

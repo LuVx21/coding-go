@@ -24,8 +24,8 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
-	. "github.com/luvx21/coding-go/coding-common/common_x/pairs"
+	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/ids"
 	"github.com/luvx21/coding-go/coding-common/iterators"
@@ -198,10 +198,10 @@ func PullByGroup(groupId int64) {
 	var cursor int64 = 0
 	iterator := iterators.NewCursorIterator(
 		cursor, false,
-		func(_cursor int64) Pair[[]any, int64] {
+		func(_cursor int64) pairs.Pair[[]any, int64] {
 			return requestPageOfGroup(groupId, _cursor)
 		},
-		func(curId int64, p Pair[[]any, int64]) int64 {
+		func(curId int64, p pairs.Pair[[]any, int64]) int64 {
 			items := p.K
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
@@ -213,7 +213,7 @@ func PullByGroup(groupId int64) {
 			}
 			return p.V
 		},
-		func(p Pair[[]any, int64]) []any {
+		func(p pairs.Pair[[]any, int64]) []any {
 			return p.K
 		},
 		func(i int64) bool {
@@ -382,7 +382,7 @@ func requestPageOfUser(uid int64, cursor int) []any {
 	return list
 }
 
-func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
+func requestPageOfGroup(groupId int64, cursor int64) pairs.Pair[[]any, int64] {
 	m := map[string]any{
 		"list_id":      groupId,
 		"max_id":       cursor,
@@ -393,13 +393,13 @@ func requestPageOfGroup(groupId int64, cursor int64) Pair[[]any, int64] {
 	_ = consts.RateLimiter.Wait(context.TODO())
 	_, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 	if len(errors) > 0 {
-		return NewPair[[]any, int64](nil, math.MaxInt64)
+		return pairs.NewPair[[]any, int64](nil, math.MaxInt64)
 	}
-	ff, _ := jsons.JsonStringToMap[string, any, JsonObject](body)
+	ff, _ := jsons.JsonStringToMap[string, any, alias_x.JsonObject](body)
 	list := ff["statuses"].([]any)
 	maxId := cast_x.ToInt64(ff["max_id"])
 
-	return NewPair(list, maxId)
+	return pairs.NewPair(list, maxId)
 }
 
 func getCookie() string {
@@ -476,7 +476,7 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 
 	s0 := ""
 	for cursor.Next(context.Background()) {
-		var jo JsonObject
+		var jo alias_x.JsonObject
 		_ = cursor.Decode(&jo)
 		s0 += a(jo)
 	}
@@ -491,20 +491,20 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 	return fmt.Sprintf(s, s0)
 }
 
-func a(jo JsonObject) string {
+func a(jo alias_x.JsonObject) string {
 	_id := cast_x.ToInt64(jo["_id"])
 	title := jo["text_raw"].(string)
 	_contentHtml := contentHtml(jo)
 	retweetId := jo["retweeted_status"]
 	if retweetId != nil {
-		var retweet JsonObject
+		var retweet alias_x.JsonObject
 		_ = collection.FindOne(context.TODO(), bson.M{"_id": cast_x.ToInt64(retweetId)}).Decode(&retweet)
 		if retweet != nil {
 			i := retweet["user"]
 			retweetUrl, uName := "", ""
 			if i != nil {
-				uName = i.(JsonObject)["name"].(string)
-				uId := cast_x.ToString(i.(JsonObject)["id"])
+				uName = i.(alias_x.JsonObject)["name"].(string)
+				uId := cast_x.ToString(i.(alias_x.JsonObject)["id"])
 				retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
 				uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, uName)
 			}
@@ -516,7 +516,7 @@ func a(jo JsonObject) string {
 	deleteUrl := addDelete(_id)
 	_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	user := jo["user"].(JsonObject)
+	user := jo["user"].(alias_x.JsonObject)
 	userId := cast_x.ToInt64(user["id"])
 	screenName := user["name"]
 	url := fmt.Sprintf("https://weibo.com/%v/%v", userId, jo["mblogid"])
@@ -544,7 +544,7 @@ func addDelete(_id int64) string {
 	return fmt.Sprintf(format, _id)
 }
 
-func contentHtml(jo JsonObject) string {
+func contentHtml(jo alias_x.JsonObject) string {
 	text := jo["text"].(string)
 	text = strings.ReplaceAll(text, "//<a ", "<br/>//<a ")
 	text = strings.ReplaceAll(text, "//@", "<br/>//@")

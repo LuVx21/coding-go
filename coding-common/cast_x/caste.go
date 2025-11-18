@@ -592,9 +592,6 @@ func ToUint64E(i interface{}) (uint64, error) {
 	case string:
 		v, err := strconv.ParseUint(numbers.TrimZeroDecimal(rv), 0, 0)
 		if err == nil {
-			if v < 0 {
-				return 0, errNegativeNotAllowed
-			}
 			return v, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", i, i)

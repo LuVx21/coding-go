@@ -15,14 +15,14 @@ import (
 const (
 	domain       = "%s-%s.turso.io"
 	http_dsn     = "https://" + domain
-	libsql_dsn   = "libsql://" + domain
+	libsql_dsn   = "libsql://" + domain //lint:ignore U1000 忽略
 	pipeline_url = http_dsn + "/v2/pipeline"
 
-	arg_type_null    = "null"
-	arg_type_integer = "integer"
-	arg_type_float   = "float"
-	arg_type_text    = "text"
-	arg_type_blob    = "blob"
+	// arg_type_null    = "null"
+	// arg_type_integer = "integer"
+	// arg_type_float   = "float"
+	// arg_type_text    = "text"
+	// arg_type_blob    = "blob"
 )
 
 var (

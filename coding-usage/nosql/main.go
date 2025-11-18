@@ -1,9 +1,9 @@
 package nosql
 
 var (
-    RedisAddr     = ""
-    RedisUserName = ""
-    RedisPassword = ""
+	RedisAddr     = ""
+	RedisUserName = ""
+	RedisPassword = ""
 
-    MongoUri = ""
+	MongoUri = ""
 )

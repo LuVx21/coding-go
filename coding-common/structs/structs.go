@@ -42,7 +42,7 @@ func ToMap(in any, tagName string) (map[string]any, error) {
 func ToSingleMap(in any, tag string) (map[string]any, error) {
 	v := reflect.ValueOf(in)
 	if v.Kind() == reflect.Pointer {
-		v = v.Elem()
+		// v = v.Elem()
 	} else if v.Kind() != reflect.Struct {
 		return nil, fmt.Errorf("只能为结构体或其指针; 类型: %T", v)
 	}

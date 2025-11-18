@@ -1,22 +1,22 @@
 package main
 
 import (
-    "github.com/labstack/echo/v4"
-    "github.com/labstack/echo/v4/middleware"
-    "net/http"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"net/http"
 )
 
 func main() {
-    e := echo.New()
+	e := echo.New()
 
-    e.Use(middleware.Logger())
-    e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-    e.GET("/", hello)
+	e.GET("/", hello)
 
-    e.Logger.Fatal(e.Start(":11323"))
+	e.Logger.Fatal(e.Start(":11323"))
 }
 
 func hello(c echo.Context) error {
-    return c.String(http.StatusOK, "Hello, World!")
+	return c.String(http.StatusOK, "Hello, World!")
 }

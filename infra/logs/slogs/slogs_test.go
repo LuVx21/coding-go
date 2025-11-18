@@ -2,11 +2,8 @@ package slogs
 
 import (
 	"log/slog"
-	"sync"
 	"testing"
 )
-
-var once sync.Once
 
 func Test_01(t *testing.T) {
 	SetConsoleLevel(slog.LevelInfo)

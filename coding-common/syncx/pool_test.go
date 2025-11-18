@@ -15,7 +15,7 @@ func Test_pool_00(t *testing.T) {
 	defer p.Put(buf)
 	buf.WriteString("hello")
 
-	fmt.Println(string(buf.Bytes()))
+	fmt.Println(buf.String())
 }
 
 // 不使用 Pool

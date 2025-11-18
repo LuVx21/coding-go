@@ -7,9 +7,9 @@ import (
 
 	"slices"
 
-	. "github.com/luvx21/coding-go/coding-common/common_x/funcs"
-	. "github.com/luvx21/coding-go/coding-common/common_x/pairs"
-	. "github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/funcs"
+	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"golang.org/x/exp/constraints"
 )
 
@@ -74,7 +74,7 @@ func LastOr[S ~[]E, E any](s S, def E) E {
 	return s[l-1]
 }
 
-func Transfer[I, O any](f Function[I, O], s ...I) []O {
+func Transfer[I, O any](f funcs.Function[I, O], s ...I) []O {
 	r := make([]O, len(s))
 	for i, v := range s {
 		r[i] = f(v)
@@ -88,7 +88,7 @@ func ToAnySliceE[E any](s ...E) []any {
 	return Transfer(f, s...)
 }
 
-func FilterTransfer[I, O any](filter Predicate[I], f Function[I, O], s ...I) []O {
+func FilterTransfer[I, O any](filter funcs.Predicate[I], f funcs.Function[I, O], s ...I) []O {
 	r := make([]O, 0)
 	for _, e := range s {
 		if filter(e) {
@@ -190,7 +190,7 @@ func Delete[S ~[]E, E comparable](arr S, t E) S {
 	return r
 }
 
-func AllTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
+func AllTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
 	for _, value := range s {
 		if !fn(value) {
 			return false
@@ -198,7 +198,7 @@ func AllTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
 	}
 	return true
 }
-func AnyTrue[S ~[]E, E any](s S, fn Predicate[E]) bool {
+func AnyTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
 	return slices.ContainsFunc(s, fn)
 }
 
@@ -221,7 +221,7 @@ func Sort[S ~[]E, E constraints.Ordered](s S) S {
 }
 
 // SortBy 新slice
-func SortBy[S ~[]E, E any](s S, less BiPredicate[E, E]) S {
+func SortBy[S ~[]E, E any](s S, less funcs.BiPredicate[E, E]) S {
 	if len(s) <= 1 {
 		return s
 	}
@@ -245,7 +245,7 @@ func LastN[S ~[]E, E any](s S, n int) (r S) {
 	return s[len(s)-n:]
 }
 
-func Filter[S ~[]E, E any](s S, predicate Predicate[E]) (r S) {
+func Filter[S ~[]E, E any](s S, predicate funcs.Predicate[E]) (r S) {
 	for _, e := range s {
 		if predicate(e) {
 			r = append(r, e)
@@ -265,7 +265,7 @@ func FlatMap[S ~[]E, E, O any](s S, transfer func(E) []O) (r []O) {
 	return r
 }
 
-func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper Function[E, K], valueMapper Function[E, V]) map[K][]V {
+func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper funcs.Function[E, K], valueMapper funcs.Function[E, V]) map[K][]V {
 	groups := make(map[K][]V)
 	for _, e := range s {
 		key, value := keyMapper(e), valueMapper(e)
@@ -274,7 +274,7 @@ func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper Function[E, K], 
 	return groups
 }
 
-func Reduce[S ~[]E, E any, O any](ss S, reducer BiFunction[E, O, O]) (el O) {
+func Reduce[S ~[]E, E any, O any](ss S, reducer funcs.BiFunction[E, O, O]) (el O) {
 	if len(ss) == 0 {
 		return
 	}
@@ -284,16 +284,16 @@ func Reduce[S ~[]E, E any, O any](ss S, reducer BiFunction[E, O, O]) (el O) {
 	return
 }
 
-func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []Pair[E1, E2] {
+func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []pairs.Pair[E1, E2] {
 	minLen := min(len(ss1), len(ss2))
-	var r []Pair[E1, E2]
+	var r []pairs.Pair[E1, E2]
 	for i := range minLen {
-		r = append(r, NewPair(ss1[i], ss2[i]))
+		r = append(r, pairs.NewPair(ss1[i], ss2[i]))
 	}
 	return r
 }
 
-func Sum[S ~[]E, E Number](s S) (sum E) {
+func Sum[S ~[]E, E types_x.Number](s S) (sum E) {
 	for _, s := range s {
 		sum += s
 	}
