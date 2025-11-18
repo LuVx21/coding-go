@@ -424,7 +424,7 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 		w := cast_x.ToString(commonkvservice.GetMapFieldValue("common_map", word))
 		if len(w) > 0 {
 			filter = append(filter, bson.E{Key: "text", Value: bson.M{"$regex": w, "$options": "i"}})
-		return filter, opts
+			return filter, opts
 		}
 	}
 

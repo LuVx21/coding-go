@@ -92,7 +92,6 @@ func HealthyCheck(c *gin.Context) {
 
 var ignoreHeaders = sets.NewSet("x-frame-options", "X-Frame-Options")
 
-
 func Redirect(c *gin.Context) {
 	toUrl := c.Query("url")
 	// logs.Log.Infoln("重定向到:", toUrl)
