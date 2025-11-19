@@ -39,6 +39,9 @@ jobs:
         if: matrix.platform != 'windows-latest' # :(
         run: "diff <(gofmt -d .) <(printf '')"
         shell: bash
+      - name: mod
+        run: |
+          go clean -modcache && go mod tidy
       - name: Vet
         run: |
           cd coding-common && go vet ./...

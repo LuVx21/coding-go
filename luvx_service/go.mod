@@ -9,7 +9,7 @@ require (
 	github.com/klauspost/compress v1.18.1
 	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
 	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251118092137-5fd9267f1584
-	go.etcd.io/etcd/client/v3 v3.6.4
+	go.etcd.io/etcd/client/v3 v3.6.6
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
 	luvx_service_sdk v0.0.0-00010101000000-000000000000
