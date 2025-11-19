@@ -42,7 +42,7 @@ jobs:
         shell: bash
       - name: mod
         run: |
-          go clean -modcache && go mod tidy
+          cd coding-common && go clean -modcache && go mod tidy
       - name: Vet
         run: |
           cd coding-common && go vet ./...
