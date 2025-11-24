@@ -2,7 +2,6 @@ package docker
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
@@ -56,13 +55,13 @@ func a() {
 
 		_url := tul + "/" + owner + "/" + imageName + "/" + tag
 		_ = rateLimiter.Wait(context.TODO())
-		_, body, errs := consts.GoRequest.Get(_url).End()
-		if errs != nil {
+		r, body, errs := consts.GoRequest.Get(_url).End()
+		if errs != nil || r.StatusCode/100 != 2 {
 			continue
 		}
 		pubDate := parseXml(body)
 		latest, _ := time.Parse(time.RFC1123, pubDate)
-		fmt.Println("docker 镜像", image, pubDate, latest)
+		logs.Log.Infoln("docker 镜像", image, latest)
 		if latest.After(lastSyncTime) {
 			values = append(values, image, latest.Format(time.DateTime))
 		}

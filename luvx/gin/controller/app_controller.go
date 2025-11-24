@@ -59,9 +59,9 @@ func HealthyCheck(c *gin.Context) {
 	r0 := make(chan model.User, 1)
 	r1 := make(chan bson.M, 1)
 	r2 := make(chan string, 1)
-	common_x.RunInRoutine(&wg, func() { r0 <- f0() })
-	common_x.RunInRoutine(&wg, func() { r1 <- f1() })
-	common_x.RunInRoutine(&wg, func() { r2 <- f2() })
+	wg.Go(func() { r0 <- f0() })
+	wg.Go(func() { r1 <- f1() })
+	wg.Go(func() { r2 <- f2() })
 
 	sqlite, _ := common_x.RunWithTime2("sqlite", func() ([]map[string]any, error) {
 		return dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args)

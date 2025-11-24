@@ -14,7 +14,7 @@ import (
 	"github.com/c-bata/go-prompt"
 	"github.com/charmbracelet/glamour"
 	"github.com/go-sql-driver/mysql"
-	"github.com/luvx21/coding-go/cmds/ai/utils"
+	"github.com/luvx21/coding-go/cmd/ai/utils"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/dbs"

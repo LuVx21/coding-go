@@ -8,16 +8,15 @@ import (
 	"slices"
 
 	"github.com/luvx21/coding-go/coding-common/common_x/funcs"
-	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
 	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"golang.org/x/exp/constraints"
 )
 
 // Contains 适合较多数据或重复检查存在的场景(空间换时间)
 func Contains[S ~[]E, E comparable](s S) func(E) bool {
-	m := make(map[E]struct{})
-	for _, e := range s {
-		m[e] = struct{}{}
+	m := make(map[E]struct{}, len(s))
+	for i := range s {
+		m[s[i]] = struct{}{}
 	}
 	return func(e E) bool {
 		_, ok := m[e]
@@ -76,8 +75,8 @@ func LastOr[S ~[]E, E any](s S, def E) E {
 
 func Transfer[I, O any](f funcs.Function[I, O], s ...I) []O {
 	r := make([]O, len(s))
-	for i, v := range s {
-		r[i] = f(v)
+	for i := range s {
+		r[i] = f(s[i])
 	}
 	return r
 }
@@ -90,9 +89,9 @@ func ToAnySliceE[E any](s ...E) []any {
 
 func FilterTransfer[I, O any](filter funcs.Predicate[I], f funcs.Function[I, O], s ...I) []O {
 	r := make([]O, 0)
-	for _, e := range s {
-		if filter(e) {
-			r = append(r, f(e))
+	for i := range s {
+		if filter(s[i]) {
+			r = append(r, f(s[i]))
 		}
 	}
 	return r
@@ -123,13 +122,14 @@ func ClearZeroRef[S ~[]E, E any](s S) S {
 // Intersect 交集
 func Intersect[S ~[]E, E comparable](a, b S) S {
 	var r S
-	mp := make(map[E]struct{}, len(a))
-	for _, val := range a {
-		mp[val] = struct{}{}
+	seen := make(map[E]struct{}, len(a))
+	for i := range a {
+		seen[a[i]] = struct{}{}
 	}
-	for _, val := range b {
-		if _, ok := mp[val]; ok {
-			r = append(r, val)
+	for i := range b {
+		if _, ok := seen[b[i]]; ok {
+			r = append(r, b[i])
+			delete(seen, b[i])
 		}
 	}
 	return r
@@ -139,12 +139,12 @@ func Intersect[S ~[]E, E comparable](a, b S) S {
 func Diff[S ~[]E, E comparable](a, b S) S {
 	var r S
 	mp := make(map[E]struct{}, len(b))
-	for _, val := range b {
-		mp[val] = struct{}{}
+	for i := range b {
+		mp[b[i]] = struct{}{}
 	}
-	for _, val := range a {
-		if _, ok := mp[val]; !ok {
-			r = append(r, val)
+	for i := range a {
+		if _, ok := mp[a[i]]; !ok {
+			r = append(r, a[i])
 		}
 	}
 	return r
@@ -153,11 +153,11 @@ func Diff[S ~[]E, E comparable](a, b S) S {
 // IsUnique 切片是否存在重复值
 func IsUnique[S ~[]E, E comparable](s S) bool {
 	m := make(map[E]struct{}, len(s))
-	for _, e := range s {
-		if _, ok := m[e]; ok {
+	for i := range s {
+		if _, ok := m[s[i]]; ok {
 			return false
 		}
-		m[e] = struct{}{}
+		m[s[i]] = struct{}{}
 	}
 	return true
 }
@@ -171,10 +171,10 @@ func Unique[S ~[]E, E comparable](arr S) S {
 
 	r := make(S, 0, l)
 	mp := map[E]struct{}{}
-	for _, e := range arr {
-		if _, ok := mp[e]; !ok {
-			mp[e] = struct{}{}
-			r = append(r, e)
+	for i := range arr {
+		if _, ok := mp[arr[i]]; !ok {
+			mp[arr[i]] = struct{}{}
+			r = append(r, arr[i])
 		}
 	}
 	return r
@@ -182,17 +182,17 @@ func Unique[S ~[]E, E comparable](arr S) S {
 
 func Delete[S ~[]E, E comparable](arr S, t E) S {
 	r := make(S, 0)
-	for _, e := range arr {
-		if e != t {
-			r = append(r, e)
+	for i := range arr {
+		if arr[i] != t {
+			r = append(r, arr[i])
 		}
 	}
 	return r
 }
 
 func AllTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
-	for _, value := range s {
-		if !fn(value) {
+	for i := range s {
+		if !fn(s[i]) {
 			return false
 		}
 	}
@@ -246,9 +246,9 @@ func LastN[S ~[]E, E any](s S, n int) (r S) {
 }
 
 func Filter[S ~[]E, E any](s S, predicate funcs.Predicate[E]) (r S) {
-	for _, e := range s {
-		if predicate(e) {
-			r = append(r, e)
+	for i := range s {
+		if predicate(s[i]) {
+			r = append(r, s[i])
 		}
 	}
 	return
@@ -259,16 +259,16 @@ func Flat[S ~[]E, E any](s []S) (r S) {
 	return FlatMap(s, func(s S) []E { return s })
 }
 func FlatMap[S ~[]E, E, O any](s S, transfer func(E) []O) (r []O) {
-	for _, e := range s {
-		r = append(r, transfer(e)...)
+	for i := range s {
+		r = append(r, transfer(s[i])...)
 	}
 	return r
 }
 
 func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper funcs.Function[E, K], valueMapper funcs.Function[E, V]) map[K][]V {
 	groups := make(map[K][]V)
-	for _, e := range s {
-		key, value := keyMapper(e), valueMapper(e)
+	for i := range s {
+		key, value := keyMapper(s[i]), valueMapper(s[i])
 		groups[key] = append(groups[key], value)
 	}
 	return groups
@@ -278,24 +278,24 @@ func Reduce[S ~[]E, E any, O any](ss S, reducer funcs.BiFunction[E, O, O]) (el O
 	if len(ss) == 0 {
 		return
 	}
-	for _, s := range ss {
-		el = reducer(s, el)
+	for i := range ss {
+		el = reducer(ss[i], el)
 	}
 	return
 }
 
-func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []pairs.Pair[E1, E2] {
+func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []types_x.Pair[E1, E2] {
 	minLen := min(len(ss1), len(ss2))
-	var r []pairs.Pair[E1, E2]
+	var r []types_x.Pair[E1, E2]
 	for i := range minLen {
-		r = append(r, pairs.NewPair(ss1[i], ss2[i]))
+		r = append(r, types_x.NewPair(ss1[i], ss2[i]))
 	}
 	return r
 }
 
 func Sum[S ~[]E, E types_x.Number](s S) (sum E) {
-	for _, s := range s {
-		sum += s
+	for i := range s {
+		sum += s[i]
 	}
 	return
 }
@@ -314,4 +314,17 @@ func Shuffle[S ~[]E, E any](ss S, source rand.Source) S {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 	return shuffled
+}
+
+func ForEach[S ~[]E, E any](s S, f func(index int, item E)) {
+	for i := range s {
+		f(i, s[i])
+	}
+}
+func ForEachUntil[S ~[]E, E any](s S, until func(index int, item E) bool) {
+	for i := range s {
+		if until(i, s[i]) {
+			break
+		}
+	}
 }

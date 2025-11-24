@@ -133,7 +133,7 @@ func GetInt[M ~map[K]any, K comparable](m M, key K, _default int) (int, error) {
 }
 
 func GetInt64[M ~map[K]any, K comparable](m M, key K, _default int64) (int64, error) {
-	val, err := GetByKey[M, K](m, key, reflect.Int64, _default)
+	val, err := GetByKey(m, key, reflect.Int64, _default)
 	if err != nil {
 		return _default, err
 	}
@@ -201,4 +201,19 @@ func GetByKey[M ~map[K]any, K comparable](m M, key K, vType reflect.Kind, _defau
 	}
 
 	return val, nil
+}
+
+func ForEach[M ~map[K]V, K comparable, V any](m M, f func(K, V)) {
+	for k, v := range m {
+		f(k, v)
+	}
+}
+
+func MapEntries[M ~map[K1]V1, K1, K2 comparable, V1, V2 any](m M, f func(K1, V1) (K2, V2)) map[K2]V2 {
+	result := make(map[K2]V2, len(m))
+	for k1, v1 := range m {
+		k2, v2 := f(k1, v1)
+		result[k2] = v2
+	}
+	return result
 }

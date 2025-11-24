@@ -12,7 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luvx21/coding-go/cmds/ai/utils"
+	"github.com/luvx21/coding-go/cmd/ai/utils"
 	"github.com/luvx21/coding-go/infra/ai"
 )
 

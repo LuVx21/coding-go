@@ -1,4 +1,4 @@
-module github.com/luvx21/coding-go/cmds
+module github.com/luvx21/coding-go/cmd
 
 go 1.25
 

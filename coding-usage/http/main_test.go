@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-resty/resty/v2"
-	"github.com/levigross/grequests"
-	"github.com/parnurzeal/gorequest"
-	"github.com/valyala/fasthttp"
 	"log"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/levigross/grequests"
+	"github.com/parnurzeal/gorequest"
+	"github.com/valyala/fasthttp"
+	"resty.dev/v3"
 )
 
 func Test00(t *testing.T) {
@@ -41,7 +42,7 @@ func Test02(t *testing.T) {
 	fmt.Println("  Status Code:", resp.StatusCode())
 	fmt.Println("  Status     :", resp.Status())
 	fmt.Println("  Proto      :", resp.Proto())
-	fmt.Println("  Time       :", resp.Time())
+	fmt.Println("  Time       :", resp.Duration())
 	fmt.Println("  Received At:", resp.ReceivedAt())
 	fmt.Println("  Body       :\n", resp)
 	fmt.Println()
@@ -59,7 +60,7 @@ func Test02(t *testing.T) {
 	fmt.Println("  IsConnWasIdle :", ti.IsConnWasIdle)
 	fmt.Println("  ConnIdleTime  :", ti.ConnIdleTime)
 	fmt.Println("  RequestAttempt:", ti.RequestAttempt)
-	fmt.Println("  RemoteAddr    :", ti.RemoteAddr.String())
+	fmt.Println("  RemoteAddr    :", ti.RemoteAddr)
 }
 
 func Test_03(t *testing.T) {

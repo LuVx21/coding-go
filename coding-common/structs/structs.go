@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 )
 
 // ToMap 结构体转为Map[string]any
@@ -48,8 +48,8 @@ func ToSingleMap(in any, tag string) (map[string]any, error) {
 	}
 
 	result := make(map[string]any)
-	queue := make([]pairs.Pair[any, string], 0, 1)
-	queue = append(queue, pairs.NewPair(in, ""))
+	queue := make([]types_x.Pair[any, string], 0, 1)
+	queue = append(queue, types_x.NewPair(in, ""))
 
 	for len(queue) > 0 {
 		e := queue[0]
@@ -67,11 +67,11 @@ func ToSingleMap(in any, tag string) (map[string]any, error) {
 			if kind == reflect.Pointer {
 				field = field.Elem()
 				if field.Kind() == reflect.Struct {
-					queue = append(queue, pairs.NewPair(field.Interface(), tagName+"."))
+					queue = append(queue, types_x.NewPair(field.Interface(), tagName+"."))
 					continue
 				}
 			} else if kind == reflect.Struct {
-				queue = append(queue, pairs.NewPair(field.Interface(), tagName+"."))
+				queue = append(queue, types_x.NewPair(field.Interface(), tagName+"."))
 				continue
 			}
 			if tagName != "" {

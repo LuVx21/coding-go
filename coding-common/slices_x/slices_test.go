@@ -61,3 +61,8 @@ func Test_empty_01(t *testing.T) {
 	e := Empty[string]()
 	fmt.Println(e)
 }
+
+func Test_Intersect_00(t *testing.T) {
+	a := Intersect([]int{1, 3}, []int{1, 2, 1})
+	fmt.Println(a)
+}

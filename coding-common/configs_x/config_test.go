@@ -7,8 +7,11 @@ import (
 	"github.com/luvx21/coding-go/coding-common/jsons"
 )
 
-func Test_00(t *testing.T) {
+func Test_config_00(t *testing.T) {
 	viper := LoadConfig("config-dev", "$HOME/OneDrive/Code/coding-go/luvx/config")
+	if viper == nil {
+		return
+	}
 	fmt.Println(jsons.ToJsonString(viper.AllSettings()))
 	fmt.Println(viper.GetString("switch.a"))
 

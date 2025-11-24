@@ -2,7 +2,6 @@ package common_x
 
 import (
 	"log/slog"
-	"sync"
 	"time"
 )
 
@@ -36,14 +35,6 @@ func RunCatchingReturn[T any](fn func() T) T {
 		}
 	}()
 	return fn()
-}
-
-func RunInRoutine(wg *sync.WaitGroup, f func()) {
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		f()
-	}()
 }
 
 func RunWithTime[R any](name string, f func() R) R {

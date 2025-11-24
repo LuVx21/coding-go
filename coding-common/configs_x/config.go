@@ -16,11 +16,15 @@ func LoadConfig(configName string, paths ...string) *viper_p.Viper {
 	viper.AddConfigPath("./config")
 	viper.AddConfigPath("$GOPATH/config")
 	for _, path := range paths {
+		if !Exists(path) {
+			continue
+		}
 		viper.AddConfigPath(path)
 	}
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("加载配置文件异常: %s", err))
+		return nil
+		// panic(fmt.Errorf("加载配置文件异常: %s", err))
 	}
 
 	viper.OnConfigChange(func(e fsnotify.Event) {

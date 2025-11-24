@@ -21,12 +21,9 @@ func Test_return(t *testing.T) {
 		wg.Add(1)
 		// 启动协程计算结果，并将结果发送到channel中
 		go func(num int) {
-			// 方式1
 			defer wg.Done()
 			time.Sleep(time.Second)
 			resultCh <- num * 2
-			// 方式2
-			//wg.Done()
 		}(i)
 	}
 
@@ -73,12 +70,8 @@ func Test_02(t *testing.T) {
 	r1 := make(chan string, 1)
 	r2 := make(chan int, 1)
 
-	common_x.RunInRoutine(&wg, func() {
-		r1 <- f1()
-	})
-	common_x.RunInRoutine(&wg, func() {
-		r2 <- f2()
-	})
+	wg.Go(func() { r1 <- f1() })
+	wg.Go(func() { r2 <- f2() })
 
 	//make方法,不指定缓冲区大小,这里直接使用会出现死锁
 	wg.Wait()
@@ -95,7 +88,26 @@ func Test_02(t *testing.T) {
 	s1 := <-r1
 	s2 := <-r2
 	fmt.Println(s1, s2)
-	fmt.Println(time.Now().Sub(start))
+	fmt.Println(time.Since(start))
 }
 
-func Test_03(t *testing.T) {}
+func Test_03(t *testing.T) {
+	tasks := []string{"task1", "task2", "task3", "task4", "task5", "task6", "task7"}
+
+	// 创建并发控制通道，容量为3
+	sem := make(chan struct{}, 3)
+	var wg sync.WaitGroup
+
+	for i, task := range tasks {
+		sem <- struct{}{} // 获取信号量
+		wg.Go(func() {
+			defer func() { <-sem }() // 释放信号量
+			fmt.Printf("开始执行任务 %d: %s\n", i, task)
+			time.Sleep(time.Second * time.Duration(common_x.IfThen(i%2 == 0, 2, 3))) // 模拟任务执行
+			fmt.Printf("完成任务 %d: %s\n", i, task)
+		})
+	}
+
+	wg.Wait()
+	fmt.Println("所有任务执行完成")
+}

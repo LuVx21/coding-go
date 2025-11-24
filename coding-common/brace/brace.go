@@ -44,8 +44,7 @@ func Expand(s string) []string {
 	// 对每个选项递归展开（因为选项内部可能还有大括号）
 	var results []string
 	for _, opt := range options {
-		optExpanded := Expand(opt)
-		suffixExpanded := Expand(suffixPart)
+		optExpanded, suffixExpanded := Expand(opt), Expand(suffixPart)
 		for _, oe := range optExpanded {
 			for _, se := range suffixExpanded {
 				results = append(results, prefix+oe+se)
@@ -107,8 +106,7 @@ func parseBraceContent(content string) []string {
 func splitTopLevel(s string, sep rune) []string {
 	var parts []string
 	var cur strings.Builder
-	depth := 0
-	escaped := false
+	depth, escaped := 0, false
 	for _, r := range s {
 		if escaped {
 			cur.WriteRune(r)
@@ -186,13 +184,9 @@ func tryParseSequence(s string) ([]string, bool) {
 
 	var aStr, bStr, stepStr string
 	if pos2 == -1 {
-		aStr = s[:pos]
-		bStr = s[pos+2:]
-		stepStr = ""
+		aStr, bStr, stepStr = s[:pos], s[pos+2:], ""
 	} else {
-		aStr = s[:pos]
-		bStr = s[pos+2 : pos2]
-		stepStr = s[pos2+2:]
+		aStr, bStr, stepStr = s[:pos], s[pos+2:pos2], s[pos2+2:]
 	}
 
 	aStr, bStr, stepStr = strings.TrimSpace(aStr), strings.TrimSpace(bStr), strings.TrimSpace(stepStr)

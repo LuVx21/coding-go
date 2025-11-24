@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	DBDir  = ".clipstore"
+	DBDir  = ".kv"
 	DBName = "store.db"
 	BUCKET = "default"
 )

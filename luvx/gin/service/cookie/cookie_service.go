@@ -16,6 +16,8 @@ import (
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
 
+	"maps"
+
 	"github.com/allegro/bigcache/v3"
 	"github.com/bytedance/sonic"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -24,7 +26,6 @@ import (
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
 	"github.com/luvx21/coding-go/infra/logs"
 	"golang.org/x/crypto/pbkdf2"
-	"maps"
 )
 
 var (
@@ -120,7 +121,19 @@ order by host_key, name
 			// } else {
 			//     password = encryptedValue.([]byte)
 			// }
-			value, _ := DecryptWithChromium(key, encryptedValue.([]byte))
+			real, ok := encryptedValue.([]byte)
+			if !ok {
+				_, ok = encryptedValue.(string)
+				if !ok {
+					continue
+				}
+				real = []byte(encryptedValue.(string))
+			}
+			value, _ := DecryptWithChromium(key, real)
+			// 正式版
+			if len(value) > 32 {
+				value = value[32:]
+			}
 			row["value"] = string(value)
 		}
 	}

@@ -7,11 +7,13 @@ import (
 	"luvx_service_sdk/proto_gen/proto_kv"
 	"math"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/db"
 	"luvx/gin/model"
@@ -31,7 +33,6 @@ import (
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
-	"github.com/luvx21/coding-go/coding-common/maths_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
@@ -41,7 +42,6 @@ import (
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/exp/slices"
 )
 
 var (
@@ -51,6 +51,11 @@ var (
 	}
 	// collection = db.MongoDatabase.Collection("weibo_feed")
 	collection = db.GetCollection("weibo_feed")
+)
+
+var (
+	sourceGroup    = strings.Split(config.Viper.GetString("rss.weibo.sourceGroup"), ",")
+	saveImageGroup = strings.Split(config.Viper.GetString("rss.weibo.saveImageGroup"), ",")
 )
 
 func PullHotBand() {
@@ -185,8 +190,9 @@ func PullByUser(uid int64) {
 
 func PullByGroupLock() {
 	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
-		PullByGroup(4670120389774996)
-		PullByGroup(3639801313908027)
+		for _, groupId := range sourceGroup {
+			PullByGroup(cast_x.ToInt64(groupId))
+		}
 	})
 }
 
@@ -240,24 +246,25 @@ func PullByGroup(groupId int64) {
 	})
 
 	runs.Go(func() {
-		if rpc.KvRpcClient != nil {
-			urls := slices_x.FlatMap(feeds, func(feed any) []string { return feed.(map[string]any)["pic_ids"].([]string) })
-			toSave := sets.NewSet(urls...)
-			for _url := range *toSave {
-				_, err := rpc.KvRpcClient.Get(context.TODO(), &proto_kv.Key{Key: _url})
-				if err == nil {
-					continue
-				}
+		if rpc.KvRpcClient == nil || !slices.Contains(saveImageGroup, strconv.FormatInt(groupId, 10)) {
+			return
+		}
+		urls := slices_x.FlatMap(feeds, func(feed any) []string { return feed.(map[string]any)["pic_ids"].([]string) })
+		toSave := sets.NewSet(urls...)
+		for _url := range *toSave {
+			_, err := rpc.KvRpcClient.Get(context.TODO(), &proto_kv.Key{Key: _url})
+			if err == nil {
+				continue
+			}
 
-				_ = consts.RateLimiter.Wait(context.TODO())
-				_, body, errors := consts.GoRequest.Get(_url).EndBytes()
-				if len(errors) > 0 {
-					continue
-				}
-				_, err = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
-				if err != nil {
-					slog.Warn("rpc put", "err", err.Error())
-				}
+			_ = consts.RateLimiter.Wait(context.TODO())
+			_, body, errors := consts.GoRequest.Get(_url).EndBytes()
+			if len(errors) > 0 {
+				continue
+			}
+			_, err = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
+			if err != nil {
+				slog.Warn("rpc put", "err", err.Error())
 			}
 		}
 	})
@@ -493,7 +500,7 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 
 func a(jo alias_x.JsonObject) string {
 	_id := cast_x.ToInt64(jo["_id"])
-	title := jo["text_raw"].(string)
+	// title := jo["text_raw"].(string)
 	_contentHtml := contentHtml(jo)
 	retweetId := jo["retweeted_status"]
 	if retweetId != nil {
@@ -536,7 +543,7 @@ func a(jo alias_x.JsonObject) string {
                    <![CDATA[ %v ]]>
                </author>
            </item>
-`, title[0:maths_x.Min(10, len(title))], _contentHtml, createdAt, url, _id, screenName)
+`, "title", _contentHtml, createdAt, url, _id, screenName)
 }
 
 func addDelete(_id int64) string {
@@ -553,13 +560,13 @@ func contentHtml(jo alias_x.JsonObject) string {
 
 	text = aa(text)
 
-	picList := ""
 	picUrls := jo["pic_ids"].(bson.A)
+	picList, pc := "", strconv.Itoa(len(picUrls))
 	for i, url := range picUrls {
 		pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ImgHost+":58090/redirect", map[string]any{
 			"url": url.(string),
 		})
-		picList += "<br/>" + strconv.Itoa(i+1) + "<br/>"
+		picList += "<br/>" + strconv.Itoa(i+1) + "/" + pc + "<br/>"
 		picList += "<img style=\"margin: 8px 4px;width:300px\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
 	}
 	return text + picList
