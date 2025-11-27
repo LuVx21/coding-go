@@ -3,7 +3,7 @@ module github.com/luvx21/coding-go/infra/ai
 go 1.25
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
 	github.com/parnurzeal/gorequest v0.3.0
 )
 
@@ -15,6 +15,6 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6 // indirect
+	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
 	golang.org/x/net v0.47.0 // indirect
 )

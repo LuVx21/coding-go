@@ -4,13 +4,13 @@ go 1.25
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/jedib0t/go-pretty/v6 v6.7.3
+	github.com/jedib0t/go-pretty/v6 v6.7.5
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.14
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6
+	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39
 	golang.org/x/text v0.31.0
 )
 

@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/dgraph-io/badger/v4 v4.8.0
 	github.com/dgraph-io/ristretto/v2 v2.3.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.0
 	google.golang.org/protobuf v1.36.10

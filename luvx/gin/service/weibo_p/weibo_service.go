@@ -27,8 +27,8 @@ import (
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
-	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"github.com/luvx21/coding-go/coding-common/ids"
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
@@ -204,10 +204,10 @@ func PullByGroup(groupId int64) {
 	var cursor int64 = 0
 	iterator := iterators.NewCursorIterator(
 		cursor, false,
-		func(_cursor int64) pairs.Pair[[]any, int64] {
+		func(_cursor int64) types_x.Pair[[]any, int64] {
 			return requestPageOfGroup(groupId, _cursor)
 		},
-		func(curId int64, p pairs.Pair[[]any, int64]) int64 {
+		func(curId int64, p types_x.Pair[[]any, int64]) int64 {
 			items := p.K
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
@@ -219,7 +219,7 @@ func PullByGroup(groupId int64) {
 			}
 			return p.V
 		},
-		func(p pairs.Pair[[]any, int64]) []any {
+		func(p types_x.Pair[[]any, int64]) []any {
 			return p.K
 		},
 		func(i int64) bool {
@@ -389,7 +389,7 @@ func requestPageOfUser(uid int64, cursor int) []any {
 	return list
 }
 
-func requestPageOfGroup(groupId int64, cursor int64) pairs.Pair[[]any, int64] {
+func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] {
 	m := map[string]any{
 		"list_id":      groupId,
 		"max_id":       cursor,
@@ -400,13 +400,13 @@ func requestPageOfGroup(groupId int64, cursor int64) pairs.Pair[[]any, int64] {
 	_ = consts.RateLimiter.Wait(context.TODO())
 	_, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 	if len(errors) > 0 {
-		return pairs.NewPair[[]any, int64](nil, math.MaxInt64)
+		return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
 	}
 	ff, _ := jsons.JsonStringToMap[string, any, alias_x.JsonObject](body)
 	list := ff["statuses"].([]any)
 	maxId := cast_x.ToInt64(ff["max_id"])
 
-	return pairs.NewPair(list, maxId)
+	return types_x.NewPair(list, maxId)
 }
 
 func getCookie() string {
@@ -620,7 +620,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	}
 
 	isJson := sonic.ValidString(body)
-	// logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
+	logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
 	if !isJson {
 		logs.Log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
 		return nil, "", []error{fmt.Errorf("请求结果非json,cookie可能过期")}

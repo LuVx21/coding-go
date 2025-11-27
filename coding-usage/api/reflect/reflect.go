@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/pairs"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 )
 
 func main() {
-	p := pairs.NewPair("foo", "bar")
+	p := types_x.NewPair("foo", "bar")
 	v := reflect.ValueOf(&p)
-	if v.Kind() == reflect.Ptr {
+	if v.Kind() == reflect.Pointer {
 		v = v.Elem()
 	}
 

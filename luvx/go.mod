@@ -17,24 +17,24 @@ require (
 	github.com/eko/gocache/lib/v4 v4.2.2
 	github.com/eko/gocache/store/bigcache/v4 v4.2.3
 	github.com/gin-gonic/gin v1.11.0
-	github.com/go-co-op/gocron/v2 v2.18.0
+	github.com/go-co-op/gocron/v2 v2.18.2
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251118092137-5fd9267f1584
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127040953-c0866b42081b
 	github.com/parnurzeal/gorequest v0.3.0
-	github.com/redis/go-redis/v9 v9.17.0
+	github.com/redis/go-redis/v9 v9.17.1
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
 	github.com/valyala/fasthttp v1.68.0
 	go.mongodb.org/mongo-driver v1.17.6
 	golang.org/x/crypto v0.45.0
-	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6
+	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39
 	golang.org/x/sync v0.18.0
 	golang.org/x/time v0.14.0
 	google.golang.org/grpc v1.77.0
@@ -110,7 +110,7 @@ require (
 	github.com/prometheus/common v0.67.4 // indirect
 	github.com/prometheus/procfs v0.19.2 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.57.0 // indirect
+	github.com/quic-go/quic-go v0.57.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
@@ -143,7 +143,7 @@ require (
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251111163417-95abcf5c77ba // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gorm.io/datatypes v1.2.7 // indirect

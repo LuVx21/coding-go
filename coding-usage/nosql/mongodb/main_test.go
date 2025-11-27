@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	where "github.com/pywee/gobson-where"
 	"go.mongodb.org/mongo-driver/bson"
@@ -124,4 +125,37 @@ func Test_01(t *testing.T) {
 	opt := where.Parse(`sku!=123 AND (name=456 OR id=789) AND id!=1 ORDER BY name DESC LIMIT 0,10`)
 	fmt.Println(opt.Filter)
 	fmt.Println(opt.Options)
+}
+
+func Test_upsert_00(t *testing.T) {
+	defer beforeAfter("Test_upsert_00")()
+	r, e := collection.UpdateOne(context.TODO(), bson.M{"_id": "test1"},
+		bson.M{
+			"$set": bson.M{
+				"expireAt": time.Now().Add(times_x.Day).Unix(),
+				"ids":      []string{"a", "b"}},
+			"$setOnInsert": bson.M{"createdAt": time.Now().Unix()},
+		},
+		options.Update().SetUpsert(true))
+	fmt.Println(r, e)
+
+	rr := collection.FindOneAndUpdate(context.TODO(), bson.M{"_id": "test2"},
+		bson.M{
+			"$set": bson.M{
+				"expireAt": time.Now().Add(times_x.Day).Unix(),
+				"ids":      []string{"a", "b"}},
+			"$inc":         bson.M{"count": 1},
+			"$setOnInsert": bson.M{"createdAt": time.Now().Unix()},
+		}, options.FindOneAndUpdate().SetUpsert(true),
+	)
+	fmt.Println(rr.Err())
+
+	// 整体更新, 类似先删除后添加
+	_, rrr := collection.ReplaceOne(context.TODO(), bson.M{"_id": "test3"},
+		bson.M{
+			"expireAt": time.Now().Add(times_x.Day).Unix(),
+			"ids":      []string{"a", "b"},
+		}, options.Replace().SetUpsert(true),
+	)
+	fmt.Println(rrr)
 }

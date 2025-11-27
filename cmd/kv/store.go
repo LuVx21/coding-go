@@ -12,9 +12,8 @@ import (
 )
 
 const (
-	DBDir  = ".kv"
-	DBName = "store.db"
-	BUCKET = "default"
+	DBDir, DBName = ".kv", "store.db"
+	BUCKET        = "default"
 )
 
 func init() {

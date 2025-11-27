@@ -36,3 +36,14 @@ func LookupEnv(key string, defaultValue string) (string, bool) {
 
 	return defaultValue, false
 }
+
+func Command(name string, arg ...string) (string, bool) {
+	cmd := exec.Command(name, arg...)
+	var out bytes.Buffer
+	cmd.Stderr, cmd.Stdout = os.Stderr, &out
+	err := cmd.Run()
+	if err == nil {
+		return out.String(), true
+	}
+	return "", false
+}

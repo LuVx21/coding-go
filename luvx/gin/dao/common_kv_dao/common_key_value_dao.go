@@ -1,8 +1,11 @@
 package common_kv_dao
 
 import (
+	"log/slog"
 	"luvx/gin/db"
 	"luvx/gin/model"
+
+	"gorm.io/gorm"
 )
 
 func JsonArrayAppend(id int64, path string, value any) {
@@ -12,6 +15,23 @@ set common_value = json_array_append(common_value, ?, ?)
 where id = ?;
 `
 	db.MySQLClient.Exec(_sql, path, value, id)
+}
+
+// UpdateJsonMap 操作json字段
+// JSON_SET 有则覆盖, 无则添加
+// JSON_INSERT 有则忽略, 无则添加
+// JSON_REPLACE 有则替换, 无则忽略
+func UpdateJsonMap(bizType int32, key string, expr string, args ...any) {
+	err := db.MySQLClient.
+		Debug().
+		Model(&model.CommonKeyValue{}).
+		Where("biz_type = ? and invalid = 0", bizType).
+		Where("common_key = ?", key).
+		Update("common_value", gorm.Expr(expr, args...)).
+		Error
+	if err != nil {
+		slog.Error("异常结束", "Error", err)
+	}
 }
 
 func Get(bizType int32, keys ...string) []*model.CommonKeyValue {
@@ -30,6 +50,7 @@ func Get(bizType int32, keys ...string) []*model.CommonKeyValue {
 	return kvs
 }
 
+// GetByCursor id < cursorID and biz_type = bizType and common_key in keys order by id desc limit limit
 func GetByCursor(cursorID int, limit int, bizType int32, keys ...string) ([]*model.CommonKeyValue, int, error) {
 	if cursorID < 0 {
 		return nil, 0, nil

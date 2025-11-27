@@ -6,6 +6,10 @@ import (
 	"luvx/gin/model"
 )
 
+func GetOne(bizType common_kv_dao.CommonKVBizType, key string) *model.CommonKeyValue {
+	m := Get(bizType, key)
+	return m[key]
+}
 func Get(bizType common_kv_dao.CommonKVBizType, keys ...string) map[string]*model.CommonKeyValue {
 	kvs := common_kv_dao.Get(int32(bizType), keys...)
 	m := make(map[string]*model.CommonKeyValue)

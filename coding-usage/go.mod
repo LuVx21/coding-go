@@ -24,7 +24,6 @@ require (
 	github.com/cloudwego/kitex v0.12.3
 	github.com/cloudwego/prutal v0.1.0
 	github.com/deckarep/golang-set/v2 v2.8.0
-	github.com/docker/docker v28.0.1+incompatible
 	github.com/dolthub/swiss v0.2.1
 	github.com/eko/gocache/lib/v4 v4.2.0
 	github.com/eko/gocache/store/bigcache/v4 v4.2.2
@@ -35,7 +34,6 @@ require (
 	github.com/go-co-op/gocron/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/go-redis/redis_rate/v10 v10.0.1
-	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/gocolly/colly v1.2.0
 	github.com/gofiber/fiber/v2 v2.52.9
@@ -47,7 +45,7 @@ require (
 	github.com/gookit/goutil v0.6.18
 	github.com/gorilla/websocket v1.5.3
 	github.com/jackc/pgx/v5 v5.7.4
-	github.com/jedib0t/go-pretty/v6 v6.7.3
+	github.com/jedib0t/go-pretty/v6 v6.7.5
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/json-iterator/go v1.1.12
@@ -59,10 +57,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251118092137-5fd9267f1584
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127040953-c0866b42081b
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/panjf2000/ants/v2 v2.11.2
@@ -82,7 +80,6 @@ require (
 	github.com/smallnest/exp v0.7.1
 	github.com/sourcegraph/conc v0.3.0
 	github.com/thedevsaddam/gojsonq/v2 v2.5.2
-	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/go-libsql v0.0.0-20250313100617-0ab5a1a61a71
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
 	github.com/valyala/fasthttp v1.59.0
@@ -99,6 +96,7 @@ require (
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/tucnak/telebot.v2 v2.5.0
+	resty.dev/v3 v3.0.0-beta.3
 )
 
 require (
@@ -175,10 +173,8 @@ require (
 	github.com/dgraph-io/ristretto/v2 v2.2.0
 	github.com/dgryski/go-metro v0.0.0-20250106013310-edb8663e5e33 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/distribution/reference v0.6.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
-	github.com/docker/go-connections v0.5.0 // indirect
-	github.com/docker/go-units v0.5.0 // indirect
+	github.com/docker/docker v28.0.1+incompatible // indirect
 	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/dubbogo/gost v1.14.0 // indirect
 	github.com/dubbogo/grpc-go v1.42.10 // indirect
@@ -277,7 +273,6 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
-	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/moby/sys/userns v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -291,8 +286,6 @@ require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/nyaruka/phonenumbers v1.6.7 // indirect
-	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/pelletier/go-toml v1.9.3 // indirect
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
@@ -319,6 +312,7 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
+	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
@@ -332,7 +326,7 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.1.2 // indirect
+	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
@@ -345,19 +339,18 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.10.0 // indirect
 	go.opentelemetry.io/otel v1.36.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0 // indirect
 	go.opentelemetry.io/otel/metric v1.36.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.36.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v1.36.0 // indirect
 	go.opentelemetry.io/otel/trace v1.36.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/crypto v0.44.0 // indirect
-	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
 	golang.org/x/mod v0.30.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
@@ -377,5 +370,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.26.0
-	gotest.tools/v3 v3.5.1 // indirect
 )

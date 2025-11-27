@@ -9,12 +9,12 @@ require (
 	github.com/charmbracelet/glamour v0.9.1
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
-	github.com/jedib0t/go-pretty/v6 v6.6.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251118092137-5fd9267f1584
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251118092137-5fd9267f1584
+	github.com/jedib0t/go-pretty/v6 v6.7.3
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127040953-c0866b42081b
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/urfave/cli/v3 v3.2.0
@@ -33,6 +33,8 @@ require (
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
+	github.com/clipperhouse/stringish v0.1.1 // indirect
+	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/golang/snappy v1.0.0 // indirect
@@ -46,7 +48,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
-	github.com/mattn/go-runewidth v0.0.16 // indirect
+	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/mattn/go-tty v0.0.3 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
@@ -59,7 +61,7 @@ require (
 	github.com/pkg/term v1.2.0-beta.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/tidwall/gjson v1.18.0
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
@@ -70,12 +72,12 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
-	golang.org/x/crypto v0.43.0 // indirect
-	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546 // indirect
-	golang.org/x/net v0.46.0 // indirect
-	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
-	golang.org/x/term v0.36.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/term v0.37.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )

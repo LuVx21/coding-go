@@ -1,18 +1,19 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"luvx/gin/common/responsex"
 	"luvx/gin/service/bili"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/luvx21/coding-go/coding-common/cast_x"
 )
 
 func PullSeason(c *gin.Context) {
 	seasonId := c.Query("seasonId")
 	toInt64 := cast_x.ToInt64(seasonId)
 	if toInt64 == 0 {
-		bili.PullAll()
+		bili.PullAllSeason()
 	} else {
 		bili.PullSeasonList(toInt64)
 	}

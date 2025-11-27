@@ -34,6 +34,6 @@ func init() {
 	}
 
 	logs.Log.Infoln("加载配置文件...", configName)
-	Viper = configs_x.LoadConfig(configName, "$HOME/OneDrive/Code/coding-go/luvx/config")
+	Viper = configs_x.LoadConfig(configName)
 	Viper.Unmarshal(&AppConfig)
 }

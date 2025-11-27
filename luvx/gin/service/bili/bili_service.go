@@ -5,7 +5,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"net/url"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,14 +30,18 @@ import (
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
+	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"github.com/tidwall/gjson"
 	"github.com/valyala/fasthttp"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/exp/slices"
 	"golang.org/x/time/rate"
+)
+
+const (
+	ckv_key_up, ckv_key_season = "bili_up", "bili_season"
 )
 
 var (
@@ -55,10 +61,9 @@ var (
 	mongoClient, mongoClient2 = db.MongoDatabase.Collection("bili_video"), db.RemoteMongoDatabase.Collection("bili_video")
 )
 
-func PullAll() {
-	key := "bili_season"
-	m := common_kv.Get(common_kv_dao.MAP, key)
-	v := m[key]
+func PullAllSeason() {
+	m := common_kv.Get(common_kv_dao.MAP, ckv_key_season)
+	v := m[ckv_key_season]
 	ff := make(map[string]bool)
 	_ = sonic.Unmarshal([]byte(v.CommonValue), &ff)
 	for _, id := range getCollections() {
@@ -110,7 +115,7 @@ func PullSeasonList(seasonId int64) {
 		if slices.Contains(ids, id) {
 			return
 		}
-		filter := bson.D{{Key: "_id", Value: id}}
+		filter := bson.D{bson.E{Key: "_id", Value: id}}
 		var result bson.M
 		_ = mongoClient.FindOne(context.TODO(), filter).Decode(&result)
 		if result != nil {
@@ -169,17 +174,7 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 
 func PullAllUpVideo() {
 	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, func() {
-		key := "bili_up"
-		m := common_kv.Get(common_kv_dao.MAP, key)
-		v := m[key]
-		midMap := make(map[string]bool)
-		_ = sonic.Unmarshal([]byte(v.CommonValue), &midMap)
-
-		mids := append(getFollows(43510), getFollows(4489143)...)
-		for _, mid := range mids {
-			midMap[mid] = true
-		}
-
+		midMap := dumpUpId()
 		for mid, flag := range midMap {
 			if !flag || len(mid) == 0 {
 				continue
@@ -221,7 +216,7 @@ func PullUpVideo(mid int64) []string {
 	result, toSave := make([]string, 0), make([]any, 0)
 	iterator.ForEachRemaining(func(item any) {
 		video := item.(map[string]any)
-		id := video["aid"]
+		id := cast_x.ToInt64(video["aid"])
 		if cast_x.ToInt64(video["created"]) <= cast_x.ToInt64(latest["pubtime"])/1000 {
 			return
 		}
@@ -286,17 +281,8 @@ func requestUpVideo(mid int64, cursor int, limit int) []any {
 		return nil
 	}
 
-	cookie := cookie.GetCookieStrByHost(".bilibili.com")
-	_ = rateLimiter.Wait(context.TODO())
-	logs.Log.Infoln("请求:", pUrl)
-	r, body, errs := consts.GoRequest.Get(newUrlStr.String()).
-		Set("User-Agent", consts.UserAgent).
-		Set("Referer", "https://www.bilibili.com/").
-		Set("Cookie", cookie).
-		End()
-
-	if !sonic.ValidString(body) {
-		logs.Log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
+	body := biliRequest(newUrlStr.String(), nil, true)
+	if body == "" {
 		return nil
 	}
 
@@ -378,38 +364,75 @@ func getWbiKeysCached() (string, string) {
 
 func getWbiKeys() (string, string) {
 	targetUrl := "https://api.bilibili.com/x/web-interface/nav"
-	logs.Log.Infoln("请求:", targetUrl)
-	_, json, _ := consts.GoRequest.Get(targetUrl).
-		Set("User-Agent", consts.UserAgent).
-		Set("Referer", "https://www.bilibili.com/").
-		End()
+	json := biliRequest(targetUrl, nil, false)
+	g := gjson.Parse(json)
 
-	imgURL := gjson.Get(json, "data.wbi_img.img_url").String()
-	subURL := gjson.Get(json, "data.wbi_img.sub_url").String()
-	imgKey := strings.Split(strings.Split(imgURL, "/")[len(strings.Split(imgURL, "/"))-1], ".")[0]
-	subKey := strings.Split(strings.Split(subURL, "/")[len(strings.Split(subURL, "/"))-1], ".")[0]
+	a := func(s string) string {
+		URL := g.Get(s).String()
+		return strings.Split(strings.Split(URL, "/")[len(strings.Split(URL, "/"))-1], ".")[0]
+	}
+
+	imgKey, subKey := a("data.wbi_img.img_url"), a("data.wbi_img.sub_url")
 	return imgKey, subKey
 }
 
-func getFollows(mid int64) []string {
+func dumpUpId() map[string]bool {
+	m := common_kv.Get(common_kv_dao.MAP, ckv_key_up)
+	v := m[ckv_key_up]
+	midMap := make(map[string]bool)
+	_ = sonic.Unmarshal([]byte(v.CommonValue), &midMap)
+
+	mids := append(getFollows(43510), getFollows(-10)...)
+	for _, mid := range mids {
+		midMap[mid] = true
+	}
+	return midMap
+}
+
+func getFollows(tagid int64) []string {
+	tagidStr := cast_x.ToString(tagid)
+	v := common_kv.GetOne(common_kv_dao.MAP, "bili_follow")
+	g := gjson.Get(v.CommonValue, tagidStr)
+	expired := time.Now().Unix() > g.Get("expireAt").Int()
+	if !expired {
+		return slices_x.Transfer(func(r gjson.Result) string { return r.String() }, g.Get("ids").Array()...)
+	}
+
 	body := biliRequest("https://api.bilibili.com/x/relation/tag", map[string]any{
-		"tagid":        -10,
+		"tagid":        tagid,
 		"pn":           1,
 		"ps":           200,
-		"mid":          cast_x.ToString(mid),
+		"mid":          "4489143",
 		"web_location": "333.1387",
-	})
+	}, true)
 
 	mids := gjson.Get(body, "data.#.mid").Array()
 	array := make([]string, 0, len(mids))
 	for _, mid := range mids {
 		array = append(array, mid.Raw)
 	}
+
+	common_kv_dao.UpdateJsonMap(common_kv_dao.MAP, "bili_follow",
+		"JSON_SET(common_value, ?, CAST(? AS JSON))",
+		`$."`+tagidStr+`"`, jsons.ToJsonString(map[string]any{
+			"expireAt": time.Now().Add(times_x.Day).Unix(),
+			"ids":      array,
+		}),
+	)
+
 	fmt.Println("哈哈哈", array)
 	return array
 }
 
 func getCollections() []string {
+	cli := db.MongoDatabase.Collection("config")
+	var result bson.M
+	cli.FindOne(context.TODO(), bson.M{"_id": "bili_season"}).Decode(&result)
+	expired := time.Now().Unix() > cast_x.ToInt64(result["expireAt"])
+	if !expired {
+		return slices_x.Transfer(func(r any) string { return cast_x.ToString(r) }, result["ids"].(bson.A)...)
+	}
+
 	ids := make([]string, 0)
 	hasMore, pn := true, 1
 	for hasMore {
@@ -419,7 +442,7 @@ func getCollections() []string {
 			"up_mid":       "4489143",
 			"platform":     "web",
 			"web_location": "333.1387",
-		})
+		}, true)
 
 		for _, id := range gjson.Get(_json, "data.list.#.id").Array() {
 			ids = append(ids, id.Raw)
@@ -427,20 +450,26 @@ func getCollections() []string {
 		hasMore = gjson.Get(_json, "data.has_more").Bool()
 		pn++
 	}
+
+	cli.UpdateOne(context.TODO(), bson.M{"_id": "bili_season"}, bson.M{"$set": bson.M{
+		"expireAt": time.Now().Add(times_x.Day).Unix(), "ids": ids,
+	}}, options.Update().SetUpsert(true))
+
 	return ids
 }
 
-func biliRequest(_url string, queryMap map[string]any) string {
+func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
 	pUrl, _ := nets_x.UrlAddQuery(_url, queryMap)
 
-	cookie := cookie.GetCookieStrByHost(".bilibili.com")
 	_ = rateLimiter.Wait(context.TODO())
 	logs.Log.Infoln("请求:", pUrl)
-	r, body, errs := consts.GoRequest.Get(pUrl.String()).
+	sa := consts.GoRequest.Get(pUrl.String()).
 		Set("User-Agent", consts.UserAgent).
-		Set("Referer", "https://www.bilibili.com/").
-		Set("Cookie", cookie).
-		End()
+		Set("Referer", "https://www.bilibili.com/")
+	if useCookie {
+		sa = sa.Set("Cookie", cookie.GetCookieStrByHost(".bilibili.com"))
+	}
+	r, body, errs := sa.End()
 
 	if !sonic.ValidString(body) {
 		logs.Log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
@@ -448,4 +477,85 @@ func biliRequest(_url string, queryMap map[string]any) string {
 	}
 
 	return body
+}
+
+func timeFlow() {
+	const a = "itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete,onlyfansQaCard,commentsNewVersion,avatarAutoTheme,sunflowerStyle,eva3CardOpus,eva3CardVideo,eva3CardComment"
+	const b = `{"platform":"web","device":"pc","spmid":"333.1365"}`
+
+	opts := options.FindOne().SetSort(bson.M{"pubtime": -1})
+	var latest bson.M
+	_ = mongoClient.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
+
+	cursor, offset := 1, ""
+	iterator := iterators.NewCursorIterator(
+		cursor, false,
+		func(_cursor int) gjson.Result {
+			c := map[string]any{
+				"timezone_offset":        -480,
+				"type":                   "video",
+				"platform":               "web",
+				"page":                   cursor,
+				"features":               a,
+				"web_location":           "333.1365",
+				"x-bili-device-req-json": b,
+			}
+			if offset != "" {
+				c["offset"] = offset
+			}
+			_json := biliRequest("https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all", c, true)
+			return gjson.Parse(_json)
+		},
+		func(curId int, items gjson.Result) int {
+			array := items.Get("data.items").Array()
+			if latest == nil || len(array) == 0 {
+				return math.MinInt
+			}
+			lastTime := array[len(array)-1].Get("modules.module_author.pub_ts").Num
+			if cast_x.ToInt64(lastTime) <= cast_x.ToInt64(latest["pubtime"])/1000 {
+				return math.MinInt
+			}
+			hasMore := items.Get("data.has_more").Bool()
+			offset = items.Get("data.offset").String()
+			cursor++
+			return common_x.IfThen(hasMore && cursor <= 30, cursor, math.MinInt)
+		},
+		func(r gjson.Result) []gjson.Result {
+			return r.Get("data.items").Array()
+		},
+		func(i int) bool {
+			return i <= 0
+		},
+	)
+
+	upIds := dumpUpId()
+	toSave := make([]any, 0)
+	iterator.ForEachRemaining(func(g gjson.Result) {
+		author := g.Get("modules.module_author")
+		_, ok := upIds[author.Get("mid").String()]
+		if !ok {
+			return
+		}
+
+		archive := g.Get("modules.module_dynamic.major.archive")
+		video := map[string]any{
+			"_id":     archive.Get("aid").Int(),
+			"title":   archive.Get("title").String(),
+			"pubtime": time.Unix(cast_x.ToInt64(author.Get("pub_ts").Num), 0),
+			"bvid":    archive.Get("bvid").String(),
+			"upper": map[string]any{
+				"mid":  cast_x.ToInt64(author.Get("mid").Num),
+				"name": author.Get("name").String(),
+			},
+			"invalid": 0,
+			"from":    "dynamic",
+			"pic":     archive.Get("cover").String(),
+		}
+
+		toSave = append(toSave, video)
+	})
+	for _, s := range slices_x.Partition(toSave, 30) {
+		_, _ = mongoClient.InsertMany(context.TODO(), s)
+		_, _ = mongoClient2.InsertMany(context.TODO(), s)
+	}
 }

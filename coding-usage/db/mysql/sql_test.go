@@ -18,13 +18,24 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *sql.DB
+var (
+	db     *sql.DB
+	gormDB *gorm.DB
+)
 
 func beforeAfter(caseName string) func() {
 	if db == nil {
-		// db, _ = sql.Open(dbs.DriverMysql, dbs.MySQLConnectWithDefaultArgs("", 53307, "root", "1121", "boot"))
-		db = tidb()
+		db, _ = sql.Open(dbs.DriverMysql, dbs.MySQLConnectWithDefaultArgs("", 53306, "root", "1121", "boot"))
+		// db = tidb()
 	}
+
+	if gormDB == nil {
+		gormDB, _ = gorm.Open(
+			gorm_mysql.New(gorm_mysql.Config{Conn: db}),
+			&gorm.Config{SkipDefaultTransaction: true}, // 建议关闭默认事务
+		)
+	}
+
 	return func() {
 		fmt.Println(caseName, "teardown......")
 	}

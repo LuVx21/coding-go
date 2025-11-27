@@ -9,7 +9,6 @@ import (
 	goJson "github.com/json-iterator/go"
 	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-usage/api/common"
-	"github.com/tidwall/gjson"
 )
 
 type User common.User
@@ -84,16 +83,4 @@ func Test_JsonIter_00(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", data)
 
-}
-
-func Test_gjson_00(t *testing.T) {
-	_json := `
-{
-    "a": {
-        "b": "bbb"
-    }
-}
-`
-	s := gjson.Get(_json, "a.b").String()
-	fmt.Println(s)
 }
