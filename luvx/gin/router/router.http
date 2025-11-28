@@ -10,6 +10,14 @@ GET http://{{host}}/app/:path
 GET http://{{host}}/app/healthyCheck
 
 ###
+POST http://{{host}}/app/runner
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+###
 POST http://{{host}}/cookie/syncCookie2Turso
 Content-Type: application/json
 

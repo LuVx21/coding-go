@@ -1,13 +1,15 @@
 package logs
 
 import (
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	prefixed "github.com/luvx12/logrus-prefixed-formatter"
-	"github.com/rifflock/lfshook"
-	"github.com/sirupsen/logrus"
 	"os"
 	"path"
 	"time"
+
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	prefixed "github.com/luvx12/logrus-prefixed-formatter"
+	"github.com/luvx21/coding-go/coding-common/os_x"
+	"github.com/rifflock/lfshook"
+	"github.com/sirupsen/logrus"
 )
 
 type LogConfig struct {
@@ -51,7 +53,8 @@ func init() {
 	}
 
 	// 以下三个常量都可以使用配置
-	logPath := "./.logs/"
+	dir, _ := os_x.Command("sh", "-c", "go list -m -f {{.Dir}}")
+	logPath := dir + "/.logs/"
 	logDir := os.Getenv("log_LogDir")
 	if len(logDir) != 0 {
 		logPath = logDir

@@ -35,3 +35,10 @@ func FetchExpensiveData() (any, error) {
 	time.Sleep(2 * time.Second)
 	return time.Now().UnixNano(), nil
 }
+func Test_singleflight_01(t *testing.T) {
+	for range 10 {
+		go UsingSingleFlight("key")
+	}
+
+	time.Sleep(time.Second * 10)
+}

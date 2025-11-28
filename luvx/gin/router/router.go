@@ -46,6 +46,7 @@ func Register0(r *gin.Engine) {
 
 	app := r.Group("/app")
 	app.GET("/healthyCheck", controller.HealthyCheck)
+	app.POST("/runner", controller.CallRunner)
 
 	cookie := r.Group("/cookie")
 	cookie.POST("/syncCookie2Turso", controller.SyncCookie2Turso)

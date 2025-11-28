@@ -6,7 +6,6 @@ import (
 
 	"luvx/gin/common/consts"
 	"luvx/gin/db"
-	"luvx/gin/runner/docker"
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
 	"luvx/gin/service/keeplive"
@@ -29,6 +28,7 @@ var (
 			// logs.Log.Infoln("任务:", jobName, "完成")
 		},
 	)
+	RunnerMap = make(map[string]func(), 16)
 )
 
 func Start() {
@@ -60,8 +60,9 @@ func callRunnerRegister(s gocron.Scheduler) {
 	runners = append(runners, rss.RunnerRegister()...)
 	runners = append(runners, bili.RunnerRegister()...)
 	runners = append(runners, keeplive.RunnerRegister()...)
-	runners = append(runners, docker.RunnerRegister()...)
+	// runners = append(runners, xxx.RunnerRegister()...)
 	for _, r := range runners {
+		RunnerMap[r.Name] = r.Fn
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),
 			gocron.NewTask(r.Fn),

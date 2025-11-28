@@ -13,6 +13,7 @@ func RunnerRegister() []*service.Runner {
 	return []*service.Runner{
 		{Name: "重置rss", Crontab: "0 3/5 * * * *", Fn: func() { common_x.RunCatching(reset) }},
 		{Name: "rss_spider", Crontab: "0 7 0/2 * * *", Fn: func() { common_x.RunCatching(PullByKey) }},
+		{Name: "新版本时间拉新", Crontab: "23 29 4/12 * * *", Fn: func() { common_x.RunCatching(a) }},
 	}
 }
 

@@ -62,7 +62,7 @@ func PullHotBand() {
 	c := colly.NewCollector()
 
 	c.OnRequest(func(r *colly.Request) {
-		logs.Log.Infoln("请求:", r.URL.String())
+		// logs.Log.Infoln("请求:", r.URL.String())
 		r.Headers.Add("Referer", "https://weibo.com/hot/search")
 	})
 
@@ -620,7 +620,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	}
 
 	isJson := sonic.ValidString(body)
-	logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
+	// logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
 	if !isJson {
 		logs.Log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
 		return nil, "", []error{fmt.Errorf("请求结果非json,cookie可能过期")}

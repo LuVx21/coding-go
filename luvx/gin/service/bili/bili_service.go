@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/db"
 	"luvx/gin/service"
@@ -173,7 +174,15 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 }
 
 func PullAllUpVideo() {
-	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, func() {
+	func1 := func() {
+		timeFlow()
+		for _, mid := range service.DynamicCache.Get()["bili_update_up"].([]string) {
+			PullUpVideo(cast_x.ToInt64(mid))
+		}
+		db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
+		service.DynamicCache.TryClose()
+	}
+	func2 := func() {
 		midMap := dumpUpId()
 		for mid, flag := range midMap {
 			if !flag || len(mid) == 0 {
@@ -183,7 +192,9 @@ func PullAllUpVideo() {
 			PullUpVideo(cast_x.ToInt64(mid))
 			// })
 		}
-	})
+	}
+
+	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, common_x.IfThen(config.Viper.GetBool("switch.bili.updateUpId"), func2, func1))
 }
 
 func PullUpVideo(mid int64) []string {
@@ -377,8 +388,7 @@ func getWbiKeys() (string, string) {
 }
 
 func dumpUpId() map[string]bool {
-	m := common_kv.Get(common_kv_dao.MAP, ckv_key_up)
-	v := m[ckv_key_up]
+	v := common_kv.GetOne(common_kv_dao.MAP, ckv_key_up)
 	midMap := make(map[string]bool)
 	_ = sonic.Unmarshal([]byte(v.CommonValue), &midMap)
 
@@ -529,13 +539,15 @@ func timeFlow() {
 	)
 
 	upIds := dumpUpId()
-	toSave := make([]any, 0)
+	toSave, updatedUpIds := make([]any, 0), make([]string, 0)
 	iterator.ForEachRemaining(func(g gjson.Result) {
 		author := g.Get("modules.module_author")
-		_, ok := upIds[author.Get("mid").String()]
-		if !ok {
+		mid := author.Get("mid").String()
+		flag, ok := upIds[mid]
+		if !ok || !flag || cast_x.ToInt64(author.Get("pub_ts").Num) <= cast_x.ToInt64(latest["pubtime"])/1000 {
 			return
 		}
+		updatedUpIds = append(updatedUpIds, mid)
 
 		archive := g.Get("modules.module_dynamic.major.archive")
 		video := map[string]any{
@@ -552,10 +564,15 @@ func timeFlow() {
 			"pic":     archive.Get("cover").String(),
 		}
 
+		logs.Log.Infof("%-12s %-20s %-10s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
 		toSave = append(toSave, video)
 	})
-	for _, s := range slices_x.Partition(toSave, 30) {
-		_, _ = mongoClient.InsertMany(context.TODO(), s)
-		_, _ = mongoClient2.InsertMany(context.TODO(), s)
-	}
+
+	db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": updatedUpIds}}, options.Update().SetUpsert(true))
+	service.DynamicCache.TryClose()
+
+	// for _, s := range slices_x.Partition(toSave, 30) {
+	// 	_, _ = mongoClient.InsertMany(context.TODO(), s)
+	// 	_, _ = mongoClient2.InsertMany(context.TODO(), s)
+	// }
 }

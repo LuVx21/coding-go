@@ -9,12 +9,12 @@ require (
 	github.com/charmbracelet/glamour v0.9.1
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
-	github.com/jedib0t/go-pretty/v6 v6.7.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127040953-c0866b42081b
+	github.com/jedib0t/go-pretty/v6 v6.7.5
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127154527-bf49096b66f1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/urfave/cli/v3 v3.2.0
@@ -66,14 +66,14 @@ require (
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.1.2 // indirect
+	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6 // indirect
+	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect

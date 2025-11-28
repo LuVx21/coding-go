@@ -44,6 +44,7 @@ require (
 	github.com/gookit/color v1.5.4
 	github.com/gookit/goutil v0.6.18
 	github.com/gorilla/websocket v1.5.3
+	github.com/icloudza/fxjson v1.2.4
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/jedib0t/go-pretty/v6 v6.7.5
 	github.com/jmespath-community/go-jmespath v1.1.1
@@ -57,12 +58,13 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127040953-c0866b42081b
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127040953-c0866b42081b
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127154527-bf49096b66f1
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
+	github.com/olekukonko/tablewriter v1.1.1
 	github.com/panjf2000/ants/v2 v2.11.2
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -97,6 +99,13 @@ require (
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/tucnak/telebot.v2 v2.5.0
 	resty.dev/v3 v3.0.0-beta.3
+)
+
+require (
+	github.com/clipperhouse/displaywidth v0.3.1 // indirect
+	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
+	github.com/olekukonko/errors v1.1.0 // indirect
+	github.com/olekukonko/ll v0.1.2 // indirect
 )
 
 require (
