@@ -40,5 +40,5 @@ func requestLog(c *gin.Context) {
 
 	// logx.WithContext(c).Serve(requestMap)
 	j, _ := sonic.Marshal(requestMap)
-	logs.Log.Warnln(string(j))
+	logs.Log.Debugln(string(j))
 }

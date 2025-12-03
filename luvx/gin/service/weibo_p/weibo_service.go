@@ -623,6 +623,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	// logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
 	if !isJson {
 		logs.Log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
+		slog.Warn("weibo->请求结果非json,cookie可能过期", "响应空", r == nil, "响应体", body, "异常", errs, "url", pUrl.String())
 		return nil, "", []error{fmt.Errorf("请求结果非json,cookie可能过期")}
 	}
 

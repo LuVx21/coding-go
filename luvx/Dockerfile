@@ -2,7 +2,7 @@ ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
 FROM ${REGISTRY}golang:1.25-alpine3.22 AS builder
 
-RUN apk add --no-cache upx
+COPY --from=registry.cn-shanghai.aliyuncs.com/luvx/upx:latest --link /usr/bin/upx /usr/bin/
 WORKDIR /build
 
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct CGO_ENABLED=0 GOOS=linux

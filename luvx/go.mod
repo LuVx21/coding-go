@@ -21,13 +21,13 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251127154527-bf49096b66f1
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251127154527-bf49096b66f1
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251127154527-bf49096b66f1
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251127154527-bf49096b66f1
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251203065930-6bbf59934025
 	github.com/parnurzeal/gorequest v0.3.0
-	github.com/redis/go-redis/v9 v9.17.1
+	github.com/redis/go-redis/v9 v9.17.2
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
@@ -86,7 +86,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
@@ -143,7 +143,7 @@ require (
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gorm.io/datatypes v1.2.7 // indirect

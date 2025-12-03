@@ -13,13 +13,15 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func RunnerRegister() []*service.Runner {
-	result, _ := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_weibo").Result()
-	if !cast_x.ToBool(result) {
+	result, err := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_weibo").Bool()
+	if err != nil || !result {
+		logrus.Warn("定时任务未启用-weibo", err, result)
 		return make([]*service.Runner, 0)
 	}
 	return []*service.Runner{
@@ -66,8 +68,7 @@ func Delete() {
 		for rows.Next() {
 			var guid string
 			_ = rows.Scan(&guid)
-			mysqlGuids = append(mysqlGuids, guid)
-			guids = append(guids, cast_x.ToInt64(guid))
+			guids, mysqlGuids = append(guids, cast_x.ToInt64(guid)), append(mysqlGuids, guid)
 		}
 	}
 	if len(guids) == 0 {
@@ -81,8 +82,7 @@ func Delete() {
 	rowsMap, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
 	ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["retweeted_status"]) }, *rowsMap...)
 	idsStr := slices_x.Transfer(func(m bson.M) string { return cast_x.ToString(m["retweeted_status"]) }, *rowsMap...)
-	guids = append(guids, ids...)
-	mysqlGuids = append(mysqlGuids, idsStr...)
+	guids, mysqlGuids = append(guids, ids...), append(mysqlGuids, idsStr...)
 
 	if len(guids) > 0 {
 		filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}

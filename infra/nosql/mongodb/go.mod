@@ -8,6 +8,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.1 // indirect
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/tidwall/gjson v1.18.0

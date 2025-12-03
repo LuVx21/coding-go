@@ -6,7 +6,7 @@ require (
 	github.com/blockloop/scan v1.3.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251127154527-bf49096b66f1
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
 	github.com/parnurzeal/gorequest v0.3.0
 	modernc.org/sqlite v1.40.1
 )

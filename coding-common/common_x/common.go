@@ -2,7 +2,10 @@ package common_x
 
 import (
 	"log/slog"
+	"runtime"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func IfThen[T any](expr bool, a T, b T) T {
@@ -31,7 +34,10 @@ func RunCatching(fn func()) {
 func RunCatchingReturn[T any](fn func() T) T {
 	defer func() {
 		if r := recover(); r != nil {
-			slog.Warn("fast-fail", r)
+			buf := make([]byte, 4096)
+			n := runtime.Stack(buf, false)
+			stackInfo := string(buf[:n])
+			logrus.Errorln("fast-fail", "panic", r, "错误栈信息", stackInfo)
 		}
 	}()
 	return fn()

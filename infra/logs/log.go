@@ -3,6 +3,7 @@ package logs
 import (
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
@@ -54,7 +55,7 @@ func init() {
 
 	// 以下三个常量都可以使用配置
 	dir, _ := os_x.Command("sh", "-c", "go list -m -f {{.Dir}}")
-	logPath := dir + "/.logs/"
+	logPath := path.Join(strings.TrimSpace(dir), ".logs")
 	logDir := os.Getenv("log_LogDir")
 	if len(logDir) != 0 {
 		logPath = logDir
@@ -86,6 +87,12 @@ func init() {
 	Log.SetFormatter(stdFormatter)
 	Log.SetOutput(os.Stdout)
 	Log.SetLevel(logrus.InfoLevel)
+
+	logrus.AddHook(lfHook)
+	logrus.SetReportCaller(true)
+	logrus.SetFormatter(stdFormatter)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.InfoLevel)
 
 	Log.Infoln("日志文件位置:", logPath)
 }

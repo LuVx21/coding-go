@@ -14,7 +14,7 @@ import (
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/google/uuid"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -32,8 +32,9 @@ var (
 )
 
 func Start() {
-	result, _ := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_all").Result()
-	if !cast_x.ToBool(result) {
+	result, err := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_all").Bool()
+	if err != nil || !result {
+		logrus.Warn("定时任务未启用", err, result)
 		return
 	}
 	go exec()
@@ -62,6 +63,7 @@ func callRunnerRegister(s gocron.Scheduler) {
 	runners = append(runners, keeplive.RunnerRegister()...)
 	// runners = append(runners, xxx.RunnerRegister()...)
 	for _, r := range runners {
+		logrus.Infof("定时任务已配置 %-20s %s", r.Crontab, r.Name)
 		RunnerMap[r.Name] = r.Fn
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),

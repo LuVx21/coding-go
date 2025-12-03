@@ -32,8 +32,7 @@ func (rule QueryRule) Valid() bool {
 }
 
 type index struct {
-	PageCount                     int
-	CountInPage                   int
+	PageCount, CountInPage        int
 	IndexItemListRule             string
 	IndexItemListPostProcessor    func([]*goquery.Selection) []*goquery.Selection `json:"-"`
 	IndexItemTitleRule            QueryRule
@@ -92,10 +91,11 @@ func Of(_json string) SpiderParam {
 	}
 	_ = json.Unmarshal([]byte(_json), &r)
 
-	a := gjson.Get(_json, "index.indexItemListPostProcessor").String()
-	a2 := gjson.Get(_json, "index.indexNextPageUrlPostProcessor").String()
-	a3 := gjson.Get(_json, "content.contentPostProcessor").String()
-	a4 := gjson.Get(_json, "content.contentNextPageUrlPostProcessor").String()
+	g := gjson.Parse(_json)
+	a := g.Get("index.indexItemListPostProcessor").String()
+	a2 := g.Get("index.indexNextPageUrlPostProcessor").String()
+	a3 := g.Get("content.contentPostProcessor").String()
+	a4 := g.Get("content.contentNextPageUrlPostProcessor").String()
 
 	if len(a) > 0 {
 		f := indexItemListPostProcessorMap[a]

@@ -176,7 +176,7 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 func PullAllUpVideo() {
 	func1 := func() {
 		timeFlow()
-		for _, mid := range service.DynamicCache.Get()["bili_update_up"].([]string) {
+		for _, mid := range service.DynamicCache.Get()["bili_update_up"].(bson.A) {
 			PullUpVideo(cast_x.ToInt64(mid))
 		}
 		db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
@@ -564,7 +564,7 @@ func timeFlow() {
 			"pic":     archive.Get("cover").String(),
 		}
 
-		logs.Log.Infof("%-12s %-20s %-10s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
+		logs.Log.Infof("%-12s %-20s %s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
 		toSave = append(toSave, video)
 	})
 
