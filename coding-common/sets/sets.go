@@ -34,6 +34,14 @@ func (s *Set[E]) Contain(e E) bool {
 	return exist
 }
 
+func (s *Set[E]) ToSlice(e E) []E {
+	r := make([]E, s.Len())
+	for k := range *s {
+		r = append(r, k)
+	}
+	return r
+}
+
 func (s *Set[E]) String() string {
 	var sb strings.Builder
 	for k := range *s {

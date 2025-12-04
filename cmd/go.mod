@@ -10,11 +10,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jedib0t/go-pretty/v6 v6.7.5
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204071418-5544c96adbeb
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/urfave/cli/v3 v3.2.0
@@ -60,6 +60,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/tidwall/gjson v1.18.0

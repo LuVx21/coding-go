@@ -14,13 +14,13 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/dao/redis_dao"
 	"luvx/gin/db"
 
 	"maps"
 
 	"github.com/allegro/bigcache/v3"
 	"github.com/bytedance/sonic"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
 	lcommon "github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
@@ -142,8 +142,8 @@ order by host_key, name
 
 func getClient() *sql.DB {
 	if client == nil {
-		result, _ := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "remote_cookie").Result()
-		if cast_x.ToBool(result) {
+		result := redis_dao.GetSwitch("remote_cookie")
+		if result {
 			client = db.Turso
 		} else {
 			home, _ := lcommon.Dir()

@@ -3,22 +3,25 @@ package logs
 import (
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	prefixed "github.com/luvx12/logrus-prefixed-formatter"
-	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 )
 
 type LogConfig struct {
-	LogDir   string
-	MainLog  string
-	ErrorLog string
+	Level             string
+	LogDir            string
+	MainLog, ErrorLog string
+	LogFormat         string
 }
 
+// Log logger
+// Deprecated: 直接使用logrus
 var Log = logrus.New()
 
 var stdFormatter *prefixed.TextFormatter  // 命令行输出格式
@@ -54,8 +57,8 @@ func init() {
 	}
 
 	// 以下三个常量都可以使用配置
-	dir, _ := os_x.Command("sh", "-c", "go list -m -f {{.Dir}}")
-	logPath := path.Join(strings.TrimSpace(dir), ".logs")
+	dir, _ := os.Executable()
+	logPath := path.Join(strings.TrimSpace(filepath.Dir(dir)), ".logs")
 	logDir := os.Getenv("log_LogDir")
 	if len(logDir) != 0 {
 		logPath = logDir

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"luvx/gin/common/consts"
+	"luvx/gin/dao/redis_dao"
 	"luvx/gin/db"
 	"luvx/gin/service"
 
@@ -13,15 +13,13 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func RunnerRegister() []*service.Runner {
-	result, err := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_weibo").Bool()
-	if err != nil || !result {
-		logrus.Warn("定时任务未启用-weibo", err, result)
+	result := redis_dao.GetSwitch("runner_weibo")
+	if !result {
 		return make([]*service.Runner, 0)
 	}
 	return []*service.Runner{

@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/dgraph-io/badger/v4 v4.8.0
 	github.com/dgraph-io/ristretto/v2 v2.3.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.0
 	google.golang.org/protobuf v1.36.10
@@ -27,6 +27,7 @@ require (
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rosedblabs/wal v1.3.8 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.21
 	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect

@@ -5,20 +5,21 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/luvx21/coding-go/coding-common/os_x"
+	"github.com/luvx21/coding-go/infra/logs"
+	"github.com/spf13/viper"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-const (
-	infoLogFile  = "app.log"
-	errorLogFile = "error.log"
-)
-
 var (
-	logDir        = os_x.Getenv("HOME") + "/data/slogs"
-	defaultLevel  = slog.LevelDebug
+	defaultLevel              = slog.LevelInfo
+	logDir                    = os_x.Getenv("HOME") + "/data/slogs"
+	infoLogFile, errorLogFile = "app.log", "error.log"
+	logFormat                 = "json"
+
 	defaultLogger *slog.Logger
 	initOnce      sync.Once
 )
@@ -58,14 +59,25 @@ func initLogger() {
 		AddSource: true,
 		Level:     defaultLevel,
 	})
-	infoHandler := slog.NewJSONHandler(infoLog, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	})
-	errorHandler := slog.NewJSONHandler(errorLog, &slog.HandlerOptions{
-		Level: slog.LevelError,
-	})
 
-	defaultLogger = slog.New(newMultiHandler(consoleHandler, infoHandler, errorHandler))
+	if logFormat == "text" {
+		infoHandler := slog.NewTextHandler(infoLog, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		})
+		errorHandler := slog.NewTextHandler(errorLog, &slog.HandlerOptions{
+			Level: slog.LevelError,
+		})
+		defaultLogger = slog.New(newMultiHandler(consoleHandler, infoHandler, errorHandler))
+	} else {
+		infoHandler := slog.NewJSONHandler(infoLog, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		})
+		errorHandler := slog.NewJSONHandler(errorLog, &slog.HandlerOptions{
+			Level: slog.LevelError,
+		})
+		defaultLogger = slog.New(newMultiHandler(consoleHandler, infoHandler, errorHandler))
+	}
+
 	slog.SetDefault(defaultLogger)
 }
 
@@ -117,4 +129,48 @@ func (h *multiHandler) WithGroup(name string) slog.Handler {
 func GetLogger() *slog.Logger {
 	initOnce.Do(initLogger)
 	return defaultLogger
+}
+
+type temp struct {
+	Log logs.LogConfig
+}
+
+func InitFromConfig(c *viper.Viper) {
+	var t temp
+	c.Unmarshal(&t)
+
+	if len(t.Log.Level) > 0 {
+		l := slog.LevelInfo
+		switch strings.ToUpper(t.Log.Level) {
+		case "DEBUG":
+			l = slog.LevelDebug
+		case "WARN":
+			l = slog.LevelWarn
+		case "ERROR":
+			l = slog.LevelError
+		}
+		if l != slog.LevelInfo {
+			SetConsoleLevel(l)
+		}
+	}
+	if len(t.Log.LogDir) > 0 {
+		if strings.HasPrefix(t.Log.LogDir, "/") || strings.HasPrefix(t.Log.LogDir, "$") {
+			SetLogDir(os.ExpandEnv(t.Log.LogDir))
+		} else {
+			if exePath, err := os.Executable(); err == nil {
+				SetLogDir(filepath.Join(filepath.Dir(exePath), t.Log.LogDir))
+			}
+		}
+	}
+	if len(t.Log.MainLog) > 0 {
+		infoLogFile = t.Log.MainLog
+	}
+	if len(t.Log.ErrorLog) > 0 {
+		errorLogFile = t.Log.ErrorLog
+	}
+	if len(t.Log.LogFormat) > 0 && (t.Log.LogFormat == "text" || t.Log.LogFormat == "json") {
+		logFormat = t.Log.LogFormat
+	}
+
+	GetLogger()
 }

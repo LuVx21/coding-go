@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/luvx21/coding-go/coding-common/os_x"
 	viper_p "github.com/spf13/viper"
 )
 
@@ -44,9 +43,9 @@ func Exists(path string) bool {
 func configPath(paths ...string) []string {
 	// 当前目录
 	r := []string{".", "./config"}
-	dir, b := os_x.Command("sh", "-c", "go list -m -f {{.Dir}}")
-	if b && dir != "" {
-		dir := strings.TrimSpace(dir)
+	dir, err := os.Executable()
+	if err != nil && dir != "" {
+		dir := strings.TrimSpace(filepath.Dir(dir))
 		// 项目根目录下
 		r = append(r, dir, filepath.Join(dir, "config"))
 	}

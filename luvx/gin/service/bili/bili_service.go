@@ -30,10 +30,13 @@ import (
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
+	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
+	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/valyala/fasthttp"
 	"go.mongodb.org/mongo-driver/bson"
@@ -496,6 +499,8 @@ func timeFlow() {
 	opts := options.FindOne().SetSort(bson.M{"pubtime": -1})
 	var latest bson.M
 	_ = mongoClient.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
+	until := cast_x.ToInt64(latest["pubtime"]) / 1000
+	logrus.Infoln("数据库中最新时间戳", until)
 
 	cursor, offset := 1, ""
 	iterator := iterators.NewCursorIterator(
@@ -522,7 +527,7 @@ func timeFlow() {
 				return math.MinInt
 			}
 			lastTime := array[len(array)-1].Get("modules.module_author.pub_ts").Num
-			if cast_x.ToInt64(lastTime) <= cast_x.ToInt64(latest["pubtime"])/1000 {
+			if cast_x.ToInt64(lastTime) <= until {
 				return math.MinInt
 			}
 			hasMore := items.Get("data.has_more").Bool()
@@ -539,15 +544,15 @@ func timeFlow() {
 	)
 
 	upIds := dumpUpId()
-	toSave, updatedUpIds := make([]any, 0), make([]string, 0)
+	toSave, updatedUpIds := make([]any, 0), sets.NewSet[string]()
 	iterator.ForEachRemaining(func(g gjson.Result) {
 		author := g.Get("modules.module_author")
 		mid := author.Get("mid").String()
 		flag, ok := upIds[mid]
-		if !ok || !flag || cast_x.ToInt64(author.Get("pub_ts").Num) <= cast_x.ToInt64(latest["pubtime"])/1000 {
+		if !ok || !flag || cast_x.ToInt64(author.Get("pub_ts").Num) <= until {
 			return
 		}
-		updatedUpIds = append(updatedUpIds, mid)
+		updatedUpIds.Add(mid)
 
 		archive := g.Get("modules.module_dynamic.major.archive")
 		video := map[string]any{
@@ -568,7 +573,7 @@ func timeFlow() {
 		toSave = append(toSave, video)
 	})
 
-	db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": updatedUpIds}}, options.Update().SetUpsert(true))
+	db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.Update().SetUpsert(true))
 	service.DynamicCache.TryClose()
 
 	// for _, s := range slices_x.Partition(toSave, 30) {

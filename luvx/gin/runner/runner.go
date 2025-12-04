@@ -1,11 +1,9 @@
 package runner
 
 import (
-	"context"
 	"time"
 
-	"luvx/gin/common/consts"
-	"luvx/gin/db"
+	"luvx/gin/dao/redis_dao"
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
 	"luvx/gin/service/keeplive"
@@ -32,9 +30,8 @@ var (
 )
 
 func Start() {
-	result, err := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, "runner_all").Bool()
-	if err != nil || !result {
-		logrus.Warn("定时任务未启用", err, result)
+	result := redis_dao.GetSwitch("runner_all")
+	if !result {
 		return
 	}
 	go exec()

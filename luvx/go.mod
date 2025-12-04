@@ -21,13 +21,14 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204071418-5544c96adbeb
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.17.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
@@ -116,7 +117,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/samber/lo v1.52.0
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
@@ -145,6 +146,7 @@ require (
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gorm.io/datatypes v1.2.7 // indirect
 	gorm.io/hints v1.1.2 // indirect

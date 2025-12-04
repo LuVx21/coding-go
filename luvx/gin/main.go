@@ -19,9 +19,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/infra/logs"
+	"github.com/luvx21/coding-go/infra/logs/slogs"
 )
 
 func WebStart() {
+	slogs.InitFromConfig(config.Viper)
+
 	logs.Log.Infoln("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
 	runner.Start()
 

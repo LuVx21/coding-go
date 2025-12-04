@@ -58,10 +58,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251203065930-6bbf59934025
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204071418-5544c96adbeb
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/olekukonko/tablewriter v1.1.1
@@ -258,7 +258,7 @@ require (
 	github.com/k0kubun/pp v3.0.1+incompatible // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.18.1
+	github.com/klauspost/compress v1.18.2
 	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect

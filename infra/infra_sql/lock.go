@@ -82,7 +82,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	// 锁已过期，尝试获取
 	_, err = l.Client.ExecContext(ctx, l.sqlHolder.lock_update, l.ownerID, time.Now().Add(exp).UnixMilli(), key)
 	if err != nil {
-		slog.Debug("加锁sql执行失败", "key", key, "sql", l.sqlHolder.lock_update, "error", err)
+		slog.Error("加锁sql执行失败", "key", key, "sql", l.sqlHolder.lock_update, "error", err)
 	}
 	return err == nil
 }
@@ -93,7 +93,7 @@ func (l *DbLocker[T]) prepare() error {
 	}
 
 	if _, err := l.Client.Exec(l.sqlHolder.ddl); err != nil {
-		slog.Debug("建表失败", "err", err)
+		slog.Error("建表失败", "err", err)
 		return fmt.Errorf("建表失败:%s", l.sqlHolder.ddl)
 	}
 	l.TableCreated = true
@@ -111,6 +111,7 @@ func (l *DbLocker[T]) Unlock(key T) bool {
 
 	result, err := l.Client.ExecContext(ctx, l.sqlHolder.unlock, key, l.ownerID)
 	if err != nil {
+		slog.Error("释放锁错误", "err", err)
 		return false
 	}
 

@@ -6,9 +6,9 @@ replace luvx_service_sdk => ../luvx_service_sdk
 
 require (
 	github.com/dgraph-io/badger/v4 v4.8.0
-	github.com/klauspost/compress v1.18.1
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251203065930-6bbf59934025
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251203065930-6bbf59934025
+	github.com/klauspost/compress v1.18.2
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251204071418-5544c96adbeb
 	go.etcd.io/etcd/client/v3 v3.6.6
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
@@ -27,6 +27,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/flatbuffers v25.9.23+incompatible // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.6 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.6 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
@@ -39,6 +40,6 @@ require (
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20251124214823-79d6a2a48846 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 )

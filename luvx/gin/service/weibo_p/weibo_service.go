@@ -264,7 +264,7 @@ func PullByGroup(groupId int64) {
 			}
 			_, err = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
 			if err != nil {
-				slog.Warn("rpc put", "err", err.Error())
+				slog.Error("rpc调用错误", "err", err.Error())
 			}
 		}
 	})
