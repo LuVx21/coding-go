@@ -3,7 +3,7 @@ module github.com/luvx21/coding-go/infra/ai
 go 1.25
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
 	github.com/parnurzeal/gorequest v0.3.0
 )
 

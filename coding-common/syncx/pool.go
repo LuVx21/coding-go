@@ -4,19 +4,15 @@ import (
 	"sync"
 )
 
-type Pool[T any] struct {
-	pool sync.Pool
+type pool[T any] struct {
+	p sync.Pool
 }
 
-func NewPool[T any](fn func() T) *Pool[T] {
-	return &Pool[T]{sync.Pool{
-		New: func() any { return fn() },
-	}}
+func NewPool[T any](fn func() T) *pool[T] {
+	return &pool[T]{
+		p: sync.Pool{New: func() any { return fn() }},
+	}
 }
 
-func (p *Pool[T]) Get() T {
-	return p.pool.Get().(T)
-}
-func (p *Pool[T]) Put(x T) {
-	p.pool.Put(x)
-}
+func (p *pool[T]) Get() T  { return p.p.Get().(T) }
+func (p *pool[T]) Put(t T) { p.p.Put(t) }

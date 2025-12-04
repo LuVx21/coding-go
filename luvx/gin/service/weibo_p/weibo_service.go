@@ -37,8 +37,8 @@ import (
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
-	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/parnurzeal/gorequest"
+	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -62,7 +62,7 @@ func PullHotBand() {
 	c := colly.NewCollector()
 
 	c.OnRequest(func(r *colly.Request) {
-		// logs.Log.Infoln("请求:", r.URL.String())
+		// log.Infoln("请求:", r.URL.String())
 		r.Headers.Add("Referer", "https://weibo.com/hot/search")
 	})
 
@@ -111,7 +111,7 @@ func PullHotBand() {
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		logs.Log.Errorln("请求异常:", r.Request.URL.RequestURI(), err.Error())
+		log.Errorln("请求异常:", r.Request.URL.RequestURI(), err.Error())
 	})
 
 	// https://weibo.com/ajax/side/hotSearch
@@ -181,10 +181,10 @@ func PullByUser(uid int64) {
 	for i := len(arr) - 1; i >= 0; i-- {
 		one, err := collection.InsertOne(context.TODO(), arr[i])
 		if err != nil {
-			logs.Log.Infoln("weibo PullByUser:", err)
+			log.Infoln("weibo PullByUser:", err)
 			continue
 		}
-		logs.Log.Infoln("weibo PullByUser:", one.InsertedID)
+		log.Infoln("weibo PullByUser:", one.InsertedID)
 	}
 }
 
@@ -277,14 +277,14 @@ func PullByGroup(groupId int64) {
 			// for j := len(arr) - 1; j >= 0; j-- {
 			for j := range arr {
 				if one, err := collection.InsertOne(context.TODO(), arr[j]); err != nil {
-					// logs.Log.Infoln("weibo insert1:", err)
+					// log.Infoln("weibo insert1:", err)
 					continue
 				} else {
-					logs.Log.Debugln("weibo insert1:", one.InsertedID)
+					log.Debugln("weibo insert1:", one.InsertedID)
 				}
 			}
 		} else {
-			logs.Log.Debugln("weibo insert", len(arr), len(many.InsertedIDs))
+			log.Debugln("weibo insert", len(arr), len(many.InsertedIDs))
 		}
 	}
 }
@@ -615,14 +615,14 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 
 	r, body, errs := gg.End()
 	if len(errs) > 0 {
-		logs.Log.Errorln("weibo请求异常", url, errs)
+		log.Errorln("weibo请求异常", url, errs)
 		return nil, "", errs
 	}
 
 	isJson := sonic.ValidString(body)
-	// logs.Log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
+	// log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
 	if !isJson {
-		logs.Log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
+		log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
 		slog.Warn("weibo->请求结果非json,cookie可能过期", "响应空", r == nil, "响应体", body, "异常", errs, "url", pUrl.String())
 		return nil, "", []error{fmt.Errorf("请求结果非json,cookie可能过期")}
 	}

@@ -19,7 +19,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -89,7 +89,7 @@ func PullByKey() {
 		m := common_kv.Get(8)
 		for k, v := range m {
 			runs.Go(func() {
-				logs.Log.Infoln("spider拉取:", k)
+				log.Infoln("spider拉取:", k)
 				items := spiderIndexPage(k, v.CommonValue)
 				_, _ = collection.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
 			})

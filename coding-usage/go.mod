@@ -58,10 +58,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204071418-5544c96adbeb
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204071418-5544c96adbeb
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204071418-5544c96adbeb
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204071418-5544c96adbeb
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204145609-13f8a9261978
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/olekukonko/tablewriter v1.1.1

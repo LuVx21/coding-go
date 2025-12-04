@@ -1,16 +1,16 @@
 package middleware
 
 import (
-	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/common/responsex"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func recoverLog(ctx *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {
-			logs.Log.Error(err)
+			log.Error(err)
 			responsex.ServiceUnavailable(ctx)
 			ctx.Abort()
 			return

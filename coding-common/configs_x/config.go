@@ -6,13 +6,33 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/fsnotify/fsnotify"
 	viper_p "github.com/spf13/viper"
 )
 
+var (
+	initOnce sync.Once
+	viper    *viper_p.Viper
+)
+
+func GetConfig() *viper_p.Viper {
+	return viper
+}
+func GetConfigByKey(key string) *viper_p.Viper {
+	if viper == nil {
+		return nil
+	}
+	return viper.Sub(key)
+}
+
 func LoadConfig(configName string, paths ...string) *viper_p.Viper {
-	viper := viper_p.New()
+	initOnce.Do(func() { load(configName, paths...) })
+	return viper
+}
+func load(configName string, paths ...string) *viper_p.Viper {
+	viper = viper_p.New()
 	viper.SetConfigName(configName)
 	viper.SetConfigType("yml")
 	for _, path := range configPath(paths...) {

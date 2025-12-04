@@ -3,7 +3,6 @@ package rss
 import (
 	"context"
 	"fmt"
-	"log"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/db"
@@ -17,7 +16,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 )
 
@@ -71,12 +70,12 @@ func a() {
 			if latest.After(lastSyncTime) {
 				values = append(values, key, latest.Format(time.DateTime))
 			}
-			logs.Log.Infof("%-40s %s", key, latest.Format(time.DateTime))
+			log.Infof("%-40s %s", key, latest.Format(time.DateTime))
 		}
 		db.RedisClient.HMSet(context.Background(), redis_key_time+":"+cate, values...)
 		mm := db.RedisClient.HGetAll(context.Background(), redis_key_time+":"+cate).Val()
 		if len(mm) > 0 {
-			logs.Log.Infoln("有新版的组件", strings.Join(maps.Keys(mm), ","))
+			log.Infoln("有新版的组件", strings.Join(maps.Keys(mm), ","))
 		}
 	}
 }

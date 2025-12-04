@@ -13,11 +13,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 )
 
 // AddTraceId TODO 不太正确
 func AddTraceId(c *gin.Context) {
-	logs.Log.AddHook(logs.NewTraceIdHook(consts.UUID()))
+	log.AddHook(logs.NewTraceIdHook(consts.UUID()))
 }
 
 func Register(r *gin.Engine) {
@@ -40,7 +41,7 @@ func Register0(r *gin.Engine) {
 	r.GET("/redirect", controller.Redirect)
 
 	r.GET("/", func(c *gin.Context) {
-		logs.Log.Infoln("path:", c.Request.URL.Path)
+		log.Infoln("path:", c.Request.URL.Path)
 		responsex.R(c, "ok!")
 	})
 

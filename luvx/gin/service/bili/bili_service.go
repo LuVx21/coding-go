@@ -33,10 +33,9 @@ import (
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
-	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/valyala/fasthttp"
 	"go.mongodb.org/mongo-driver/bson"
@@ -142,7 +141,7 @@ func PullSeasonList(seasonId int64) {
 		})
 		_, _ = mongoClient.InsertOne(context.TODO(), media)
 		_, _ = mongoClient2.InsertOne(context.TODO(), media)
-		logs.Log.Infoln(media["pubtime"], media["title"])
+		log.Infoln(media["pubtime"], media["title"])
 	})
 }
 
@@ -162,13 +161,13 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 	defer fasthttp.ReleaseResponse(resp)
 
 	_ = rateLimiter.Wait(context.TODO())
-	logs.Log.Infoln("请求:", pUrl)
+	log.Infoln("请求:", pUrl)
 	err := client.Do(req, resp)
 	ff := make(map[string]any)
 	_ = sonic.Unmarshal(resp.Body(), &ff)
 
 	if cast_x.ToInt32(ff["code"]) != 0 || ff["data"] == nil {
-		logs.Log.Warnln("bili->请求结果非json,cookie可能过期", err)
+		log.Warnln("bili->请求结果非json,cookie可能过期", err)
 		return make([]any, 0)
 	}
 
@@ -261,7 +260,7 @@ func PullUpVideo(mid int64) []string {
 		// _, _ = mongoClient.InsertOne(context.TODO(), video)
 		toSave = append(toSave, video)
 		result = append(result, video["bvid"].(string))
-		logs.Log.Infoln(video["pubtime"], video["title"])
+		log.Infoln(video["pubtime"], video["title"])
 	})
 	for _, s := range slices_x.Partition(toSave, 30) {
 		_, _ = mongoClient.InsertMany(context.TODO(), s)
@@ -428,7 +427,7 @@ func getFollows(tagid int64) []string {
 	common_kv_dao.UpdateJsonMap(common_kv_dao.MAP, "bili_follow",
 		"JSON_SET(common_value, ?, CAST(? AS JSON))",
 		`$."`+tagidStr+`"`, jsons.ToJsonString(map[string]any{
-			"expireAt": time.Now().Add(times_x.Day).Unix(),
+			"expireAt": time.Now().Add(2 * times_x.Day).Unix(),
 			"ids":      array,
 		}),
 	)
@@ -465,7 +464,7 @@ func getCollections() []string {
 	}
 
 	cli.UpdateOne(context.TODO(), bson.M{"_id": "bili_season"}, bson.M{"$set": bson.M{
-		"expireAt": time.Now().Add(times_x.Day).Unix(), "ids": ids,
+		"expireAt": time.Now().Add(2 * times_x.Day).Unix(), "ids": ids,
 	}}, options.Update().SetUpsert(true))
 
 	return ids
@@ -475,7 +474,7 @@ func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
 	pUrl, _ := nets_x.UrlAddQuery(_url, queryMap)
 
 	_ = rateLimiter.Wait(context.TODO())
-	logs.Log.Infoln("请求:", pUrl)
+	log.Infoln("请求:", pUrl)
 	sa := consts.GoRequest.Get(pUrl.String()).
 		Set("User-Agent", consts.UserAgent).
 		Set("Referer", "https://www.bilibili.com/")
@@ -485,7 +484,7 @@ func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
 	r, body, errs := sa.End()
 
 	if !sonic.ValidString(body) {
-		logs.Log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
+		log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
 		return ""
 	}
 
@@ -500,7 +499,7 @@ func timeFlow() {
 	var latest bson.M
 	_ = mongoClient.FindOne(context.TODO(), bson.M{}, opts).Decode(&latest)
 	until := cast_x.ToInt64(latest["pubtime"]) / 1000
-	logrus.Infoln("数据库中最新时间戳", until)
+	log.Infoln("数据库中最新时间戳", until)
 
 	cursor, offset := 1, ""
 	iterator := iterators.NewCursorIterator(
@@ -569,7 +568,7 @@ func timeFlow() {
 			"pic":     archive.Get("cover").String(),
 		}
 
-		logs.Log.Infof("%-12s %-20s %s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
+		log.Infof("%-12s %-20s %s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
 		toSave = append(toSave, video)
 	})
 

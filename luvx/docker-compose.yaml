@@ -5,7 +5,10 @@ services:
     networks:
       - net_common
     build:
+      context: .
       dockerfile: Dockerfile
+      args:
+        - CR=registry.cn-shanghai.aliyuncs.com/luvx
     ports:
       - "58090:8090"
     volumes:

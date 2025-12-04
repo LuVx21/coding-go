@@ -3,13 +3,14 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/infra/logs"
 	"luvx/gin/service"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func GetUserByUsername(c *gin.Context) {
-	logs.Log.Infoln("path:", c.Request.URL.Path)
+	log.Infoln("path:", c.Request.URL.Path)
 	username := c.Param("username")
 	user, err := service.GetUserByUsername(username)
 	if err != nil {

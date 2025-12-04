@@ -1,28 +1,36 @@
 package slogs
 
 import (
-	"context"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/luvx21/coding-go/coding-common/configs_x"
 	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/spf13/viper"
-	"gopkg.in/natefinch/lumberjack.v2"
+	"gitlab.com/greyxor/slogor"
 )
 
 var (
 	defaultLevel              = slog.LevelInfo
 	logDir                    = os_x.Getenv("HOME") + "/data/slogs"
-	infoLogFile, errorLogFile = "app.log", "error.log"
+	infoLogFile, errorLogFile = "main-slog", "error-slog"
 	logFormat                 = "json"
+
+	hs = []slog.Handler{}
 
 	defaultLogger *slog.Logger
 	initOnce      sync.Once
 )
+
+// RegisterHandler 添加自定义Handler
+func RegisterHandler(h ...slog.Handler) {
+	hs = append(hs, h...)
+}
 
 func SetConsoleLevel(level slog.Level) {
 	defaultLevel = level
@@ -37,92 +45,24 @@ func initLogger() {
 		panic(err)
 	}
 
-	infoLog := &lumberjack.Logger{
-		Filename:   filepath.Join(logDir, infoLogFile),
-		MaxSize:    100,
-		MaxBackups: 30,
-		MaxAge:     30,
-		Compress:   true,
-		LocalTime:  true,
-	}
+	infoWriter, errWriter := logs.LogWriter(logDir, infoLogFile), logs.LogWriter(logDir, errorLogFile)
 
-	errorLog := &lumberjack.Logger{
-		Filename:   filepath.Join(logDir, errorLogFile),
-		MaxSize:    100,
-		MaxBackups: 30,
-		MaxAge:     30,
-		Compress:   true,
-		LocalTime:  true,
-	}
-
-	consoleHandler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		AddSource: true,
-		Level:     defaultLevel,
-	})
-
+	consoleHandler := slogor.NewHandler(os.Stderr, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(defaultLevel), slogor.ShowSource())
+	RegisterHandler(consoleHandler)
 	if logFormat == "text" {
-		infoHandler := slog.NewTextHandler(infoLog, &slog.HandlerOptions{
-			Level: slog.LevelInfo,
-		})
-		errorHandler := slog.NewTextHandler(errorLog, &slog.HandlerOptions{
-			Level: slog.LevelError,
-		})
-		defaultLogger = slog.New(newMultiHandler(consoleHandler, infoHandler, errorHandler))
+		infoHandler := slogor.NewHandler(infoWriter, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(slog.LevelInfo), slogor.ShowSource(), slogor.DisableColor())
+		errorHandler := slogor.NewHandler(errWriter, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(slog.LevelError), slogor.ShowSource(), slogor.DisableColor())
+
+		RegisterHandler(infoHandler, errorHandler)
 	} else {
-		infoHandler := slog.NewJSONHandler(infoLog, &slog.HandlerOptions{
-			Level: slog.LevelInfo,
-		})
-		errorHandler := slog.NewJSONHandler(errorLog, &slog.HandlerOptions{
-			Level: slog.LevelError,
-		})
-		defaultLogger = slog.New(newMultiHandler(consoleHandler, infoHandler, errorHandler))
+		infoHandler := slog.NewJSONHandler(infoWriter, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true})
+		errorHandler := slog.NewJSONHandler(errWriter, &slog.HandlerOptions{Level: slog.LevelError, AddSource: true})
+
+		RegisterHandler(infoHandler, errorHandler)
 	}
+	defaultLogger = slog.New(newMultiHandler(hs...))
 
 	slog.SetDefault(defaultLogger)
-}
-
-type multiHandler struct {
-	handlers []slog.Handler
-}
-
-func newMultiHandler(handlers ...slog.Handler) *multiHandler {
-	return &multiHandler{handlers: handlers}
-}
-
-func (h *multiHandler) Enabled(ctx context.Context, level slog.Level) bool {
-	for _, handler := range h.handlers {
-		if handler.Enabled(ctx, level) {
-			return true
-		}
-	}
-	return false
-}
-
-func (h *multiHandler) Handle(ctx context.Context, r slog.Record) error {
-	for _, handler := range h.handlers {
-		if handler.Enabled(ctx, r.Level) {
-			if err := handler.Handle(ctx, r); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func (h *multiHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	var handlers []slog.Handler
-	for _, handler := range h.handlers {
-		handlers = append(handlers, handler.WithAttrs(attrs))
-	}
-	return newMultiHandler(handlers...)
-}
-
-func (h *multiHandler) WithGroup(name string) slog.Handler {
-	var handlers []slog.Handler
-	for _, handler := range h.handlers {
-		handlers = append(handlers, handler.WithGroup(name))
-	}
-	return newMultiHandler(handlers...)
 }
 
 // GetLogger returns the default logger
@@ -131,45 +71,44 @@ func GetLogger() *slog.Logger {
 	return defaultLogger
 }
 
-type temp struct {
-	Log logs.LogConfig
-}
-
 func InitFromConfig(c *viper.Viper) {
-	var t temp
-	c.Unmarshal(&t)
-
-	if len(t.Log.Level) > 0 {
-		l := slog.LevelInfo
-		switch strings.ToUpper(t.Log.Level) {
-		case "DEBUG":
-			l = slog.LevelDebug
-		case "WARN":
-			l = slog.LevelWarn
-		case "ERROR":
-			l = slog.LevelError
-		}
-		if l != slog.LevelInfo {
-			SetConsoleLevel(l)
-		}
+	if c == nil {
+		c = configs_x.GetConfigByKey("log")
 	}
-	if len(t.Log.LogDir) > 0 {
-		if strings.HasPrefix(t.Log.LogDir, "/") || strings.HasPrefix(t.Log.LogDir, "$") {
-			SetLogDir(os.ExpandEnv(t.Log.LogDir))
-		} else {
-			if exePath, err := os.Executable(); err == nil {
-				SetLogDir(filepath.Join(filepath.Dir(exePath), t.Log.LogDir))
+	var lc logs.LogConfig
+	if c != nil && c.Unmarshal(&lc) == nil {
+		if len(lc.Level) > 0 {
+			l := slog.LevelInfo
+			switch strings.ToUpper(lc.Level) {
+			case "DEBUG":
+				l = slog.LevelDebug
+			case "WARN":
+				l = slog.LevelWarn
+			case "ERROR":
+				l = slog.LevelError
+			}
+			if l != slog.LevelInfo {
+				SetConsoleLevel(l)
 			}
 		}
-	}
-	if len(t.Log.MainLog) > 0 {
-		infoLogFile = t.Log.MainLog
-	}
-	if len(t.Log.ErrorLog) > 0 {
-		errorLogFile = t.Log.ErrorLog
-	}
-	if len(t.Log.LogFormat) > 0 && (t.Log.LogFormat == "text" || t.Log.LogFormat == "json") {
-		logFormat = t.Log.LogFormat
+		if len(lc.LogDir) > 0 {
+			if strings.HasPrefix(lc.LogDir, "/") || strings.HasPrefix(lc.LogDir, "$") {
+				SetLogDir(os.ExpandEnv(lc.LogDir))
+			} else {
+				if exePath, err := os.Executable(); err == nil {
+					SetLogDir(filepath.Join(filepath.Dir(exePath), lc.LogDir))
+				}
+			}
+		}
+		if len(lc.MainLog) > 0 {
+			infoLogFile = lc.MainLog
+		}
+		if len(lc.ErrorLog) > 0 {
+			errorLogFile = lc.ErrorLog
+		}
+		if len(lc.LogFormat) > 0 && (lc.LogFormat == "text" || lc.LogFormat == "json") {
+			logFormat = lc.LogFormat
+		}
 	}
 
 	GetLogger()

@@ -11,8 +11,8 @@ import (
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
-	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -96,7 +96,7 @@ func Delete() {
 		if err != nil {
 			return
 		}
-		logs.Log.Infoln("mongodb删除数量:", dr.ModifiedCount)
+		log.Infoln("mongodb删除数量:", dr.ModifiedCount)
 	}
 
 	go db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)

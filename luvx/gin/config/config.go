@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/luvx21/coding-go/coding-common/configs_x"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -33,7 +33,7 @@ func init() {
 		configName = "config-dev"
 	}
 
-	logs.Log.Infoln("加载配置文件...", configName)
+	log.Infoln("加载配置文件...", configName)
 	Viper = configs_x.LoadConfig(configName)
 	Viper.Unmarshal(&AppConfig)
 }

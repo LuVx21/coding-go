@@ -18,14 +18,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/infra/logs"
 	"github.com/luvx21/coding-go/infra/logs/slogs"
+	log "github.com/sirupsen/logrus"
 )
 
 func WebStart() {
-	slogs.InitFromConfig(config.Viper)
+	slogs.InitFromConfig(config.Viper.Sub("log"))
 
-	logs.Log.Infoln("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
+	log.Infoln("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
 	runner.Start()
 
 	r := gin.Default()
@@ -49,7 +49,7 @@ func WebStart() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logs.Log.Fatalf("listen: %s\n", err)
+			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 
@@ -65,15 +65,15 @@ func gracefulExitWeb(srv *http.Server) {
 	// signal.Notify把收到的 syscall.SIGINT或syscall.SIGTERM 信号转发给quit
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT) // 此处不会阻塞
 	sig := <-quit                                                         // 阻塞在此，当接收到上述两种信号时才会往下执行
-	logs.Log.Infof("退出服务%v\n", sig)
+	log.Infof("退出服务%v\n", sig)
 
 	now := time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	// 5秒内优雅关闭服务（将未处理完的请求处理完再关闭服务），超过5秒就超时退出
 	if err := srv.Shutdown(ctx); err != nil {
-		logs.Log.Warnln("退出时异常:", err)
+		log.Warnln("退出时异常:", err)
 	}
 
-	logs.Log.Infof("ʕ◔ϖ◔ʔ 已退出... ʕ◔ϖ◔ʔ 耗时:%v\n", time.Since(now))
+	log.Infof("ʕ◔ϖ◔ʔ 已退出... ʕ◔ϖ◔ʔ 耗时:%v\n", time.Since(now))
 }

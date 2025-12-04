@@ -12,18 +12,18 @@ import (
 
 	"github.com/go-co-op/gocron/v2"
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
 	beforeListener = gocron.BeforeJobRuns(
 		func(jobID uuid.UUID, jobName string) {
-			// logs.Log.Infoln("任务:", jobName, "开始")
+			// log.Infoln("任务:", jobName, "开始")
 		},
 	)
 	afterListener = gocron.AfterJobRuns(
 		func(jobID uuid.UUID, jobName string) {
-			// logs.Log.Infoln("任务:", jobName, "完成")
+			// log.Infoln("任务:", jobName, "完成")
 		},
 	)
 	RunnerMap = make(map[string]func(), 16)
@@ -60,7 +60,7 @@ func callRunnerRegister(s gocron.Scheduler) {
 	runners = append(runners, keeplive.RunnerRegister()...)
 	// runners = append(runners, xxx.RunnerRegister()...)
 	for _, r := range runners {
-		logrus.Infof("定时任务已配置 %-20s %s", r.Crontab, r.Name)
+		log.Infof("定时任务已配置 %-20s %s", r.Crontab, r.Name)
 		RunnerMap[r.Name] = r.Fn
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),

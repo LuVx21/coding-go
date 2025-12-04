@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"testing"
@@ -47,9 +48,11 @@ func Test_log_00(t *testing.T) {
 		// logger := slog.New(h)
 		// slog.SetDefault(logger)
 
-		logger.Debug("这是一条调试信息")
-		logger.Info("这是一条普通信息")
-		logger.Warn("这是一条警告信息")
-		logger.Error("这是一条错误信息")
+		logger.Debug("这是一条调试信息", "a", "b")
+		logger.Info("这是一条普通信息", "a", "b")
+		logger.Warn("这是一条警告信息", "a", "b")
+		logger.Error("这是一条错误信息", "a", "b")
+
+		fmt.Println("--------------------------------------------------------------------")
 	}
 }

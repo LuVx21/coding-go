@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/bytedance/sonic"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,5 +40,5 @@ func requestLog(c *gin.Context) {
 
 	// logx.WithContext(c).Serve(requestMap)
 	j, _ := sonic.Marshal(requestMap)
-	logs.Log.Debugln(string(j))
+	log.Debugln(string(j))
 }

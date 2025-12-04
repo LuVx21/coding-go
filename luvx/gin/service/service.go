@@ -9,7 +9,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/func_x"
 	"github.com/luvx21/coding-go/infra/infra_sql"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -20,7 +20,7 @@ var (
 		var m bson.M
 		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_config"}).Decode(&m)
 		if e != nil {
-			logs.Log.Warnln("lazy加载异常", e)
+			log.Warnln("lazy加载异常", e)
 		}
 		return m
 	})
@@ -28,7 +28,7 @@ var (
 		var m bson.M
 		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_cache"}).Decode(&m)
 		if e != nil {
-			logs.Log.Warnln("lazy加载异常", e)
+			log.Warnln("lazy加载异常", e)
 		}
 		return m
 	})

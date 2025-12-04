@@ -5,9 +5,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-	"time"
 
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	prefixed "github.com/luvx12/logrus-prefixed-formatter"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
@@ -16,7 +14,7 @@ import (
 type LogConfig struct {
 	Level             string
 	LogDir            string
-	MainLog, ErrorLog string
+	MainLog, ErrorLog string // 日志文件名(不含扩展名)
 	LogFormat         string
 }
 
@@ -63,18 +61,8 @@ func init() {
 	if len(logDir) != 0 {
 		logPath = logDir
 	}
-	writer, _ := rotatelogs.New(
-		path.Join(logPath, "main-%Y-%m-%d.log"),
-		rotatelogs.WithLinkName(path.Join(logPath, "main.log")),
-		rotatelogs.WithMaxAge(time.Duration(168)*time.Hour),
-		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
-	)
-	writer1, _ := rotatelogs.New(
-		path.Join(logPath, "error-%Y-%m-%d.log"),
-		rotatelogs.WithLinkName(path.Join(logPath, "error.log")),
-		rotatelogs.WithMaxAge(time.Duration(168)*time.Hour),
-		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
-	)
+
+	writer, writer1 := LogWriter(logPath, "main"), LogWriter(logPath, "error")
 
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
 		logrus.DebugLevel: writer,

@@ -17,14 +17,18 @@ func Test_config_00(t *testing.T) {
 
 	var AppConfig config
 	viper.Unmarshal(&AppConfig)
-	fmt.Println(jsons.ToJsonString(AppConfig))
+	fmt.Println("反序列化所有", jsons.ToJsonString(AppConfig))
 
 	subv := viper.Sub("webclient")
 	fmt.Println("sub", jsons.ToJsonString(subv.AllSettings()))
 
+	webclient0 := make(map[string]any)
+	subv.Unmarshal(&webclient0)
+	fmt.Println("反序列化指定key", jsons.ToJsonString(webclient0))
+
 	webclient := make(map[string]any)
 	viper.UnmarshalKey("webclient", &webclient)
-	fmt.Println("UnmarshalKey", jsons.ToJsonString(webclient))
+	fmt.Println("反序列化指定key", jsons.ToJsonString(webclient))
 }
 
 func Test_01(t *testing.T) {

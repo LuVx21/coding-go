@@ -3,6 +3,7 @@ package soup
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"slices"
@@ -15,7 +16,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/strings_x"
-	"github.com/luvx21/coding-go/infra/logs"
+	log "github.com/sirupsen/logrus"
 )
 
 func (param SpiderParam) content(title, _url string) PageContent {
@@ -26,10 +27,10 @@ func (param SpiderParam) content(title, _url string) PageContent {
 	pageUrl := _url
 	for i := 0; !strings_x.IsBlank(pageUrl); i++ {
 		unescape, _ := url.QueryUnescape(pageUrl)
-		logs.Log.Infof("解析内容页: No.%d %s-%s\n", i+1, title, unescape)
+		log.Infof("解析内容页: No.%d %s-%s", i+1, title, unescape)
 		doc, err := request("解析内容页重试", pageUrl)
 		if err != nil {
-			logs.Log.Error(err)
+			log.Error(err)
 			break
 		}
 		if i == 0 {
@@ -90,10 +91,10 @@ func (param SpiderParam) Visit() []PageContent {
 	_url := param.StartUrl
 	pageUrl := _url
 	for i := 0; i < paramConfig.PageCount && len(pageUrl) > 0; i++ {
-		logs.Log.Infoln("解析目录页:", pageUrl)
+		log.Infoln("解析目录页:", pageUrl)
 		doc, err := request("解析目录页重试", pageUrl)
 		if err != nil {
-			logs.Log.Error(err)
+			log.Error(err)
 			break
 		}
 		temp1 := make([]*goquery.Selection, 0, 10)
@@ -111,14 +112,14 @@ func (param SpiderParam) Visit() []PageContent {
 			title := strings.TrimSpace(getValue1(element, paramConfig.IndexItemTitleRule))
 			href := getValue1(element, paramConfig.IndexItemUrlRule)
 			href = urlAddDomain(_url, href)
-			logs.Log.Debugf("目录页内容:No.%d %s %s\n", k+1, title, href)
+			log.Debugf("目录页内容:No.%d %s %s\n", k+1, title, href)
 			if strings_x.IsBlank(href) || slices.Contains(paramConfig.IgnoreIndexItemUrlSet, href) {
 				continue
 			}
 			content := param.content(title, href)
-			logs.Log.Debug("内容页内容:\n", content.Content)
+			log.Debug("内容页内容:\n", content.Content)
 			if len(content.Content) == 0 {
-				logs.Log.Warnln("内容页内容为空")
+				log.Warnln("内容页内容为空")
 				continue
 			}
 			paramConfig.IgnoreIndexItemUrlSet = append(paramConfig.IgnoreIndexItemUrlSet, content.Url)
@@ -147,7 +148,8 @@ func request(name, pageUrl string) (*goquery.Document, error) {
 		limiter := consts.GetRateLimiter(pageUrl)
 		_ = limiter.Wait(context.Background())
 		res, e := http.Get(pageUrl)
-		if e != nil {
+		if e != nil || res.StatusCode/100 != 2 {
+			slog.Error("网络请求异常", "请求作用", name, "url", pageUrl, "err", e, "status", res.Status)
 			return nil
 		}
 		defer res.Body.Close()
