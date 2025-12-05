@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/cmd
 
-go 1.25
+go 1.25.5
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -10,11 +10,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jedib0t/go-pretty/v6 v6.7.5
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251205082634-1b08583c3aa4
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.9.1
 	github.com/urfave/cli/v3 v3.2.0
@@ -86,6 +86,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
+	gitlab.com/greyxor/slogor v1.6.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
@@ -94,6 +95,5 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/term v0.37.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )

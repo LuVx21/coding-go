@@ -4,19 +4,24 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"net/url"
 	"slices"
 	"strings"
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/dao/mongo_dao"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/strings_x"
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	proxy = common_x.IfThen(mongo_dao.DynamicSwitch.Get().Get("rss_proxy").BoolOr(false), "http://"+consts.AppProxy, "")
 )
 
 func (param SpiderParam) content(title, _url string) PageContent {
@@ -147,9 +152,13 @@ func request(name, pageUrl string) (*goquery.Document, error) {
 	f := func() *goquery.Document {
 		limiter := consts.GetRateLimiter(pageUrl)
 		_ = limiter.Wait(context.Background())
-		res, e := http.Get(pageUrl)
-		if e != nil || res.StatusCode/100 != 2 {
-			slog.Error("网络请求异常", "请求作用", name, "url", pageUrl, "err", e, "status", res.Status)
+		res, _, es := consts.GoRequest.
+			Proxy(proxy).
+			Get(pageUrl).
+			End()
+
+		if len(es) != 0 || res.StatusCode/100 != 2 {
+			slog.Error("网络请求异常", "请求作用", name, "url", pageUrl, "err", es, "status", res.Status)
 			return nil
 		}
 		defer res.Body.Close()

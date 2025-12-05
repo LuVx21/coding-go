@@ -18,13 +18,13 @@ import (
 var (
 	defaultLevel              = slog.LevelInfo
 	logDir                    = os_x.Getenv("HOME") + "/data/slogs"
-	infoLogFile, errorLogFile = "main-slog", "error-slog"
+	infoLogFile, errorLogFile = "main", "error"
+	initOnce                  sync.Once
 	logFormat                 = "json"
 
 	hs = []slog.Handler{}
 
 	defaultLogger *slog.Logger
-	initOnce      sync.Once
 )
 
 // RegisterHandler 添加自定义Handler
@@ -45,7 +45,7 @@ func initLogger() {
 		panic(err)
 	}
 
-	infoWriter, errWriter := logs.LogWriter(logDir, infoLogFile), logs.LogWriter(logDir, errorLogFile)
+	infoWriter, errWriter := logs.LogWriter(logDir, infoLogFile+"-slog"), logs.LogWriter(logDir, errorLogFile+"-slog")
 
 	consoleHandler := slogor.NewHandler(os.Stderr, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(defaultLevel), slogor.ShowSource())
 	RegisterHandler(consoleHandler)

@@ -2,23 +2,24 @@ package nets_x
 
 import (
 	"bytes"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"net/url"
 	"text/template"
+
+	"github.com/luvx21/coding-go/coding-common/cast_x"
 )
 
-func UrlAddPath(urlTemplate string, pathMap map[string]any) (string, error) {
-	if len(urlTemplate) == 0 || len(pathMap) == 0 {
-		return urlTemplate, nil
+func UrlAddPath(ut string, pathMap map[string]any) (string, error) {
+	if len(ut) == 0 || len(pathMap) == 0 {
+		return ut, nil
 	}
 
-	tmpl, err := template.New("url").Parse(urlTemplate)
+	tmpl, err := template.New("url").Parse(ut)
 	if err != nil {
-		return urlTemplate, err
+		return ut, err
 	}
 	var result bytes.Buffer
 	if err = tmpl.Execute(&result, pathMap); err != nil {
-		return urlTemplate, err
+		return ut, err
 	}
 	return result.String(), nil
 }

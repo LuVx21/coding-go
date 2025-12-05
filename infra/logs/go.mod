@@ -1,11 +1,11 @@
 module github.com/luvx21/coding-go/infra/logs
 
-go 1.25
+go 1.25.5
 
 require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.21.0

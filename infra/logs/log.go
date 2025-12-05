@@ -5,27 +5,38 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	prefixed "github.com/luvx12/logrus-prefixed-formatter"
+	"github.com/luvx21/coding-go/coding-common/configs_x"
+	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-type LogConfig struct {
-	Level             string
-	LogDir            string
-	MainLog, ErrorLog string // 日志文件名(不含扩展名)
-	LogFormat         string
+var (
+	defaultLevel              = logrus.InfoLevel
+	logDir                    = os_x.Getenv("HOME") + "/data/logs"
+	infoLogFile, errorLogFile = "main", "error"
+	initOnce                  sync.Once
+	// Log logger
+	// Deprecated: 直接使用logrus
+	Log = logrus.New()
+
+	stdFormatter, fileFormatter *prefixed.TextFormatter // 命令行,文件输出格式
+)
+
+func SetConsoleLevel(level logrus.Level) {
+	defaultLevel = level
 }
 
-// Log logger
-// Deprecated: 直接使用logrus
-var Log = logrus.New()
+func SetLogDir(path string) {
+	logDir = path
+}
 
-var stdFormatter *prefixed.TextFormatter  // 命令行输出格式
-var fileFormatter *prefixed.TextFormatter // 文件输出格式
-
-func init() {
+func init() { initOnce.Do(initLogger) }
+func initLogger() {
 	stdFormatter = &prefixed.TextFormatter{
 		PrefixPadding:   3,
 		FullTimestamp:   true,
@@ -62,7 +73,7 @@ func init() {
 		logPath = logDir
 	}
 
-	writer, writer1 := LogWriter(logPath, "main"), LogWriter(logPath, "error")
+	writer, writer1 := LogWriter(logPath, infoLogFile), LogWriter(logPath, errorLogFile)
 
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
 		logrus.DebugLevel: writer,
@@ -86,4 +97,20 @@ func init() {
 	logrus.SetLevel(logrus.InfoLevel)
 
 	Log.Infoln("日志文件位置:", logPath)
+}
+
+// GetLogger returns the default logger
+func GetLogger() *logrus.Logger {
+	initOnce.Do(initLogger)
+	return Log
+}
+
+func InitFromConfig(c *viper.Viper) {
+	if c == nil {
+		c = configs_x.GetConfigByKey("log")
+	}
+	var lc LogConfig
+	if c != nil && c.Unmarshal(&lc) == nil {
+	}
+	GetLogger()
 }

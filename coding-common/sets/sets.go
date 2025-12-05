@@ -5,36 +5,36 @@ import (
 	"strings"
 )
 
-type Set[E comparable] map[E]struct{}
+type set[E comparable] map[E]struct{}
 
-func NewSet[E comparable](e ...E) *Set[E] {
-	set := &Set[E]{}
+func NewSet[E comparable](e ...E) *set[E] {
+	set := &set[E]{}
 	set.Add(e...)
 	return set
 }
 
-func (s *Set[E]) Len(e ...E) int {
+func (s *set[E]) Len() int {
 	return len(*s)
 }
 
-func (s *Set[E]) Add(e ...E) {
+func (s *set[E]) Add(e ...E) {
 	for _, _e := range e {
 		(*s)[_e] = struct{}{}
 	}
 }
 
-func (s *Set[E]) Remove(e ...E) {
+func (s *set[E]) Remove(e ...E) {
 	for _, _e := range e {
 		delete(*s, _e)
 	}
 }
 
-func (s *Set[E]) Contain(e E) bool {
+func (s *set[E]) Contain(e E) bool {
 	_, exist := (*s)[e]
 	return exist
 }
 
-func (s *Set[E]) ToSlice(e E) []E {
+func (s *set[E]) ToSlice(e E) []E {
 	r := make([]E, s.Len())
 	for k := range *s {
 		r = append(r, k)
@@ -42,7 +42,7 @@ func (s *Set[E]) ToSlice(e E) []E {
 	return r
 }
 
-func (s *Set[E]) String() string {
+func (s *set[E]) String() string {
 	var sb strings.Builder
 	for k := range *s {
 		sb.WriteString(fmt.Sprintf("%v\n", k))

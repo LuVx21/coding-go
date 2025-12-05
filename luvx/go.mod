@@ -1,6 +1,6 @@
 module luvx
 
-go 1.25
+go 1.25.5
 
 replace (
 	luvx_service_sdk => ../luvx_service_sdk
@@ -21,17 +21,17 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251205082634-1b08583c3aa4
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.18.0
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
+	github.com/tursodatabase/libsql-client-go v0.0.0-20251205113610-b69dd6e475fc
 	github.com/valyala/fasthttp v1.68.0
 	go.mongodb.org/mongo-driver v1.17.6
 	golang.org/x/crypto v0.45.0
@@ -80,6 +80,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
+	github.com/icloudza/fxjson v1.2.4
 	github.com/jedib0t/go-pretty/v6 v6.7.5 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -133,6 +134,7 @@ require (
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+	gitlab.com/greyxor/slogor v1.6.3 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
@@ -146,7 +148,6 @@ require (
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gorm.io/datatypes v1.2.7 // indirect
 	gorm.io/hints v1.1.2 // indirect

@@ -1,6 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-FROM ${REGISTRY}golang:1.25-alpine3.22 AS builder
+FROM ${REGISTRY}golang:1.25-alpine3.23 AS builder
 
 COPY --from=registry.cn-shanghai.aliyuncs.com/luvx/upx:latest --link /usr/bin/upx /usr/bin/
 WORKDIR /build
@@ -11,7 +11,7 @@ RUN go mod download && go mod tidy && go build -ldflags="-w -s" -v -o app main.g
 
 # -------------------------------------------
 
-FROM ${REGISTRY}alpine:3.22
+FROM ${REGISTRY}alpine:3.23
 
 WORKDIR /app
 ENV log_LogDir=/root/data/logs TZ=Asia/Shanghai

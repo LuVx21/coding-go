@@ -1,37 +1,17 @@
 package service
 
 import (
-	"context"
 	"time"
 
 	"luvx/gin/db"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/func_x"
 	"github.com/luvx21/coding-go/infra/infra_sql"
-	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var db1, _ = db.MySQLClient.DB()
 var (
-	RunnerLocker  = infra_sql.NewLocker[string](db1)
-	DynamicConfig = func_x.Lazy(func() bson.M {
-		var m bson.M
-		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_config"}).Decode(&m)
-		if e != nil {
-			log.Warnln("lazy加载异常", e)
-		}
-		return m
-	})
-	DynamicCache = func_x.Lazy(func() bson.M {
-		var m bson.M
-		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_cache"}).Decode(&m)
-		if e != nil {
-			log.Warnln("lazy加载异常", e)
-		}
-		return m
-	})
+	RunnerLocker = infra_sql.NewLocker[string](db1)
 )
 
 type Runner struct {

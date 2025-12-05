@@ -159,3 +159,15 @@ func Test_upsert_00(t *testing.T) {
 	)
 	fmt.Println(rrr)
 }
+
+func Test_count_00(t *testing.T) {
+	defer beforeAfter("Test_count_00")()
+
+	opts := options.FindOne().SetProjection(bson.M{"_id": 1})
+	var m bson.M
+	err := db.Collection("config").FindOne(context.TODO(), bson.M{"_id": "app_switch"}, opts).Decode(&m)
+	fmt.Println(err == nil)
+
+	c, _ := db.Collection("config").CountDocuments(context.TODO(), bson.M{"_id": "app_switch"})
+	fmt.Println(c)
+}

@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/coding-usage
 
-go 1.25
+go 1.25.5
 
 replace (
 	github.com/luvx21/coding-go/coding-common => ../coding-common
@@ -17,7 +17,7 @@ require (
 	github.com/apache/pulsar-client-go v0.14.0
 	github.com/avast/retry-go/v4 v4.6.1
 	github.com/bits-and-blooms/bloom/v3 v3.7.0
-	github.com/bytedance/sonic v1.13.2
+	github.com/bytedance/sonic v1.14.2
 	github.com/cch123/elasticsql v1.0.1
 	github.com/charmbracelet/glamour v0.9.1
 	github.com/cloudwego/hertz v0.9.6
@@ -58,10 +58,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251204145609-13f8a9261978
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251204145609-13f8a9261978
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251205082634-1b08583c3aa4
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/olekukonko/tablewriter v1.1.1
@@ -142,8 +142,8 @@ require (
 	github.com/blockloop/scan v1.3.0 // indirect
 	github.com/bufbuild/protocompile v0.14.1 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
-	github.com/bytedance/gopkg v0.1.1 // indirect
-	github.com/bytedance/sonic/loader v0.2.4 // indirect
+	github.com/bytedance/gopkg v0.1.3 // indirect
+	github.com/bytedance/sonic/loader v0.4.0 // indirect
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/charmbracelet/colorprofile v0.3.0 // indirect
@@ -158,7 +158,7 @@ require (
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
-	github.com/cloudwego/base64x v0.1.5 // indirect
+	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/cloudwego/configmanager v0.2.2 // indirect
 	github.com/cloudwego/dynamicgo v0.5.2 // indirect
 	github.com/cloudwego/fastpb v0.0.5 // indirect
@@ -344,7 +344,7 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
-	gitlab.com/greyxor/slogor v1.6.1
+	gitlab.com/greyxor/slogor v1.6.3
 	go.etcd.io/etcd/api/v3 v3.5.21 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.21 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect

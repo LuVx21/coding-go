@@ -15,7 +15,7 @@ type DbLocker[T any] struct {
 	Client  *sql.DB
 	ownerID string // 当前实例的唯一标识
 
-	TableCreated bool
+	tableCreated bool
 	sqlHolder    *sqlHolder
 	// mu           sync.Mutex
 }
@@ -71,6 +71,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 			// 记录不存在(可能在检查期间被删除)，重试插入
 			return l.TryLock(key, exp)
 		}
+		slog.Debug("现有锁查询错误", "err", err)
 		return false
 	}
 	// 检查锁是否已过期
@@ -88,7 +89,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 }
 
 func (l *DbLocker[T]) prepare() error {
-	if l.TableCreated {
+	if l.tableCreated {
 		return nil
 	}
 
@@ -96,7 +97,7 @@ func (l *DbLocker[T]) prepare() error {
 		slog.Error("建表失败", "err", err)
 		return fmt.Errorf("建表失败:%s", l.sqlHolder.ddl)
 	}
-	l.TableCreated = true
+	l.tableCreated = true
 	return nil
 }
 

@@ -16,6 +16,7 @@ import (
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/db"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
@@ -178,11 +179,11 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 func PullAllUpVideo() {
 	func1 := func() {
 		timeFlow()
-		for _, mid := range service.DynamicCache.Get()["bili_update_up"].(bson.A) {
+		for _, mid := range mongo_dao.DynamicCache.Get()["bili_update_up"].(bson.A) {
 			PullUpVideo(cast_x.ToInt64(mid))
 		}
 		db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
-		service.DynamicCache.TryClose()
+		mongo_dao.DynamicCache.TryClose()
 	}
 	func2 := func() {
 		midMap := dumpUpId()
@@ -568,12 +569,12 @@ func timeFlow() {
 			"pic":     archive.Get("cover").String(),
 		}
 
-		log.Infof("%-12s %-20s %s", video["bvid"], video["title"], video["upper"].(map[string]any)["name"])
+		log.Infof("%-12s %-12s %s", video["bvid"], video["upper"].(map[string]any)["name"], video["title"])
 		toSave = append(toSave, video)
 	})
 
 	db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.Update().SetUpsert(true))
-	service.DynamicCache.TryClose()
+	mongo_dao.DynamicCache.TryClose()
 
 	// for _, s := range slices_x.Partition(toSave, 30) {
 	// 	_, _ = mongoClient.InsertMany(context.TODO(), s)

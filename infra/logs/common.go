@@ -8,6 +8,13 @@ import (
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 )
 
+type LogConfig struct {
+	Level             string
+	LogDir            string
+	MainLog, ErrorLog string // 日志文件名(不含扩展名)
+	LogFormat         string
+}
+
 // LogWriter 日志文件轮转writer
 func LogWriter(logPath, logName string) io.Writer {
 	writer, _ := rotatelogs.New(
