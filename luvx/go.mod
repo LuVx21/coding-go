@@ -14,18 +14,18 @@ require (
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/antchfx/xmlquery v1.5.0
 	github.com/bytedance/sonic v1.14.2
-	github.com/eko/gocache/lib/v4 v4.2.2
-	github.com/eko/gocache/store/bigcache/v4 v4.2.3
+	github.com/eko/gocache/lib/v4 v4.2.3
+	github.com/eko/gocache/store/bigcache/v4 v4.2.4
 	github.com/gin-gonic/gin v1.11.0
-	github.com/go-co-op/gocron/v2 v2.18.2
+	github.com/go-co-op/gocron/v2 v2.19.0
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251205082634-1b08583c3aa4
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251205082634-1b08583c3aa4
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251205082634-1b08583c3aa4
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251209154445-c328360a9df8
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/sirupsen/logrus v1.9.3
@@ -34,9 +34,9 @@ require (
 	github.com/tursodatabase/libsql-client-go v0.0.0-20251205113610-b69dd6e475fc
 	github.com/valyala/fasthttp v1.68.0
 	go.mongodb.org/mongo-driver v1.17.6
-	golang.org/x/crypto v0.45.0
-	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39
-	golang.org/x/sync v0.18.0
+	golang.org/x/crypto v0.46.0
+	golang.org/x/exp v0.0.0-20251209150349-8475f28825e9
+	golang.org/x/sync v0.19.0
 	golang.org/x/time v0.14.0
 	google.golang.org/grpc v1.77.0
 	gorm.io/driver/mysql v1.6.0
@@ -66,11 +66,11 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.11 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.28.0 // indirect
+	github.com/go-playground/validator/v10 v10.29.0 // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -81,7 +81,7 @@ require (
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/icloudza/fxjson v1.2.4
-	github.com/jedib0t/go-pretty/v6 v6.7.5 // indirect
+	github.com/jedib0t/go-pretty/v6 v6.7.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
@@ -134,20 +134,19 @@ require (
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	gitlab.com/greyxor/slogor v1.6.3 // indirect
-	go.uber.org/mock v0.6.0 // indirect
+	gitlab.com/greyxor/slogor v1.6.4 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.23.0 // indirect
-	golang.org/x/mod v0.30.0 // indirect
-	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/term v0.37.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
-	golang.org/x/tools v0.39.0 // indirect
+	golang.org/x/mod v0.31.0 // indirect
+	golang.org/x/net v0.48.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/term v0.38.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/tools v0.40.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/protobuf v1.36.10 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251213004720-97cd9d5aeac2 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gorm.io/datatypes v1.2.7 // indirect
 	gorm.io/hints v1.1.2 // indirect

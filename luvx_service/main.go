@@ -10,11 +10,14 @@ import (
 	kv "luvx_service_sdk/proto_gen/proto_kv"
 
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
+	"github.com/luvx21/coding-go/infra/logs/slogs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 func main() {
+	slogs.InitFromConfig(nil)
+
 	svr := grpc.NewServer(
 		grpc.MaxRecvMsgSize(20*1024*1024),
 		grpc.MaxSendMsgSize(20*1024*1024),

@@ -60,7 +60,7 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 		}
 	}
 
-	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceHost+`:58090/rss/delete/%v">删除<a/>`, _id)
+	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%v">删除<a/>`, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
 	return &RssItem{

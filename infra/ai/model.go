@@ -27,5 +27,5 @@ func Models(domain, apiKeyName string) []string {
 	}
 
 	s := gjson.Get(r, "data.#.id").Array()
-	return slices_x.Transfer(func(i gjson.Result) string { return i.String() }, s...)
+	return slices_x.Transfer(func(i gjson.Result) string { return i.Str }, s...)
 }

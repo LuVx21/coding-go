@@ -5,14 +5,14 @@ import (
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/ids"
+	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/parnurzeal/gorequest"
 	"golang.org/x/sync/singleflight"
 	"golang.org/x/time/rate"
 )
 
 const (
-	ServiceHost, ImgHost = "mini.rx", "img.rx"
-	UserAgent            = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
+	UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36 Edg/144.0.0.0"
 
 	AppSwitchKey = "app:switch"
 )
@@ -29,6 +29,8 @@ var (
 )
 
 var (
+	ImgHost, _ = os_x.LookupEnv("ImgHost", "img.rx")
+
 	AppPort     = os.Getenv("APP_PORT")
 	AppHostName = os.Getenv("APP_HOST_NAME")
 	AppProxy    = os.Getenv("APP_PROXY")

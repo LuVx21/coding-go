@@ -13,9 +13,14 @@ import (
 )
 
 var (
+	app_name = "go_app"
 	initOnce sync.Once
 	viper    *viper_p.Viper
 )
+
+func RegisterAppName(n string) {
+	app_name = n
+}
 
 func GetConfig() *viper_p.Viper {
 	return viper
@@ -70,7 +75,7 @@ func configPath(paths ...string) []string {
 		r = append(r, dir, filepath.Join(dir, "config"))
 	}
 	// 用户主目录下
-	r = append(r, "$HOME/.config", "$GOPATH/config")
+	r = append(r, "$HOME/.config/"+app_name, "$GOPATH/config")
 	// 自定义目录下
 	for _, path := range paths {
 		if !Exists(os.ExpandEnv(path)) {

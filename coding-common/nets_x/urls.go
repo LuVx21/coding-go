@@ -3,6 +3,7 @@ package nets_x
 import (
 	"bytes"
 	"net/url"
+	"strings"
 	"text/template"
 
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -32,4 +33,12 @@ func UrlAddQuery(urlStr string, queryMap map[string]any) (*url.URL, error) {
 	}
 	pUrl.RawQuery = query.Encode()
 	return pUrl, nil
+}
+
+// EncodeURIComponent 类似javascript函数作用
+func EncodeURIComponent(s string) string {
+	encoded := url.QueryEscape(s)
+	// 将+替换为%20，更符合encodeURIComponent
+	encoded = strings.ReplaceAll(encoded, "+", "%20")
+	return encoded
 }

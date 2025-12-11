@@ -20,6 +20,7 @@ services:
       APP_HOST_NAME: "mini.rx"
       APP_PROXY: "host.docker.internal:7890"
       passwordStr: ${passwordStr}
+      ImgHost: img.rx
 #    command: ["sleep", "infinity"]
 
   # nginx:

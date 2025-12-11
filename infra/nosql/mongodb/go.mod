@@ -7,7 +7,7 @@ require go.mongodb.org/mongo-driver v1.17.6
 require (
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251205082634-1b08583c3aa4
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251209154445-c328360a9df8
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3 // indirect
@@ -18,8 +18,8 @@ require (
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	golang.org/x/crypto v0.45.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/crypto v0.46.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 )

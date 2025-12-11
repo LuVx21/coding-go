@@ -547,7 +547,7 @@ func a(jo alias_x.JsonObject) string {
 }
 
 func addDelete(_id int64) string {
-	format := `<a href="http://` + consts.ServiceHost + `:58090/weibo/rss/delete/%v">删除<a/>`
+	format := `<a href="http://` + consts.AppHostName + `:58090/weibo/rss/delete/%v">删除<a/>`
 	return fmt.Sprintf(format, _id)
 }
 

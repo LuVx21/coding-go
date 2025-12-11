@@ -6,6 +6,8 @@ services:
       - net_common
     build:
       dockerfile: Dockerfile
+      args:
+        - CR=registry.cn-shanghai.aliyuncs.com/luvx
     ports:
       - "18888:18888"
     volumes:

@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/db"
+	"luvx/gin/service/webhook"
 	"regexp"
 	"strings"
 	"time"
@@ -76,6 +78,12 @@ func a() {
 		mm := db.RedisClient.HGetAll(context.Background(), redis_key_time+":"+cate).Val()
 		if len(mm) > 0 {
 			log.Infoln("有新版的组件", strings.Join(maps.Keys(mm), ","))
+			webhook.SendMessage(webhook.TO_USER, mongo_dao.DynamicConfig.Get()["template_id_2"].(string),
+				"", map[string]webhook.WeixinMsg{
+					"cate":    {Value: cate},
+					"content": {Value: strings.Join(maps.Keys(mm), "\n")},
+				},
+			)
 		}
 	}
 }
