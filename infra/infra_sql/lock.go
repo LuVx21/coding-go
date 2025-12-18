@@ -6,9 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/luvx21/coding-go/coding-common/common_x"
 )
 
 type DbLocker[T any] struct {
@@ -21,7 +24,9 @@ type DbLocker[T any] struct {
 }
 
 func NewLocker[T any](c *sql.DB) *DbLocker[T] {
-	return NewLockerWithOwner[T](c, "default")
+	hostname, err := os.Hostname()
+	id := common_x.IfThen(err == nil, hostname, "default")
+	return NewLockerWithOwner[T](c, id)
 }
 func NewLockerWithOwner[T any](c *sql.DB, ownerID string) *DbLocker[T] {
 	l := &DbLocker[T]{Client: c, ownerID: ownerID}
@@ -75,8 +80,8 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 		return false
 	}
 	// 检查锁是否已过期
-	if time.Now().UnixMilli() < expAt {
-		slog.Debug("现有锁未过期", "expAt", expAt)
+	if time.Now().UnixMilli() < expAt && existingOwner != l.ownerID {
+		slog.Debug("现有锁未过期", "expAt", expAt, "持锁ownerID", existingOwner)
 		return false
 	}
 

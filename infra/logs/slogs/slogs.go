@@ -63,6 +63,7 @@ func initLogger() {
 	defaultLogger = slog.New(newMultiHandler(hs...))
 
 	slog.SetDefault(defaultLogger)
+	slog.Info("日志文件位置", "path", logDir)
 }
 
 // GetLogger returns the default logger

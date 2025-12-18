@@ -21,6 +21,7 @@ import (
 	commonkvservice "luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
 	"luvx/gin/service/rpc"
+	"luvx/gin/service/rss"
 
 	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
@@ -44,13 +45,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	COL_NAME = "weibo_feed"
+)
+
 var (
 	fields = []string{"_id", "user", "mblogid", "created_at", "text_raw", "text", "retweeted_status", "pic_ids",
 		"invalid", "read", "extra", "groupId", "mix_media_info",
 		// "page_info",
 	}
-	// collection = db.MongoDatabase.Collection("weibo_feed")
-	collection = db.GetCollection("weibo_feed")
+	// collection = db.MongoDatabase.Collection(COL_NAME)
+	collection = db.GetCollection(COL_NAME)
 )
 
 var (
@@ -487,15 +492,7 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 		_ = cursor.Decode(&jo)
 		s0 += a(jo)
 	}
-	s := `<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title><![CDATA[网络傻事]]></title>
-%s
-    </channel>
-</rss>
-`
-	return fmt.Sprintf(s, s0)
+	return fmt.Sprintf(rss.XmlFormat, "网络傻事", s0)
 }
 
 func a(jo alias_x.JsonObject) string {
@@ -547,8 +544,8 @@ func a(jo alias_x.JsonObject) string {
 }
 
 func addDelete(_id int64) string {
-	format := `<a href="http://` + consts.AppHostName + `:58090/weibo/rss/delete/%v">删除<a/>`
-	return fmt.Sprintf(format, _id)
+	format := `<a href="http://` + consts.AppHostName + `:58090/rss/delete/%s/%v?real=true">删除<a/>`
+	return fmt.Sprintf(format, COL_NAME, _id)
 }
 
 func contentHtml(jo alias_x.JsonObject) string {
@@ -590,11 +587,6 @@ func aa(text string) string {
 		r = append(r, a)
 	}
 	return fmt.Sprintf(format, r...)
-}
-
-func DeleteById(id int64) int64 {
-	r, _ := collection.DeleteOne(context.TODO(), bson.M{"_id": id})
-	return r.DeletedCount
 }
 
 func requestWeibo(url string, queryMap map[string]any, headerMap map[string]string) (gorequest.Response, string, []error) {

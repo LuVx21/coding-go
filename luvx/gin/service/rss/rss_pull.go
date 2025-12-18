@@ -3,6 +3,7 @@ package rss
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/mongo_dao"
@@ -16,7 +17,6 @@ import (
 	"github.com/luvx21/coding-go/coding-common/brace"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
-	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
@@ -27,7 +27,7 @@ var (
 )
 
 const (
-	redis_key_last_sync_time = "app:rss:last_sync_time"
+	redis_key_last_sync_time = "app:rss:%s:last_sync_time"
 	redis_key_time           = "app:rss"
 )
 
@@ -44,8 +44,13 @@ func a() {
 			func() []string { return strings.Split(keys, ",") },
 		)
 		keySli = slices_x.FlatMap(keySli, func(s string) []string { return brace.Expand(s) })
-		lastSyncTimeStr := db.RedisClient.Get(context.Background(), redis_key_last_sync_time+":"+cate).Val()
-		lastSyncTime, _ := time.Parse(time.DateTime, strings_x.FirstNonEmpty(lastSyncTimeStr, "2020-01-01 00:00:00"))
+		lastSyncTimeStr, err := db.RedisClient.Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Result()
+		lastSyncTime := time.Now().Add(time.Hour * 24 * -3)
+		if err == nil {
+			lastSyncTime, _ = time.Parse(time.DateTime, lastSyncTimeStr)
+		} else {
+			slog.Warn("redis读取错误", "err", err)
+		}
 		values := make([]any, 0)
 		for _, key := range keySli {
 			var args []any

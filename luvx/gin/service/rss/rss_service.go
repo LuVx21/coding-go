@@ -8,14 +8,11 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
-	"luvx/gin/common/responsex"
 	"luvx/gin/db"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/soup"
 
-	"github.com/gin-gonic/gin"
-	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
@@ -25,10 +22,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const ()
+const (
+	COL_NAME = "rss_feed"
+)
 
 var (
-	collection = db.MongoDatabase.Collection("rss_feed")
+	collection = db.MongoDatabase.Collection(COL_NAME)
 )
 
 func Rss(spiderKey string) string {
@@ -60,7 +59,7 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 		}
 	}
 
-	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%v">删除<a/>`, _id)
+	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
 	return &RssItem{
@@ -71,17 +70,6 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 		Guid:        strconv.FormatInt(_id, 10),
 		Author:      "未知",
 	}
-}
-
-func DeleteById(c *gin.Context) {
-	id := cast_x.ToInt64(c.Param("id"))
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			{Key: "invalid", Value: 1},
-		}},
-	}
-	one, _ := collection.UpdateOne(context.TODO(), bson.M{"_id": id}, update)
-	responsex.R(c, one)
 }
 
 func PullByKey() {

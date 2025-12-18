@@ -2,6 +2,18 @@ package rss
 
 import (
 	"fmt"
+	"strings"
+)
+
+const (
+	XmlFormat = `<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title><![CDATA[%s]]></title>
+%s
+    </channel>
+</rss>
+`
 )
 
 type RSS struct {
@@ -43,17 +55,9 @@ func ToRssXml(items []*RssItem, title string) string {
 	if title == "" {
 		title = "网络傻事"
 	}
-	result := ""
-	for _, item := range items {
-		result += item.ToString()
+	var sb strings.Builder
+	for i := range items {
+		sb.WriteString(items[i].ToString())
 	}
-	s := `<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title><![CDATA[%s]]></title>
-%s
-    </channel>
-</rss>
-`
-	return fmt.Sprintf(s, title, result)
+	return fmt.Sprintf(XmlFormat, title, sb.String())
 }

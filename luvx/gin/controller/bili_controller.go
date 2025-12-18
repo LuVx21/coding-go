@@ -4,9 +4,11 @@ import (
 	"luvx/gin/common/responsex"
 	"luvx/gin/service/bili"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
 func PullSeason(c *gin.Context) {
@@ -30,4 +32,16 @@ func PullUpVideo(c *gin.Context) {
 		video = bili.PullUpVideo(toInt64)
 	}
 	responsex.R(c, video)
+}
+
+func Rss(c *gin.Context) {
+	uname, includeUid, excludeUid, size := c.Query("uname"), c.Query("includeUid"), c.Query("excludeUid"), c.Query("size")
+	f := func(ids string) []int64 {
+		return slices_x.FilterTransfer(func(s string) bool { return s != "" }, func(s string) int64 { return cast_x.ToInt64(s) }, strings.Split(ids, ",")...)
+	}
+	includeUids, excludeUids := f(includeUid), f(excludeUid)
+
+	rss := bili.Rss(uname, includeUids, excludeUids, cast_x.ToInt64(size))
+	c.Header("Content-Type", "application/xml;charset=UTF-8")
+	c.String(http.StatusOK, rss)
 }

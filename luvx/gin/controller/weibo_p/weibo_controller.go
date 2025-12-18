@@ -56,8 +56,3 @@ func Rss(c *gin.Context) {
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
 }
-func DeleteById(c *gin.Context) {
-	id := c.Param("id")
-	cnt := weibo_p.DeleteById(cast_x.ToInt64(id))
-	responsex.R(c, cnt)
-}

@@ -3,9 +3,9 @@ module github.com/luvx21/coding-go/infra/infra_kv
 go 1.25
 
 require (
-	github.com/dgraph-io/badger/v4 v4.8.0
+	github.com/dgraph-io/badger/v4 v4.9.0
 	github.com/dgraph-io/ristretto/v2 v2.3.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251217160306-b7ee33986643
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.0
 	google.golang.org/protobuf v1.36.11
@@ -23,7 +23,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
-	github.com/google/flatbuffers v25.9.23+incompatible // indirect
+	github.com/google/flatbuffers v25.12.19+incompatible // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rosedblabs/wal v1.3.8 // indirect
@@ -39,7 +39,7 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
-	golang.org/x/exp v0.0.0-20251209150349-8475f28825e9 // indirect
+	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93 // indirect
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect

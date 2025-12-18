@@ -9,7 +9,6 @@ import (
 	"luvx/gin/controller/rss_p"
 	"luvx/gin/controller/useful_c"
 	"luvx/gin/controller/weibo_p"
-	rssService "luvx/gin/service/rss"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/infra/logs"
@@ -54,10 +53,10 @@ func Register0(r *gin.Engine) {
 
 	useful := r.Group("/useful")
 	useful.POST("/compare", useful_c.Compare)
-	useful.GET("/common_key_value", common_kv_controller.GetCommonKeyValue)
-	useful.POST("/common_key_value", common_kv_controller.CreateCommonKeyValue)
-	useful.DELETE("/common_key_value", common_kv_controller.DeleteCommonKeyValue)
-	useful.PUT("/common_key_value/:id", common_kv_controller.UpdateCommonKeyValue)
+	useful.GET("/c_k_v", common_kv_controller.GetCommonKeyValue)
+	useful.POST("/c_k_v", common_kv_controller.CreateCommonKeyValue)
+	useful.DELETE("/c_k_v", common_kv_controller.DeleteCommonKeyValue)
+	useful.PUT("/c_k_v/:id", common_kv_controller.UpdateCommonKeyValue)
 
 	cache := r.Group("/cache")
 	cache.GET("clear", controller.ClearCache)
@@ -75,6 +74,7 @@ func RegisterBili(r *gin.Engine) {
 	bili := r.Group("/bili", AddTraceId)
 	bili.GET("/pull/season", controller.PullSeason)
 	bili.GET("/pull/up/video", controller.PullUpVideo)
+	bili.GET("/rss", controller.Rss)
 }
 
 func RegisterWeibo(r *gin.Engine) {
@@ -82,11 +82,10 @@ func RegisterWeibo(r *gin.Engine) {
 	weibo.GET("/pull/group", weibo_p.PullByGroup)
 	weibo.GET("/pull/user", weibo_p.PullByUser)
 	weibo.GET("/rss/:uid", weibo_p.Rss)
-	weibo.GET("/rss/delete/:id", weibo_p.DeleteById)
 
 	_rss := r.Group("/rss")
 	_rss.GET("/feed/:spiderKey", rss_p.Rss)
-	_rss.GET("/delete/:id", rssService.DeleteById)
+	_rss.GET("/delete/:source/:id", rss_p.DeleteById)
 	_rss.GET("pullbykey", rss_p.PullByKey)
 
 	_ai := r.Group("/ai")

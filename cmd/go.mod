@@ -10,11 +10,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.7
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251209154445-c328360a9df8
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20251209154445-c328360a9df8
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251209154445-c328360a9df8
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20251209154445-c328360a9df8
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251217160306-b7ee33986643
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20251217160306-b7ee33986643
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20251217160306-b7ee33986643
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20251217160306-b7ee33986643
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20251217160306-b7ee33986643
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/urfave/cli/v3 v3.6.1
@@ -25,16 +25,16 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/alecthomas/chroma/v2 v2.20.0 // indirect
+	github.com/alecthomas/chroma/v2 v2.21.1 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/charmbracelet/colorprofile v0.4.1 // indirect
 	github.com/charmbracelet/x/ansi v0.11.3 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.14 // indirect
-	github.com/charmbracelet/x/exp/slice v0.0.0-20251212161403-a3028fabe6bc // indirect
+	github.com/charmbracelet/x/exp/slice v0.0.0-20251215102626-e0db08df7383 // indirect
 	github.com/charmbracelet/x/term v0.2.2 // indirect
-	github.com/clipperhouse/displaywidth v0.6.1 // indirect
+	github.com/clipperhouse/displaywidth v0.6.2 // indirect
 	github.com/clipperhouse/stringish v0.1.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect

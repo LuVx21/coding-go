@@ -101,6 +101,8 @@ func Delete() {
 
 	go db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
 
+	go func() {
 	collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
 	collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
+	}()
 }

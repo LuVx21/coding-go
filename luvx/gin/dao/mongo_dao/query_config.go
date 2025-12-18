@@ -27,9 +27,10 @@ var (
 		}
 		return m
 	})
-	DynamicSwitch = func_x.Lazy(func() fxjson.Node {
+	_dynamicSwitch = func_x.Lazy(func() fxjson.Node {
 		sr := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_switch"})
 		a, _ := sr.Raw()
 		return fxjson.FromString(a.String())
 	})
+	DynamicSwitch = func(key string) bool { return _dynamicSwitch.Get().Get(key).BoolOr(false) }
 )

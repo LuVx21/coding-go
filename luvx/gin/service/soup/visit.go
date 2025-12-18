@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	proxy = common_x.IfThen(mongo_dao.DynamicSwitch.Get().Get("rss_proxy").BoolOr(false), "http://"+consts.AppProxy, "")
+	proxy = common_x.IfThen(mongo_dao.DynamicSwitch("rss_proxy"), "http://"+consts.AppProxy, "")
 )
 
 func (param SpiderParam) content(title, _url string) PageContent {

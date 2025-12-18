@@ -52,9 +52,6 @@ GET http://{{host}}/weibo/pull/group
 GET http://{{host}}/weibo/rss/:uid
 
 ###
-GET http://{{host}}/weibo/rss/delete/:id
-
-###
 GET http://{{host}}/rss/pullbykey
 
 ### useful

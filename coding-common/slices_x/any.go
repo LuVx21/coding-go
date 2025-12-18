@@ -1,5 +1,16 @@
 package slices_x
 
+// ToAnySliceE 入参类型一致
+func ToAnySliceE[E any](s ...E) []any {
+	f := func(a E) any { return a }
+	return Transfer(f, s...)
+}
+
+// ToAnySlice 入参类型可随意
+func ToAnySlice(s ...any) []any {
+	return ToAnySliceE(s...)
+}
+
 func SliceAny[S ~[]E, E any](s S) []any {
 	r := make([]any, len(s))
 	for i := range s {

@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"math"
 	"net/url"
 	"slices"
@@ -21,6 +22,7 @@ import (
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
+	"luvx/gin/service/rss"
 
 	"github.com/bytedance/sonic"
 	gocache_store "github.com/eko/gocache/lib/v4/store"
@@ -46,6 +48,7 @@ import (
 
 const (
 	ckv_key_up, ckv_key_season = "bili_up", "bili_season"
+	COL_NAME                   = "bili_video"
 )
 
 var (
@@ -55,7 +58,7 @@ var (
 		61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11,
 		36, 20, 34, 44, 52,
 	}
-	fields = []string{"_id", "title", "pubtime", "bvid", "upper", "invalid", "from", "pic"}
+	fields = []string{"_id", "title", "pubtime", "bvid", "upper", "invalid", "from", "pic", "description", "is_charging_arc"}
 	cache  = consts.NewLoadableCache(func(ctx context.Context, key any) ([]byte, []gocache_store.Option, error) {
 		fmt.Println("自动加载缓存......", key)
 		imgKey, subKey := getWbiKeys()
@@ -236,16 +239,13 @@ func PullUpVideo(mid int64) []string {
 		}
 
 		video["_id"] = id
-		filter := bson.D{{Key: "_id", Value: id}}
 		var r bson.M
-		_ = mongoClient.FindOne(context.TODO(), filter).Decode(&r)
+		_ = mongoClient.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&r)
 		if r != nil {
 			return
 		}
 
-		video["invalid"] = 0
-		video["pubtime"] = time.Unix(cast_x.ToInt64(video["created"]), 0)
-		video["from"] = "go-up"
+		video["from"], video["invalid"], video["pubtime"] = "go-up", 0, time.Unix(cast_x.ToInt64(video["created"]), 0)
 		upper := map[string]any{
 			"mid":  cast_x.ToInt64(video["mid"]),
 			"name": video["author"],
@@ -259,8 +259,7 @@ func PullUpVideo(mid int64) []string {
 			return !slices.Contains(fields, k)
 		})
 		// _, _ = mongoClient.InsertOne(context.TODO(), video)
-		toSave = append(toSave, video)
-		result = append(result, video["bvid"].(string))
+		toSave, result = append(toSave, video), append(result, video["bvid"].(string))
 		log.Infoln(video["pubtime"], video["title"])
 	})
 	for _, s := range slices_x.Partition(toSave, 30) {
@@ -268,6 +267,49 @@ func PullUpVideo(mid int64) []string {
 		_, _ = mongoClient2.InsertMany(context.TODO(), s)
 	}
 	return result
+}
+
+func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
+	filter := bson.M{"invalid": 0}
+	if uname != "" {
+		filter["upper.name"] = uname
+	}
+	if len(includeUids) > 0 {
+		filter["upper.mid"] = bson.M{"$in": includeUids}
+	}
+	if len(excludeUids) > 0 {
+		filter["upper.mid"] = bson.M{"$nin": excludeUids}
+	}
+	slog.Info("mongo查询", "filter", filter)
+	opts := options.Find().SetSort(bson.M{"pubtime": -1}).SetLimit(common_x.IfThen(size > 0, size, 100))
+	result := make([]*rss.RssItem, 0)
+	if ms, err := mongodb.RowsMap(context.Background(), mongoClient, filter, opts); err == nil {
+		for i := range *ms {
+			m := (*ms)[i]
+			_id, upper := cast_x.ToString(m["_id"]), m["upper"].(bson.M)
+			img := ""
+			if m["pic"] != nil {
+				img = "<img style=\"margin: 8px 4px;width:300px\" src=\"" + cast_x.ToString(m["pic"]) + "\" referrerpolicy=\"no-referrer\">"
+			}
+			b := "from: " + m["from"].(string) + " | mid: " + cast_x.ToString(upper["mid"]) + " | seasonId: " + cast_x.ToString(upper["seasonId"])
+
+			deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+			_contentHtml := img + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
+			_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
+
+			a := &rss.RssItem{
+				Title:       upper["name"].(string) + ": " + m["title"].(string),
+				Description: _contentHtml,
+				PubDate:     time.UnixMilli(cast_x.ToInt64(m["pubtime"])).Format(time.DateTime),
+				Link:        "http://bilibili.com/" + m["bvid"].(string),
+				Guid:        _id,
+				Author:      upper["name"].(string),
+			}
+			result = append(result, a)
+		}
+	}
+
+	return rss.ToRssXml(result, "Bilibili")
 }
 
 func requestUpVideo(mid int64, cursor int, limit int) []any {
@@ -428,7 +470,7 @@ func getFollows(tagid int64) []string {
 	common_kv_dao.UpdateJsonMap(common_kv_dao.MAP, "bili_follow",
 		"JSON_SET(common_value, ?, CAST(? AS JSON))",
 		`$."`+tagidStr+`"`, jsons.ToJsonString(map[string]any{
-			"expireAt": time.Now().Add(2 * times_x.Day).Unix(),
+			"expireAt": time.Now().Add(3 * times_x.Day).Unix(),
 			"ids":      array,
 		}),
 	)
@@ -465,7 +507,7 @@ func getCollections() []string {
 	}
 
 	cli.UpdateOne(context.TODO(), bson.M{"_id": "bili_season"}, bson.M{"$set": bson.M{
-		"expireAt": time.Now().Add(2 * times_x.Day).Unix(), "ids": ids,
+		"expireAt": time.Now().Add(3 * times_x.Day).Unix(), "ids": ids,
 	}}, options.Update().SetUpsert(true))
 
 	return ids

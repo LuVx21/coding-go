@@ -7,7 +7,7 @@ require go.mongodb.org/mongo-driver v1.17.6
 require (
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.2 // indirect
-	github.com/luvx21/coding-go/coding-common v0.0.0-20251209154445-c328360a9df8
+	github.com/luvx21/coding-go/coding-common v0.0.0-20251217160306-b7ee33986643
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3 // indirect
