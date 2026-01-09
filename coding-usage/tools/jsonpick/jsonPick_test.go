@@ -6,7 +6,8 @@ https://www.codeleading.com/article/17814079501/
 import (
 	"fmt"
 	"github.com/thedevsaddam/gojsonq/v2"
-	"io/ioutil"
+	"os"
+
 	"testing"
 )
 
@@ -14,7 +15,7 @@ var jsonPick = gojsonq.New()
 var json = ""
 
 func init() {
-	s, _ := ioutil.ReadFile("./json.json")
+	s, _ := os.ReadFile("./json.json")
 	//fmt.Println(string(s))
 	json = string(s)
 }

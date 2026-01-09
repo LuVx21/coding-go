@@ -2,7 +2,6 @@ package mongo_dao
 
 import (
 	"context"
-	"luvx/gin/db"
 
 	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/func_x"
@@ -13,7 +12,7 @@ import (
 var (
 	DynamicConfig = func_x.Lazy(func() bson.M {
 		var m bson.M
-		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_config"}).Decode(&m)
+		e := ConfigCol.FindOne(context.TODO(), bson.M{"key": "app_config"}).Decode(&m)
 		if e != nil {
 			log.Warnln("lazy加载异常", e)
 		}
@@ -21,16 +20,24 @@ var (
 	})
 	DynamicCache = func_x.Lazy(func() bson.M {
 		var m bson.M
-		e := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_cache"}).Decode(&m)
+		e := ConfigCol.FindOne(context.TODO(), bson.M{"key": "app_cache"}).Decode(&m)
 		if e != nil {
 			log.Warnln("lazy加载异常", e)
 		}
 		return m
 	})
 	_dynamicSwitch = func_x.Lazy(func() fxjson.Node {
-		sr := db.GetCollection("config").FindOne(context.TODO(), bson.M{"_id": "app_switch"})
+		sr := ConfigCol.FindOne(context.TODO(), bson.M{"key": "app_switch"})
 		a, _ := sr.Raw()
 		return fxjson.FromString(a.String())
 	})
 	DynamicSwitch = func(key string) bool { return _dynamicSwitch.Get().Get(key).BoolOr(false) }
+)
+
+var (
+	BiliSeason = func() bson.M {
+		var result bson.M
+		ConfigCol.FindOne(context.TODO(), bson.M{"key": "bili_season"}).Decode(&result)
+		return result
+	}
 )

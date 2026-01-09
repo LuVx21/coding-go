@@ -2,22 +2,28 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"luvx_service_sdk/proto_gen/proto_kv"
+	"net/http"
+	"strings"
 	"sync"
 
 	"luvx/gin/common/consts"
 	"luvx/gin/common/responsex"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/db"
 	"luvx/gin/model"
 	"luvx/gin/service/cookie"
 	"luvx/gin/service/rpc"
 
 	"github.com/gin-gonic/gin"
+	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
 	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/time/rate"
 )
 
 var (
@@ -40,10 +46,8 @@ func HealthyCheck(c *gin.Context) {
 
 	f1 := func() bson.M {
 		mongo, _ := common_x.RunWithTime2("mongodb", func() (bson.M, error) {
-			userTable := db.MongoDatabase.Collection("user")
-			filter := bson.D{{Key: "_id", Value: args}}
 			var result bson.M
-			a := userTable.FindOne(context.TODO(), filter).Decode(&result)
+			a := mongo_dao.UserCol.FindOne(context.TODO(), bson.M{"_id": args}).Decode(&result)
 			return result, a
 		})
 		return mongo
@@ -92,12 +96,26 @@ func HealthyCheck(c *gin.Context) {
 
 var ignoreHeaders = sets.NewSet("x-frame-options", "X-Frame-Options")
 
+// var limiter = rate.NewLimiter(3, 3)
+var limiter = rate.NewLimiter(
+	rate.Limit(cast_x.ToFloat64(mongo_dao.DynamicConfig.Get()["redirect_limit"])),
+	cast_x.ToInt(mongo_dao.DynamicConfig.Get()["redirect_burst"]),
+)
+
 func Redirect(c *gin.Context) {
 	toUrl := c.Query("url")
-	// logs.Log.Infoln("重定向到:", toUrl)
-
+	limiter.Wait(context.TODO())
+	// logrus.Infoln("重定向到:", toUrl)
+	if rpc.KvRpcClient != nil && strings.Contains(toUrl, ".sinaimg.cn") {
+		gr, _ := (*rpc.KvRpcClient).Get(context.Background(), &proto_kv.Key{Key: toUrl})
+		if gr != nil && len(gr.Value) > 0 {
+			c.Data(http.StatusOK, "image/jpeg", gr.Value)
+			return
+		}
+	}
+	fmt.Println("再次请求:", toUrl)
 	response, body, _ := consts.GoRequest.
-		Proxy("http://" + consts.ServiceHost + ":7890").
+		Proxy("http://" + consts.AppProxy).
 		Get(toUrl).
 		End()
 	if response != nil {
@@ -127,6 +145,6 @@ func ClearCache(c *gin.Context) {
 
 func KvSet(c *gin.Context) {}
 func KvGet(c *gin.Context) {
-	gr, _ := rpc.KvRpcClient.Get(context.Background(), &proto_kv.Key{Key: c.Query("key")})
+	gr, _ := (*rpc.KvRpcClient).Get(context.Background(), &proto_kv.Key{Key: c.Query("key")})
 	responsex.R(c, string(gr.Value))
 }

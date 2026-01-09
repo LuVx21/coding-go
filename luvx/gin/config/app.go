@@ -22,6 +22,7 @@ type MySQL struct {
 	Username string
 	Password string
 	Dbname   string
+	Args     map[string]string
 }
 
 type Redis struct {

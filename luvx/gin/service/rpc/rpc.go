@@ -2,16 +2,18 @@ package rpc
 
 import (
 	"log/slog"
+	"slices"
 
 	"luvx_service_sdk/proto_gen/proto_kv"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
 	RpcConn     *grpc.ClientConn
-	KvRpcClient proto_kv.KVClient
+	KvRpcClient *proto_kv.KVClient
 )
 
 func init() {
@@ -21,9 +23,11 @@ func init() {
 			grpc.MaxCallSendMsgSize(50*1024*1024),
 		),
 	)
-	if err != nil {
-		slog.Error("RPC连接失败", "err", err)
+	work := []connectivity.State{connectivity.Connecting, connectivity.Ready}
+	if err != nil || !slices.Contains(work, RpcConn.GetState()) {
+		slog.Error("RPC连接失败", "err", err, "状态", RpcConn.GetState().String())
 		return
 	}
-	KvRpcClient = proto_kv.NewKVClient(RpcConn)
+	a := proto_kv.NewKVClient(RpcConn)
+	KvRpcClient = &a
 }

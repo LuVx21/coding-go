@@ -3,9 +3,10 @@ package io
 import (
 	"bufio"
 	"fmt"
-	"github.com/luvx21/coding-go/coding-usage/api/common"
 	"io"
-	"io/ioutil"
+
+	"github.com/luvx21/coding-go/coding-usage/api/common"
+
 	"os"
 	"time"
 )
@@ -26,7 +27,7 @@ func fileExist(filename string) bool {
 */
 func w1() {
 	content := []byte(s)
-	err := ioutil.WriteFile(fileName, content, 0644)
+	err := os.WriteFile(fileName, content, 0644)
 	if err != nil {
 		panic(err)
 	}

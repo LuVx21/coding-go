@@ -79,6 +79,10 @@ func a() {
 			}
 			log.Infof("%-40s %s", key, latest.Format(time.DateTime))
 		}
+		if len(values) == 0 {
+			return
+		}
+
 		db.RedisClient.HMSet(context.Background(), redis_key_time+":"+cate, values...)
 		mm := db.RedisClient.HGetAll(context.Background(), redis_key_time+":"+cate).Val()
 		if len(mm) > 0 {

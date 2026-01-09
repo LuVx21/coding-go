@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -170,4 +171,95 @@ func Test_count_00(t *testing.T) {
 
 	c, _ := db.Collection("config").CountDocuments(context.TODO(), bson.M{"_id": "app_switch"})
 	fmt.Println(c)
+}
+
+func Test_index_00(t *testing.T) {
+	defer beforeAfter("Test_index_00")()
+	ctx := context.Background()
+
+	indexView := db.Collection("bili_video").Indexes()
+	cursor, err := indexView.List(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cursor.Close(ctx)
+
+	indexCount := 0
+
+	// 遍历索引
+	for cursor.Next(ctx) {
+		var result bson.M
+		if err := cursor.Decode(&result); err != nil {
+			log.Fatal(err)
+		}
+
+		// 解析索引信息
+		indexCount++
+		fmt.Printf("\n索引 #%d:\n", indexCount)
+
+		// 显示索引详细信息
+		for key, value := range result {
+			switch key {
+			case "v":
+				fmt.Printf("  索引版本: %v\n", value)
+			case "key":
+				fmt.Printf("  键: %v\n", value)
+			case "name":
+				fmt.Printf("  索引名称: %v\n", value)
+			case "ns":
+				fmt.Printf("  命名空间: %v\n", value)
+			case "background":
+				if value == true {
+					fmt.Printf("  后台创建: true\n")
+				}
+			case "unique":
+				if value == true {
+					fmt.Printf("  唯一索引: true\n")
+				}
+			case "sparse":
+				if value == true {
+					fmt.Printf("  稀疏索引: true\n")
+				}
+			case "expireAfterSeconds":
+				if seconds, ok := value.(int32); ok && seconds > 0 {
+					fmt.Printf("  TTL过期时间: %d 秒\n", seconds)
+				}
+			case "weights":
+				fmt.Printf("  权重: %v\n", value)
+			case "default_language":
+				fmt.Printf("  默认语言: %v\n", value)
+			case "language_override":
+				fmt.Printf("  语言覆盖: %v\n", value)
+			case "textIndexVersion":
+				fmt.Printf("  文本索引版本: %v\n", value)
+			case "2dsphereIndexVersion":
+				fmt.Printf("  2dsphere索引版本: %v\n", value)
+			case "bits":
+				fmt.Printf("  位: %v\n", value)
+			case "min":
+				fmt.Printf("  最小值: %v\n", value)
+			case "max":
+				fmt.Printf("  最大值: %v\n", value)
+			case "bucketSize":
+				fmt.Printf("  桶大小: %v\n", value)
+			default:
+				fmt.Printf("  %s: %v\n", key, value)
+			}
+		}
+	}
+
+	if indexCount == 0 {
+		fmt.Println("没有找到索引（只有默认的 _id 索引？）")
+	} else {
+		fmt.Printf("\n总索引数: %d\n", indexCount)
+	}
+}
+
+func Test_index_01(t *testing.T) {
+	defer beforeAfter("Test_index_01")()
+
+	collection.Indexes().CreateOne(context.Background(), mongo.IndexModel{
+		Keys:    map[string]any{"xxx": 1},
+		Options: options.Index().SetUnique(true),
+	})
 }

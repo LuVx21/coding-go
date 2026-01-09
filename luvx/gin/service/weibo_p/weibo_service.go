@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"luvx_service_sdk/proto_gen/proto_kv"
 	"math"
+	"math/rand"
+	"net/url"
 	"regexp"
 	"slices"
 	"strconv"
@@ -15,7 +17,7 @@ import (
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
-	"luvx/gin/db"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/model"
 	"luvx/gin/service"
 	commonkvservice "luvx/gin/service/common_kv"
@@ -25,9 +27,9 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/gocolly/colly"
+	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"github.com/luvx21/coding-go/coding-common/ids"
@@ -38,7 +40,9 @@ import (
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
+	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"github.com/parnurzeal/gorequest"
+	"github.com/samber/lo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
@@ -54,13 +58,22 @@ var (
 		"invalid", "read", "extra", "groupId", "mix_media_info",
 		// "page_info",
 	}
-	// collection = db.MongoDatabase.Collection(COL_NAME)
-	collection = db.GetCollection(COL_NAME)
+	collection = mongo_dao.WeiboFeedCol
 )
 
 var (
 	sourceGroup    = strings.Split(config.Viper.GetString("rss.weibo.sourceGroup"), ",")
 	saveImageGroup = strings.Split(config.Viper.GetString("rss.weibo.saveImageGroup"), ",")
+)
+
+var (
+	sampleRegexp = regexp.MustCompile(`<a\s+[^>]*href="(.*?)".*?>(.*?)<\/a>`)
+	replacer     = strings.NewReplacer(
+		"\n", "<br/>",
+		"。”", "。”<br/>",
+		"//@", "<br/>//@",
+		"//<a ", "<br/>//<a ",
+	)
 )
 
 func PullHotBand() {
@@ -75,10 +88,15 @@ func PullHotBand() {
 		ff := make(map[string]any)
 		_ = sonic.Unmarshal(r.Body, &ff)
 
-		client := db.MongoDatabase.Collection("weibo_hot_band")
+		client := mongo_dao.WeiboHotCol
 		bandList := ff["data"].(map[string]any)["band_list"].([]any)
 		now := times_x.TimeNowDate()
 		worker, _ := ids.NewSnowflakeIdWorker(0, 0)
+		toInsert := make([]any, 0)
+		words := slices_x.Transfer(func(item any) any { return item.(map[string]any)["word"] }, bandList...)
+		rows, _ := mongodb.RowsMap(context.TODO(), client, bson.M{"word": bson.M{"$in": words}})
+		rowsMap := lo.KeyBy(*rows, func(m bson.M) string { return cast_x.ToString(m["word"]) })
+
 		for _, v := range bandList {
 			vv := v.(map[string]any)
 			rank := vv["realpos"]
@@ -86,32 +104,31 @@ func PullHotBand() {
 				continue
 			}
 			word := vv["word"]
-			filter := bson.D{{Key: "word", Value: word}}
-			var result bson.M
-			_ = client.FindOne(context.TODO(), filter).Decode(&result)
+			result := rowsMap[cast_x.ToString(word)]
 			if result != nil {
 				rankMap := result["rankMap"].(bson.M)
 				oldRank := maps_x.GetOrDefault(rankMap, now, "99")
 				if cast_x.ToInt(oldRank) > cast_x.ToInt(rank) {
 					rankMap[now] = cast_x.ToString(rank)
-					update := bson.D{{Key: "$set", Value: bson.D{
-						{Key: "rankMap", Value: rankMap},
-						{Key: "category", Value: vv["category"]},
-					}}}
-					_, _ = client.UpdateOne(context.TODO(), filter, update)
+					update := bson.M{"$set": bson.M{
+						"rankMap":  rankMap,
+						"category": vv["category"],
+					}}
+					_, _ = client.UpdateOne(context.TODO(), bson.M{"word": word}, update)
 				}
 			} else {
-				d := bson.D{
-					{Key: "_id", Value: worker.NextId()},
-					// {Key: "_class", Value: "org.luvx.boot.tools.dao.mongo.weibo.HotBand"},
-					{Key: "word", Value: word},
-					{Key: "category", Value: vv["category"]},
-					{Key: "rankMap", Value: map[string]string{now: cast_x.ToString(rank)}},
+				d := bson.M{
+					// "_class":   "org.luvx.boot.tools.dao.mongo.weibo.HotBand",
+					"_id":      worker.NextId(),
+					"word":     word,
+					"category": vv["category"],
+					"rankMap":  map[string]string{now: cast_x.ToString(rank)},
 				}
-				_, _ = client.InsertOne(context.TODO(), d)
+				toInsert = append(toInsert, d)
 			}
 			// fmt.Println(i+1, word, result == nil)
 		}
+		_, _ = client.InsertMany(context.TODO(), toInsert)
 		// fmt.Println("Visited", r.Request.URL.String())
 	})
 
@@ -183,14 +200,7 @@ func PullByUser(uid int64) {
 		parseAndSaveFeed(feed, false)
 		arr = append(arr, feed)
 	})
-	for i := len(arr) - 1; i >= 0; i-- {
-		one, err := collection.InsertOne(context.TODO(), arr[i])
-		if err != nil {
-			log.Infoln("weibo PullByUser:", err)
-			continue
-		}
-		log.Infoln("weibo PullByUser:", one.InsertedID)
-	}
+	collection.InsertMany(context.TODO(), arr, options.InsertMany().SetOrdered(false))
 }
 
 func PullByGroupLock() {
@@ -257,7 +267,7 @@ func PullByGroup(groupId int64) {
 		urls := slices_x.FlatMap(feeds, func(feed any) []string { return feed.(map[string]any)["pic_ids"].([]string) })
 		toSave := sets.NewSet(urls...)
 		for _url := range *toSave {
-			_, err := rpc.KvRpcClient.Get(context.TODO(), &proto_kv.Key{Key: _url})
+			_, err := (*rpc.KvRpcClient).Get(context.TODO(), &proto_kv.Key{Key: _url})
 			if err == nil {
 				continue
 			}
@@ -267,46 +277,19 @@ func PullByGroup(groupId int64) {
 			if len(errors) > 0 {
 				continue
 			}
-			_, err = rpc.KvRpcClient.Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
+			_, err = (*rpc.KvRpcClient).Put(context.TODO(), &proto_kv.PutRequest{Entry: &proto_kv.Entry{Key: _url, Value: body}, Expire: int64(7 * 24 * time.Hour.Seconds())})
 			if err != nil {
-				slog.Error("rpc调用错误", "err", err.Error())
+				slog.Error("rpc调用错误", "err", err.Error(), "rpc client", rpc.KvRpcClient == nil)
 			}
 		}
 	})
 
-	arrs := slices_x.Partition(feeds, 5)
-	for i := range arrs {
-		// for i := len(arrs) - 1; i >= 0; i-- {
-		arr := arrs[i]
-		if many, e := collection.InsertMany(context.TODO(), arr); e != nil {
-			// for j := len(arr) - 1; j >= 0; j-- {
-			for j := range arr {
-				if one, err := collection.InsertOne(context.TODO(), arr[j]); err != nil {
-					// log.Infoln("weibo insert1:", err)
-					continue
-				} else {
-					log.Debugln("weibo insert1:", one.InsertedID)
-				}
-			}
-		} else {
-			log.Debugln("weibo insert", len(arr), len(many.InsertedIDs))
-		}
-	}
+	_, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
 }
 
 func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	id := cast_x.ToInt64(feed["id"])
 	feed["_id"] = id
-	// var r bson.M
-	// _ = collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&r)
-	// if r != nil {
-	// 	return id
-	// }
-
-	// feed["extra"] = map[string]any{
-	//    "retweeted": retweeted,
-	// }
-
 	if cast_x.ToBool(feed["isLongText"]) {
 		feed["text"] = requestLongText(feed["mblogid"].(string))
 	}
@@ -407,7 +390,7 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 	if len(errors) > 0 {
 		return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
 	}
-	ff, _ := jsons.JsonStringToMap[string, any, alias_x.JsonObject](body)
+	ff, _ := jsons.JsonStringToMap[string, any, bson.M](body)
 	list := ff["statuses"].([]any)
 	maxId := cast_x.ToInt64(ff["max_id"])
 
@@ -417,34 +400,32 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 func getCookie() string {
 	return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 }
-func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.D, *options.FindOptions) {
+func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.M, *options.FindOptions) {
 	size, ok := args["size"]
 	if !ok {
 		size = 100
 	}
 
-	filter := bson.D{bson.E{Key: "invalid", Value: 0}}
+	filter := bson.M{"invalid": 0}
 	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(cast_x.ToInt64(size))
 	if cast_x.ToBool(args["asc"]) {
 		opts = opts.SetSort(bson.M{"created_at": 1})
 	}
 
 	if groupId > 0 {
-		filter = append(filter, bson.E{Key: "groupId", Value: groupId})
+		filter["groupId"] = groupId
 	}
 	if len(word) > 0 {
 		w := cast_x.ToString(commonkvservice.GetMapFieldValue("common_map", word))
 		if len(w) > 0 {
-			filter = append(filter, bson.E{Key: "text", Value: bson.M{"$regex": w, "$options": "i"}})
+			filter["text"] = bson.M{"$regex": w, "$options": "i"}
 			return filter, opts
 		}
 	}
 
 	if day.Year() > 2000 {
 		day = day.Add(time.Hour * -8)
-		filter = append(filter, bson.E{Key: "created_at", Value: bson.M{
-			"$gte": day, "$lt": day.AddDate(0, 0, 1),
-		}})
+		filter["created_at"] = bson.M{"$gte": day, "$lt": day.AddDate(0, 0, 1)}
 		DeleteLock()
 	} else {
 		_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
@@ -460,10 +441,10 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 
 		if len(uids) == 1 && uids[0] == 0 {
 			if len(ignore) > 0 {
-				filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$nin": ignore}})
+				filter["user.id"] = bson.M{"$nin": ignore}
 			}
 		} else {
-			filter = append(filter, bson.E{Key: "user.id", Value: bson.M{"$in": uids}})
+			filter["user.id"] = bson.M{"$in": uids}
 			for _, uid := range uids {
 				if !slices.Contains(ignore, uid) {
 					common_kv_dao.JsonArrayAppend(kv.ID, "$.ignore", uid)
@@ -483,44 +464,44 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 		PullByGroupLock()
 	}
 
-	cursor, _ := collection.Find(context.Background(), filter, opts)
-	defer cursor.Close(context.Background())
+	cursor, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+	retweetedIds := slices_x.FilterTransfer(func(m bson.M) bool {
+		return m["retweeted_status"] != nil
+	}, func(m bson.M) int64 {
+		return cast_x.ToInt64(m["retweeted_status"])
+	}, *cursor...)
+	rows, _ := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
+	rowsMap := lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
 
-	s0 := ""
-	for cursor.Next(context.Background()) {
-		var jo alias_x.JsonObject
-		_ = cursor.Decode(&jo)
-		s0 += a(jo)
+	var s0 strings.Builder
+	for i := range *cursor {
+		jo := (*cursor)[i]
+		s0.WriteString(a(jo, rowsMap[cast_x.ToInt64(jo["retweeted_status"])]))
 	}
-	return fmt.Sprintf(rss.XmlFormat, "网络傻事", s0)
+
+	return fmt.Sprintf(rss.XmlFormat, "网络傻事", s0.String())
 }
 
-func a(jo alias_x.JsonObject) string {
+func a(jo, retweet bson.M) string {
 	_id := cast_x.ToInt64(jo["_id"])
 	// title := jo["text_raw"].(string)
 	_contentHtml := contentHtml(jo)
-	retweetId := jo["retweeted_status"]
-	if retweetId != nil {
-		var retweet alias_x.JsonObject
-		_ = collection.FindOne(context.TODO(), bson.M{"_id": cast_x.ToInt64(retweetId)}).Decode(&retweet)
-		if retweet != nil {
-			i := retweet["user"]
-			retweetUrl, uName := "", ""
-			if i != nil {
-				uName = i.(alias_x.JsonObject)["name"].(string)
-				uId := cast_x.ToString(i.(alias_x.JsonObject)["id"])
-				retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
-				uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, uName)
-			}
-			t := uName + strings.Repeat(consts.Ensp, 4) + time.UnixMilli(cast_x.ToInt64(retweet["created_at"])).Format(time.DateTime) +
-				common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
-			_contentHtml = fmt.Sprintf("%s<hr/>%s:  %s<br/>%s", _contentHtml, retweetUrl, t, contentHtml(retweet))
+	if retweet != nil {
+		user, retweetUrl, uName := retweet["user"], "", ""
+		if user != nil {
+			uName = user.(bson.M)["name"].(string)
+			uId := cast_x.ToString(user.(bson.M)["id"])
+			retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
+			uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, uName)
 		}
+		t := uName + strings.Repeat(consts.Ensp, 4) + time.UnixMilli(cast_x.ToInt64(retweet["created_at"])).Format(time.DateTime) +
+			common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
+		_contentHtml = fmt.Sprintf("%s<hr/>%s:  %s<br/>%s", _contentHtml, retweetUrl, t, contentHtml(retweet))
 	}
 	deleteUrl := addDelete(_id)
-	_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
+	_contentHtml = fmt.Sprintf("%s<br/><br/>%s", _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	user := jo["user"].(alias_x.JsonObject)
+	user := jo["user"].(bson.M)
 	userId := cast_x.ToInt64(user["id"])
 	screenName := user["name"]
 	url := fmt.Sprintf("https://weibo.com/%v/%v", userId, jo["mblogid"])
@@ -544,32 +525,25 @@ func a(jo alias_x.JsonObject) string {
 }
 
 func addDelete(_id int64) string {
-	format := `<a href="http://` + consts.AppHostName + `:58090/rss/delete/%s/%v?real=true">删除<a/>`
+	format := `<a href="http://` + consts.ServiceDomain + `/rss/delete/%s/%v?real=true">删除<a/>`
 	return fmt.Sprintf(format, COL_NAME, _id)
 }
 
-func contentHtml(jo alias_x.JsonObject) string {
+func contentHtml(jo bson.M) string {
 	text := jo["text"].(string)
-	text = strings.ReplaceAll(text, "//<a ", "<br/>//<a ")
-	text = strings.ReplaceAll(text, "//@", "<br/>//@")
-	text = strings.ReplaceAll(text, "\n", "<br/>")
-	text = strings.ReplaceAll(text, "。”", "。”<br/>")
+	text = replacer.Replace(text)
 
 	text = aa(text)
 
 	picUrls := jo["pic_ids"].(bson.A)
 	picList, pc := "", strconv.Itoa(len(picUrls))
-	for i, url := range picUrls {
-		pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ImgHost+":58090/redirect", map[string]any{
-			"url": url.(string),
-		})
+	for i, _url := range picUrls {
+		url := roundImgCdn(_url.(string))
 		picList += "<br/>" + strconv.Itoa(i+1) + "/" + pc + "<br/>"
-		picList += "<img style=\"margin: 8px 4px;width:300px\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
+		picList += "<img style=\"margin: 8px 4px;width:300px\" src=\"" + url + "\" referrerpolicy=\"no-referrer\">"
 	}
 	return text + picList
 }
-
-var sampleRegexp = regexp.MustCompile(`<a\s+[^>]*href="(.*?)".*?>(.*?)<\/a>`)
 
 func aa(text string) string {
 	allString := sampleRegexp.FindAllStringSubmatch(text, -1)
@@ -580,10 +554,8 @@ func aa(text string) string {
 			r = append(r, ss[0])
 			continue
 		}
-		pUrl, _ := nets_x.UrlAddQuery("http://"+consts.ImgHost+":58090/redirect", map[string]any{
-			"url": ss[1],
-		})
-		a := "<img style=\"margin: 8px 4px;width:300px\" src=\"" + pUrl.String() + "\" referrerpolicy=\"no-referrer\">"
+		url := roundImgCdn(ss[1])
+		a := "<img style=\"margin: 8px 4px;width:300px\" src=\"" + url + "\" referrerpolicy=\"no-referrer\">"
 		r = append(r, a)
 	}
 	return fmt.Sprintf(format, r...)
@@ -612,6 +584,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	}
 
 	isJson := sonic.ValidString(body)
+	slog.Debug("weibo请求信息", "请求", pUrl, "响应", r.StatusCode, "Json", isJson)
 	// log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
 	if !isJson {
 		log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
@@ -620,4 +593,62 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	}
 
 	return r, body, nil
+}
+
+// 各种图片CDN
+func roundImgCdn(_url string) string {
+	if !config.GetSwitch("weibo.imgCdn") {
+		return _url
+	}
+	i := rand.Intn(4)
+	if i > 0 {
+		u2, _ := url.Parse(_url)
+		switch i {
+		case 1:
+			return "https://cdn.ipfsscan.io/weibo" + u2.Path
+		case 2:
+			return "https://cdn.cdnjson.com/" + u2.Host + u2.Path
+		case 3:
+			return "https://i" + strconv.Itoa(rand.Intn(4)) + ".wp.com/" + u2.Host + u2.Path
+		}
+	}
+
+	u1, _ := nets_x.UrlAddQuery(consts.ImgRedirectUrlPrefix, map[string]any{"url": _url})
+	return u1.String()
+}
+
+func getGroupMember(groupId int64) []int64 {
+	data := func(c int) []int64 {
+		m := map[string]any{
+			"list_id": groupId,
+			"page":    c,
+		}
+		_ = consts.RateLimiter.Wait(context.TODO())
+		_, body, _ := requestWeibo("https://weibo.com/ajax/profile/getGroupMembers", m, map[string]string{"Cookie": getCookie()})
+		node := fxjson.FromString(body)
+		nextCursor := node.Get("data.next_cursor").IntOr(0)
+		r := make([]int64, 0)
+		if nextCursor == 0 {
+			return r
+		}
+		node.GetPath("data.users").ArrayForEach(func(index int, item fxjson.Node) bool {
+			id := item.Get("id").IntOr(0)
+			if id > 0 {
+				r = append(r, id)
+			}
+			return true
+		})
+		return r
+	}
+
+	r := make([]int64, 0)
+	for i := range 99 {
+		ids := data(i + 1)
+		if len(ids) == 0 {
+			break
+		}
+		r = append(r, ids...)
+	}
+
+	return r
 }

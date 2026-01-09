@@ -7,7 +7,6 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/update"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/some"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"strconv"
 	"time"
@@ -94,11 +93,11 @@ func aggregationDemo(client *elasticsearch.TypedClient) {
 		Index("my-review-1").
 		Request(
 			&search.Request{
-				Size: some.Int(0),
+				Size: new(0),
 				Aggregations: map[string]types.Aggregations{
 					"avg_score": { // 将所有文档的 score 的平均值聚合为 avg_score
 						Avg: &types.AverageAggregation{
-							Field: some.String("score"),
+							Field: new("score"),
 						},
 					},
 				},

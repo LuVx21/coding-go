@@ -43,7 +43,8 @@ func Join[M ~map[K]V, K comparable, V any](m M, kvLink, eLink string) string {
 // JoinMapper kvLink: kv连接符, eLink: entry连接符, keyMapper,valueMapper: k,v的映射器
 func JoinMapper[M ~map[K]V, K comparable, V any](m M,
 	kvLink, eLink string,
-	keyMapper func(K) string, valueMapper func(V) string) string {
+	keyMapper func(K) string,
+	valueMapper func(V) string) string {
 	var sb strings.Builder
 	var result string
 	keys := maps.Keys(m)
@@ -76,9 +77,8 @@ func RemoveIf[M ~map[K]V, K comparable, V any](m M, f func(K, V) bool) {
 func GetOrDefault[M ~map[K]V, K comparable, V any](m M, k K, defaultV V) V {
 	if v, exist := m[k]; exist {
 		return v
-	} else {
-		return defaultV
 	}
+	return defaultV
 }
 
 func Compute[M ~map[K]V, K comparable, V any](m M, k K, f func(K, V) V) V {
@@ -176,7 +176,7 @@ func GetSlice[M ~map[K]any, K comparable, E any](m M, key K, _default []E) ([]E,
 	return val.([]E), err
 }
 
-func GetInterface[M ~map[K]any, K comparable](m M, key K, _default any) (any, error) {
+func GetAny[M ~map[K]any, K comparable](m M, key K, _default any) (any, error) {
 	val, ok := m[key]
 	if !ok {
 		val = _default

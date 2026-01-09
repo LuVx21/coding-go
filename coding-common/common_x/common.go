@@ -55,7 +55,7 @@ func RunWithTime2[R1 any, R2 any](name string, f func() (R1, R2)) (R1, R2) {
 
 func TrackTime1(name string, start time.Time) {
 	elapsed := time.Since(start)
-	slog.Info(name, "执行时间", elapsed)
+	slog.Debug(name, "执行时间", elapsed)
 }
 
 func TrackTime(name string) func() {

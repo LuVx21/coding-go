@@ -10,7 +10,6 @@ import (
 
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -73,22 +72,24 @@ func Delete() {
 		return
 	}
 
-	filter := bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
+	filter := bson.M{"_id": bson.M{"$in": guids}}
 	opts := options.Find().
-		SetProjection(bson.D{{Key: "_id", Value: 1}, {Key: "retweeted_status", Value: 1}}).
+		SetProjection(bson.M{"_id": 1, "retweeted_status": 1}).
 		SetLimit(300)
 	rowsMap, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
-	ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["retweeted_status"]) }, *rowsMap...)
-	idsStr := slices_x.Transfer(func(m bson.M) string { return cast_x.ToString(m["retweeted_status"]) }, *rowsMap...)
-	guids, mysqlGuids = append(guids, ids...), append(mysqlGuids, idsStr...)
+	for _, row := range *rowsMap {
+		if cell, ok := row["retweeted_status"]; ok {
+			guids, mysqlGuids = append(guids, cast_x.ToInt64(cell)), append(mysqlGuids, cast_x.ToString(cell))
+		}
+	}
+
+	go db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
 
 	if len(guids) > 0 {
-		filter = bson.D{bson.E{Key: "_id", Value: bson.M{"$in": guids}}}
-		update := bson.D{{Key: "$set",
-			Value: bson.D{
-				{Key: "invalid", Value: 1},
-				{Key: "read", Value: 1},
-			},
+		filter = bson.M{"_id": bson.M{"$in": guids}}
+		update := bson.M{"$set": bson.M{
+			"invalid": 1,
+			"read":    1,
 		}}
 		dr, err := collection.UpdateMany(context.TODO(), filter, update)
 
@@ -99,10 +100,8 @@ func Delete() {
 		log.Infoln("mongodb删除数量:", dr.ModifiedCount)
 	}
 
-	go db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
-
 	go func() {
-	collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
-	collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
+		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
+		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
 	}()
 }

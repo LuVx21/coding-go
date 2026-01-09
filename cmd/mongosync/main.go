@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"strings"
 
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
@@ -38,9 +37,11 @@ const (
 	],
 	"uniqueField": "_id",
 	"order": "asc",
-	"batchSize": 500,
-	"onSuccess": "markDel",
+	"batchSize": 1024,
+	"onSuccess": "",
 	"compareField": []
+	"batchMove": false,
+	"batchMoveSize": 1024
 }
 `
 )
@@ -56,6 +57,8 @@ type config struct {
 	OnSuccess          string
 	UniqueField, Order string // 仅支持数字类型唯一性字段, asc时顺序,其他逆序
 	CompareField       []string
+	BatchMove          bool
+	BatchMoveSize      int
 }
 type mongoConfig struct {
 	Uri, Database, Collection string
@@ -77,15 +80,34 @@ func main() {
 
 	sourceClient, sourceErr := mongo.Connect(context.TODO(), options.Client().ApplyURI(source.Uri))
 	if sourceErr != nil {
-		slog.Error("mongo source 连接失败")
+		slog.Error("mongo source 连接失败", "错误", sourceErr.Error())
 		return
 	}
 	sinkClient, sinkErr := mongo.Connect(context.TODO(), options.Client().ApplyURI(sink.Uri))
 	if sinkErr != nil {
-		slog.Error("mongo sink 连接失败")
+		slog.Error("mongo sink 连接失败", "错误", sinkErr.Error())
 		return
 	}
-	sourceDb, sinkDB := sourceClient.Database(source.Database).Collection(source.Collection), sinkClient.Database(sink.Database).Collection(sink.Collection)
+	sourceDb := sourceClient.Database(source.Database).Collection(source.Collection)
+	sinkDB := sinkClient.Database(sink.Database).Collection(common_x.IfThen(len(sink.Collection) == 0, source.Collection, sink.Collection))
+
+	existIndex := mongodb.GetAllIndex(sinkDB)
+	indexs, _ := sourceDb.Indexes().ListSpecifications(context.TODO())
+	for _, index := range indexs {
+		if index.Name == "_id_" {
+			continue
+		}
+		_, exist := existIndex[index.Name]
+		if exist {
+			continue
+		}
+		sinkDB.Indexes().CreateOne(context.TODO(), mongo.IndexModel{
+			Keys: index.KeysDocument,
+			Options: options.Index().
+				SetName(index.Name).
+				SetUnique(index.Unique != nil && *index.Unique),
+		})
+	}
 
 	filter := buildFilter(_config.Filter)
 	opts := options.FindOne().SetSort(sort)
@@ -112,37 +134,37 @@ func main() {
 			return i <= 0
 		},
 	)
+
+	if _config.BatchMove {
+		batch(iterator, sourceDb, sinkDB, _config)
+	} else {
+		iterator.ForEachRemaining(func(m bson.M) {
+			_, e := sinkDB.InsertOne(context.TODO(), m)
+			if e == nil {
+				postMoveSuccess([]any{m[uk]}, sourceDb, _config)
+				return
+			}
+			postMoveError(e, []any{m}, sinkDB, _config)
+		})
+	}
+}
+
+func batch(iterator *iterators.CursorIterator[bson.M, int64, []bson.M], sourceDb, sinkDB *mongo.Collection, _config config) {
+	temp := make([]any, 0)
+
 	iterator.ForEachRemaining(func(m bson.M) {
-		_, e := sinkDB.InsertOne(context.TODO(), m)
-		if e == nil {
-			switch _config.OnSuccess {
-			case "delete":
-				sourceDb.DeleteOne(context.TODO(), bson.M{uk: m[uk]})
-			case "markDel":
-				sourceDb.UpdateOne(context.TODO(), bson.M{uk: m[uk]}, bson.D{{Key: "$set", Value: bson.D{{Key: "markDel", Value: 1}}}})
+		temp = append(temp, m)
+		if !iterator.HasNext() || len(temp) >= _config.BatchMoveSize {
+			imr, e := sinkDB.InsertMany(context.TODO(), temp, options.InsertMany().SetOrdered(false))
+			if e != nil {
+				postMoveError(e, temp, sinkDB, _config)
 			}
-			return
-		}
-
-		if strings.Contains(e.Error(), "duplicate key error collection") {
-			if len(_config.CompareField) > 0 {
-				var target bson.M
-				sinkDB.FindOne(context.Background(), bson.M{uk: m[uk]}).Decode(&target)
-				update := make(bson.D, 0)
-				for _, f := range _config.CompareField {
-					origina := m[f]
-					if origina != target[f] {
-						update = append(update, bson.E{Key: f, Value: origina})
-					}
-				}
-				if len(update) > 0 {
-					sinkDB.UpdateOne(context.Background(), bson.M{uk: m[uk]}, bson.D{{Key: "$set", Value: update}})
-				}
+			if len(imr.InsertedIDs) > 0 {
+				slog.Info("批量迁移", "移动数量:", len(imr.InsertedIDs))
+				postMoveSuccess(imr.InsertedIDs, sourceDb, _config)
 			}
-			return
+			temp = temp[:0]
 		}
-
-		slog.Error("同步写入失败", "错误", e.Error(), "id", m[uk])
 	})
 }
 
@@ -169,4 +191,60 @@ func buildFilter(filters []kv) bson.D {
 	}
 
 	return filter
+}
+
+func postMoveError(e error, datas []any, sinkDB *mongo.Collection, _config config) {
+	if e == nil {
+		return
+	}
+
+	wes := make([]mongo.WriteError, 0)
+	// insertOne时出现
+	if a, ok := e.(mongo.WriteException); ok {
+		wes = append(wes, a.WriteErrors...)
+	} else if b, ok := e.(mongo.BulkWriteException); ok {
+		// insertMany时出现
+		for _, we := range b.WriteErrors {
+			wes = append(wes, we.WriteError)
+		}
+	} else {
+		return
+	}
+
+	uk := _config.UniqueField
+	for _, we := range wes {
+		m := datas[we.Index].(bson.M)
+		id := m[uk]
+		if we.Code != 11000 {
+			slog.Error("同步写入错误", "错误", e.Error(), "id", id)
+			continue
+		}
+		// 数据存在时, 针对指定字段比较, 如果不一致就修改指定的字段
+		if len(_config.CompareField) > 0 {
+			var target bson.M
+			sinkDB.FindOne(context.Background(), bson.M{uk: id}).Decode(&target)
+			update := make(bson.D, 0)
+			for _, f := range _config.CompareField {
+				origina := m[f]
+				if origina != target[f] {
+					update = append(update, bson.E{Key: f, Value: origina})
+				}
+			}
+			if len(update) > 0 {
+				sinkDB.UpdateOne(context.Background(), bson.M{uk: id}, bson.D{{Key: "$set", Value: update}})
+			}
+		}
+	}
+
+}
+func postMoveSuccess(dataIds []any, sourceDb *mongo.Collection, _config config) {
+	uk := _config.UniqueField
+	for _, dataId := range dataIds {
+		switch _config.OnSuccess {
+		case "delete":
+			sourceDb.DeleteOne(context.TODO(), bson.M{uk: dataId})
+		case "markDel":
+			sourceDb.UpdateOne(context.TODO(), bson.M{uk: dataId}, bson.D{{Key: "$set", Value: bson.D{{Key: "markDel", Value: 1}}}})
+		}
+	}
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
+	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
@@ -33,7 +34,7 @@ func Rss(c *gin.Context) {
 	uidStr := c.Param("uid")
 	groupIdStr, word, dayStr := c.Query("groupId"), c.Query("word"), c.Query("day")
 
-	groupId := cast_x.ToInt64(groupIdStr)
+	groupId := common_x.IfThen(len(groupIdStr) > 0, cast_x.ToInt64(groupIdStr), 0)
 	var day time.Time
 	if len(dayStr) > 0 {
 		day, _ = time.Parse(time.DateOnly, dayStr)

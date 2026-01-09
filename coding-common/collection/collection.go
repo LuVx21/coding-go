@@ -641,7 +641,7 @@ func (c *Collection[T]) PluckString(key string) *Collection[string] {
 
 	for _, v := range c.value {
 		var val reflect.Value
-		if c.typ.Kind() == reflect.Ptr {
+		if c.typ.Kind() == reflect.Pointer {
 			val = reflect.ValueOf(v).Elem().FieldByName(key)
 		} else if c.typ.Kind() == reflect.Struct {
 			val = reflect.ValueOf(v).FieldByName(key)
@@ -662,7 +662,7 @@ func (c *Collection[T]) PluckInt64(key string) *Collection[int64] {
 	res := make([]int64, 0, len(c.value))
 	for _, v := range c.value {
 		var val reflect.Value
-		if c.typ.Kind() == reflect.Ptr {
+		if c.typ.Kind() == reflect.Pointer {
 			val = reflect.ValueOf(v).Elem().FieldByName(key)
 		} else if c.typ.Kind() == reflect.Struct {
 			val = reflect.ValueOf(v).FieldByName(key)
@@ -682,7 +682,7 @@ func (c *Collection[T]) PluckFloat64(key string) *Collection[float64] {
 	res := make([]float64, 0, len(c.value))
 	for _, v := range c.value {
 		var val reflect.Value
-		if c.typ.Kind() == reflect.Ptr {
+		if c.typ.Kind() == reflect.Pointer {
 			val = reflect.ValueOf(v).Elem().FieldByName(key)
 		} else if c.typ.Kind() == reflect.Struct {
 			val = reflect.ValueOf(v).FieldByName(key)
@@ -702,7 +702,7 @@ func (c *Collection[T]) PluckUint64(key string) *Collection[uint64] {
 	res := make([]uint64, 0, len(c.value))
 	for _, v := range c.value {
 		var val reflect.Value
-		if c.typ.Kind() == reflect.Ptr {
+		if c.typ.Kind() == reflect.Pointer {
 			val = reflect.ValueOf(v).Elem().FieldByName(key)
 		} else if c.typ.Kind() == reflect.Struct {
 			val = reflect.ValueOf(v).FieldByName(key)
@@ -722,7 +722,7 @@ func (c *Collection[T]) PluckBool(key string) *Collection[bool] {
 	res := make([]bool, 0, len(c.value))
 	for _, v := range c.value {
 		var val reflect.Value
-		if c.typ.Kind() == reflect.Ptr {
+		if c.typ.Kind() == reflect.Pointer {
 			val = reflect.ValueOf(v).Elem().FieldByName(key)
 		} else if c.typ.Kind() == reflect.Struct {
 			val = reflect.ValueOf(v).FieldByName(key)
@@ -930,18 +930,18 @@ func (c *Collection[T]) SortDesc() *Collection[T] {
 
 // Join 进行拼接
 func (c *Collection[T]) Join(split string, format ...func(item any) string) string {
-	var res string
+	var res strings.Builder
 	for i, v := range c.value {
 		if len(format) > 0 {
-			res += format[0](v)
+			res.WriteString(format[0](v))
 		} else {
-			res += fmt.Sprintf("%v", v)
+			res.WriteString(fmt.Sprintf("%v", v))
 		}
 		if i != len(c.value)-1 {
-			res += split
+			res.WriteString(split)
 		}
 	}
-	return res
+	return res.String()
 }
 
 // Union 两个集合的并集

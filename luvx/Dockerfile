@@ -1,6 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-FROM ${REGISTRY}golang:1.25-alpine3.23 AS builder
+FROM ${REGISTRY}golang:1.26-alpine3.23 AS builder
 
 COPY --from=registry.cn-shanghai.aliyuncs.com/luvx/upx:latest --link /usr/bin/upx /usr/bin/
 WORKDIR /build

@@ -1,6 +1,7 @@
 package slices_x
 
 import (
+	"cmp"
 	"math/rand"
 	"reflect"
 	"sort"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/luvx21/coding-go/coding-common/common_x/funcs"
 	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
-	"golang.org/x/exp/constraints"
 )
 
 // Contains 适合较多数据或重复检查存在的场景(空间换时间)
@@ -211,12 +211,12 @@ func AllIn[S ~[]E, E comparable](values S, safelist ...E) bool {
 	return true
 }
 
-func IsSorted[S ~[]E, E constraints.Ordered](s S) bool {
+func IsSorted[S ~[]E, E cmp.Ordered](s S) bool {
 	return sort.SliceIsSorted(s, func(i, j int) bool {
 		return s[i] < s[j]
 	})
 }
-func Sort[S ~[]E, E constraints.Ordered](s S) S {
+func Sort[S ~[]E, E cmp.Ordered](s S) S {
 	return SortBy(s, func(i, j E) bool { return i < j })
 }
 
@@ -252,6 +252,15 @@ func Filter[S ~[]E, E any](s S, predicate funcs.Predicate[E]) (r S) {
 		}
 	}
 	return
+}
+
+func ToMap[S ~[]E, E any, K comparable, V any](s S, keyMapper func(int, E) K, valueMapper func(int, E) V) map[K]V {
+	r := make(map[K]V)
+	for i := range s {
+		key, value := keyMapper(i, s[i]), valueMapper(i, s[i])
+		r[key] = value
+	}
+	return r
 }
 
 // 双层切片
@@ -327,4 +336,16 @@ func ForEachUntil[S ~[]E, E any](s S, until func(index int, item E) bool) {
 			break
 		}
 	}
+}
+
+func Pick[S ~[]E, E any](s S, is []int) S {
+	picked := make(S, 0, len(is))
+
+	for _, i := range is {
+		if i >= 0 && i < len(s) {
+			picked = append(picked, s[i])
+		}
+	}
+
+	return picked
 }

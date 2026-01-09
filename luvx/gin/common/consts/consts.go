@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/ids"
-	"github.com/luvx21/coding-go/coding-common/os_x"
+	"github.com/luvx21/coding-go/coding-common/strings_x"
 	"github.com/parnurzeal/gorequest"
 	"golang.org/x/sync/singleflight"
 	"golang.org/x/time/rate"
@@ -29,10 +29,10 @@ var (
 )
 
 var (
-	ImgHost, _ = os_x.LookupEnv("ImgHost", "img.rx")
+	ImgRedirectUrlPrefix = strings_x.FirstNonEmpty(os.Getenv("IMG_REDIRECT_URL_PREFIX"), "https://image.baidu.com/search/down")
 
-	AppPort     = os.Getenv("APP_PORT")
-	AppHostName = os.Getenv("APP_HOST_NAME")
-	AppProxy    = os.Getenv("APP_PROXY")
-	PasswordStr = os.Getenv("passwordStr")
+	AppPort       = os.Getenv("APP_PORT")
+	ServiceDomain = os.Getenv("SERVICE_DOMAIN")
+	AppProxy      = os.Getenv("APP_PROXY")
+	PasswordStr   = os.Getenv("passwordStr")
 )

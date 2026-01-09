@@ -1,32 +1,11 @@
 package maps_x
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
 	// json "github.com/bytedance/sonic"
 )
-
-func Test_map(t *testing.T) {
-	_json := `
-{
-  "foo": "bar",
-  "bar": 2
-}
-`
-	m := Map[string, any]{}
-	_ = json.Unmarshal([]byte(_json), &m)
-	fmt.Println(m)
-
-	merge := m.Merge(Map[string, any]{"aaa": "bbb"}, true)
-	fmt.Println(merge)
-
-	nm := merge.Filter(func(k string, v any) bool {
-		return k == "aaa"
-	})
-	fmt.Println(nm)
-}
 
 func Test_Join(t *testing.T) {
 	m := map[string]any{

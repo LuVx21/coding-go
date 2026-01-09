@@ -44,7 +44,7 @@ func (e ErrorUnsupportedType) Error() string {
 func Apply(t any) error {
 	// Make sure we've been given a pointer.
 	val := reflect.ValueOf(t)
-	if val.Kind() != reflect.Ptr {
+	if val.Kind() != reflect.Pointer {
 		return newErrNotAStructPointer(t)
 	}
 
@@ -71,7 +71,7 @@ func parseField(value reflect.Value, field reflect.StructField) error {
 	tagVal := field.Tag.Get("default")
 
 	isStruct := value.Kind() == reflect.Struct
-	isStructPointer := value.Kind() == reflect.Ptr && value.Type().Elem().Kind() == reflect.Struct
+	isStructPointer := value.Kind() == reflect.Pointer && value.Type().Elem().Kind() == reflect.Struct
 
 	if (tagVal == "" || tagVal == "-") && !(isStruct || isStructPointer) {
 		return nil
@@ -214,7 +214,7 @@ func parseField(value reflect.Value, field reflect.StructField) error {
 		}
 		return parseFields(value) // recurse
 
-	case reflect.Ptr:
+	case reflect.Pointer:
 		ref := value.Type().Elem()
 
 		switch ref.Kind() {

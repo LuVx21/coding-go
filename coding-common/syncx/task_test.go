@@ -18,7 +18,6 @@ func Test_a_00(t *testing.T) {
 	tasks := []string{"task1", "task2", "task3", "task4", "task5", "task6", "task7"}
 
 	for i, task := range tasks {
-		i, task := i, task
 		err := scheduler.AddTask(func() {
 			fmt.Printf("执行任务 %d: %s\n", i, task)
 			time.Sleep(time.Second * time.Duration(common_x.IfThen(i%2 == 0, 2, 3)))

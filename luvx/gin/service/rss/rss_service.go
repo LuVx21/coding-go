@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
-	"luvx/gin/db"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/soup"
@@ -26,14 +26,10 @@ const (
 	COL_NAME = "rss_feed"
 )
 
-var (
-	collection = db.MongoDatabase.Collection(COL_NAME)
-)
-
 func Rss(spiderKey string) string {
 	filter := bson.M{"spiderKey": spiderKey, "invalid": 0}
-	opts := options.Find().SetSort(bson.D{{Key: "pubDate", Value: -1}, {Key: "_id", Value: -1}}).SetLimit(100)
-	cursor, _ := collection.Find(context.Background(), filter, opts)
+	opts := options.Find().SetSort(bson.M{"pubDate": -1, "_id": -1}).SetLimit(100)
+	cursor, _ := mongo_dao.RssFeedCol.Find(context.Background(), filter, opts)
 	defer cursor.Close(context.Background())
 
 	result := make([]*RssItem, 0)
@@ -59,7 +55,7 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 		}
 	}
 
-	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
 	return &RssItem{
@@ -79,7 +75,7 @@ func PullByKey() {
 			runs.Go(func() {
 				log.Infoln("spider拉取:", k)
 				items := spiderIndexPage(k, v.CommonValue)
-				_, _ = collection.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
+				_, _ = mongo_dao.RssFeedCol.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
 			})
 		}
 	})
@@ -91,12 +87,12 @@ func spiderIndexPage(key, paramJson string) []soup.PageContent {
 		"content":   bson.M{"$exists": true, "$not": bson.M{"$size": 0}},
 	}
 	opts := options.Find().
-		SetProjection(bson.D{
-			{Key: "url", Value: 1},
-			// {"content", 1},
+		SetProjection(bson.M{
+			"url": 1,
+			// "content": 1,
 		}).
 		SetSort(bson.M{"_id": -1}).SetLimit(2000)
-	cursor, _ := collection.Find(context.Background(), filter, opts)
+	cursor, _ := mongo_dao.RssFeedCol.Find(context.Background(), filter, opts)
 	defer cursor.Close(context.Background())
 
 	ignoreIndexItemUrlSet := make([]string, 0, 2000)

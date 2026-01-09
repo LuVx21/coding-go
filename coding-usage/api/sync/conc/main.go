@@ -55,7 +55,6 @@ func poolWithContextDemoCancelOnError() {
 		WithCancelOnError() // 出错时取消所有goroutine
 	// 提交3个任务
 	for i := range 3 {
-		i := i
 		p.Go(func(ctx context.Context) error {
 			if i == 2 {
 				return errors.New("cancel all other tasks")
@@ -73,7 +72,6 @@ func poolWithResult() {
 	// 创建一个任务池，其中任务返回的结果为int
 	p := pool.NewWithResults[int]()
 	for i := range 10 {
-		i := i
 		p.Go(func() int {
 			return i * 2
 		})

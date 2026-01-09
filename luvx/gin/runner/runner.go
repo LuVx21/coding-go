@@ -60,7 +60,7 @@ func callRunnerRegister(s gocron.Scheduler) {
 	runners = append(runners, keeplive.RunnerRegister()...)
 	// runners = append(runners, xxx.RunnerRegister()...)
 	for _, r := range runners {
-		log.Infof("定时任务已配置 %-20s %s", r.Crontab, r.Name)
+		log.Debugf("定时任务已配置 %-20s %s", r.Crontab, r.Name)
 		RunnerMap[r.Name] = r.Fn
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),

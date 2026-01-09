@@ -18,7 +18,6 @@ import (
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/mongo_dao"
-	"luvx/gin/db"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/cookie"
@@ -64,8 +63,8 @@ var (
 		imgKey, subKey := getWbiKeys()
 		return []byte(imgKey + "|" + subKey), nil, nil
 	})
-	rateLimiter               = rate.NewLimiter(0.5, 1)
-	mongoClient, mongoClient2 = db.MongoDatabase.Collection("bili_video"), db.RemoteMongoDatabase.Collection("bili_video")
+	rateLimiter = rate.NewLimiter(0.5, 1)
+	mongoClient = mongo_dao.BiliVideoCol
 )
 
 func PullAllSeason() {
@@ -88,8 +87,8 @@ func PullAllSeason() {
 
 func PullSeasonList(seasonId int64) {
 	opts := options.Find().
-		SetProjection(bson.D{{Key: "_id", Value: 1}}).
-		SetSort(bson.D{{Key: "_id", Value: -1}}).
+		SetProjection(bson.M{"_id": 1}).
+		SetSort(bson.M{"_id": -1}).
 		SetLimit(300)
 	rowsMap, _ := mongodb.RowsMap(context.Background(), mongoClient, bson.M{"upper.seasonId": seasonId}, opts)
 	ids := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) }, *rowsMap...)
@@ -122,9 +121,8 @@ func PullSeasonList(seasonId int64) {
 		if slices.Contains(ids, id) {
 			return
 		}
-		filter := bson.D{bson.E{Key: "_id", Value: id}}
 		var result bson.M
-		_ = mongoClient.FindOne(context.TODO(), filter).Decode(&result)
+		_ = mongoClient.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&result)
 		if result != nil {
 			return
 		}
@@ -144,7 +142,6 @@ func PullSeasonList(seasonId int64) {
 			return !slices.Contains(fields, k)
 		})
 		_, _ = mongoClient.InsertOne(context.TODO(), media)
-		_, _ = mongoClient2.InsertOne(context.TODO(), media)
 		log.Infoln(media["pubtime"], media["title"])
 	})
 }
@@ -185,7 +182,7 @@ func PullAllUpVideo() {
 		for _, mid := range mongo_dao.DynamicCache.Get()["bili_update_up"].(bson.A) {
 			PullUpVideo(cast_x.ToInt64(mid))
 		}
-		db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
+		mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
 		mongo_dao.DynamicCache.TryClose()
 	}
 	func2 := func() {
@@ -200,7 +197,7 @@ func PullAllUpVideo() {
 		}
 	}
 
-	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, common_x.IfThen(config.Viper.GetBool("switch.bili.updateUpId"), func2, func1))
+	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, common_x.IfThen(config.GetSwitch("bili.updateUpId"), func2, func1))
 }
 
 func PullUpVideo(mid int64) []string {
@@ -258,13 +255,11 @@ func PullUpVideo(mid int64) []string {
 		maps_x.RemoveIf(video, func(k string, v any) bool {
 			return !slices.Contains(fields, k)
 		})
-		// _, _ = mongoClient.InsertOne(context.TODO(), video)
 		toSave, result = append(toSave, video), append(result, video["bvid"].(string))
 		log.Infoln(video["pubtime"], video["title"])
 	})
-	for _, s := range slices_x.Partition(toSave, 30) {
+	for _, s := range slices_x.Partition(toSave, 50) {
 		_, _ = mongoClient.InsertMany(context.TODO(), s)
-		_, _ = mongoClient2.InsertMany(context.TODO(), s)
 	}
 	return result
 }
@@ -274,13 +269,15 @@ func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
 	if uname != "" {
 		filter["upper.name"] = uname
 	}
+	or := []bson.M{}
 	if len(includeUids) > 0 {
-		filter["upper.mid"] = bson.M{"$in": includeUids}
+		or = append(or, bson.M{"upper.mid": bson.M{"$in": includeUids}})
 	}
 	if len(excludeUids) > 0 {
-		filter["upper.mid"] = bson.M{"$nin": excludeUids}
+		or = append(or, bson.M{"upper.mid": bson.M{"$nin": excludeUids}})
 	}
-	slog.Info("mongo查询", "filter", filter)
+	filter["$or"] = or
+	slog.Debug("mongo查询", "filter", jsons.ToJsonString(filter))
 	opts := options.Find().SetSort(bson.M{"pubtime": -1}).SetLimit(common_x.IfThen(size > 0, size, 100))
 	result := make([]*rss.RssItem, 0)
 	if ms, err := mongodb.RowsMap(context.Background(), mongoClient, filter, opts); err == nil {
@@ -293,8 +290,8 @@ func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
 			}
 			b := "from: " + m["from"].(string) + " | mid: " + cast_x.ToString(upper["mid"]) + " | seasonId: " + cast_x.ToString(upper["seasonId"])
 
-			deleteUrl := fmt.Sprintf(`<a href="http://`+consts.AppHostName+`:58090/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
-			_contentHtml := img + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
+			deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+			_contentHtml := img + "<br/>" + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
 			_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
 
 			a := &rss.RssItem{
@@ -480,9 +477,7 @@ func getFollows(tagid int64) []string {
 }
 
 func getCollections() []string {
-	cli := db.MongoDatabase.Collection("config")
-	var result bson.M
-	cli.FindOne(context.TODO(), bson.M{"_id": "bili_season"}).Decode(&result)
+	result := mongo_dao.BiliSeason()
 	expired := time.Now().Unix() > cast_x.ToInt64(result["expireAt"])
 	if !expired {
 		return slices_x.Transfer(func(r any) string { return cast_x.ToString(r) }, result["ids"].(bson.A)...)
@@ -506,7 +501,7 @@ func getCollections() []string {
 		pn++
 	}
 
-	cli.UpdateOne(context.TODO(), bson.M{"_id": "bili_season"}, bson.M{"$set": bson.M{
+	mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "bili_season"}, bson.M{"$set": bson.M{
 		"expireAt": time.Now().Add(3 * times_x.Day).Unix(), "ids": ids,
 	}}, options.Update().SetUpsert(true))
 
@@ -615,7 +610,7 @@ func timeFlow() {
 		toSave = append(toSave, video)
 	})
 
-	db.GetCollection("config").UpdateOne(context.TODO(), bson.M{"_id": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.Update().SetUpsert(true))
+	mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.Update().SetUpsert(true))
 	mongo_dao.DynamicCache.TryClose()
 
 	// for _, s := range slices_x.Partition(toSave, 30) {

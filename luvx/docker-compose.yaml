@@ -17,10 +17,10 @@ services:
     environment:
       TZ: Asia/Shanghai
       APP_PORT: ":8090"
-      APP_HOST_NAME: "mini.rx"
+      SERVICE_DOMAIN: "mini.rx:58090"
       APP_PROXY: "host.docker.internal:7890"
       passwordStr: ${passwordStr}
-      ImgHost: img.rx
+      IMG_REDIRECT_URL_PREFIX: "https://image.baidu.com/search/down"
 #    command: ["sleep", "infinity"]
 
   # nginx:

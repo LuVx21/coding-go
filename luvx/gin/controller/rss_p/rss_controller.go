@@ -31,7 +31,7 @@ func DeleteById(c *gin.Context) {
 		responsex.R(c, "不存在的source")
 	}
 
-	cli := db.GetCollection(source)
+	cli := db.GetCollectionByName(source)
 	if cast_x.ToBool(realDel) {
 		n := mongo_dao.DeleteById(cli, id)
 		responsex.R(c, map[string]any{"delete": n})

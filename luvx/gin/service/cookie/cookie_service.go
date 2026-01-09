@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"strings"
 	"time"
 
 	"luvx/gin/common/consts"
@@ -20,9 +21,9 @@ import (
 
 	"github.com/allegro/bigcache/v3"
 	"github.com/bytedance/sonic"
-	lcommon "github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
-	dbs "github.com/luvx21/coding-go/infra/infra_sql"
+	"github.com/luvx21/coding-go/infra/infra_sql"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -96,14 +97,15 @@ order by host_key, name
 -- limit 1
 ;
 `
-	var args string
+	var args strings.Builder
 	for i := range hosts {
-		args += lcommon.IfThen(i == 0, "", ", ") + fmt.Sprintf("'%s'", hosts[i])
+		args.WriteString(common_x.IfThen(i == 0, "", ", "))
+		fmt.Fprintf(&args, "'%s'", hosts[i])
 	}
-	_sql = fmt.Sprintf(_sql, args)
+	_sql = fmt.Sprintf(_sql, args.String())
 
 	getClient()
-	rowsMap, err := dbs.RowsMap(context.TODO(), client, _sql)
+	rowsMap, err := infra_sql.RowsMap(context.TODO(), client, _sql)
 	if err == nil {
 		key := masterKey()
 		for _, row := range rowsMap {
@@ -145,7 +147,7 @@ func getClient() *sql.DB {
 		if result {
 			client = db.Turso
 		} else {
-			home, _ := lcommon.Dir()
+			home, _ := common_x.Dir()
 			client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
 		}
 	}

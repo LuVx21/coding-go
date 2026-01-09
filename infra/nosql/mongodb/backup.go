@@ -228,7 +228,7 @@ func (c DefaultTypeConverter) GoTypeToSQL(t reflect.Type) string {
 	case reflect.Bool:
 		return "BOOLEAN"
 	case reflect.Struct:
-		if t == reflect.TypeOf(time.Time{}) {
+		if t == reflect.TypeFor[time.Time]() {
 			return "DATETIME"
 		}
 		return "TEXT" // 复杂结构存储为JSON

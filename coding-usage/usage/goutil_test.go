@@ -6,7 +6,6 @@ import (
 
 	"github.com/Goldziher/go-utils/maputils"
 	"github.com/gookit/goutil"
-	. "github.com/luvx21/coding-go/coding-common/maps_x"
 )
 
 func Test_01(t *testing.T) {
@@ -15,7 +14,7 @@ func Test_01(t *testing.T) {
 }
 
 func Test_11_00(t *testing.T) {
-	m := Map[string, bool]{"a": true}
+	m := map[string]bool{"a": true}
 	keys := maputils.Keys(m)
 	fmt.Println(keys)
 }
