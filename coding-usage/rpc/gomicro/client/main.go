@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	pb "github.com/luvx21/coding-go/coding-usage/rpc/gomicro/proto"
-	"go-micro.dev/v4/client"
+	"go-micro.dev/v5/client"
 )
 
 func main() {

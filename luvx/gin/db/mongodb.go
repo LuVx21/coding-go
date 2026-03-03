@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"luvx/gin/config"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
@@ -19,7 +18,7 @@ func init() {
 	defer common_x.TrackTime("初始化MongoDB连接...")()
 	_config := config.AppConfig.MongoDB
 	clientOptions := options.Client().ApplyURI(_config.Uri)
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(clientOptions)
 
 	if err != nil {
 		panic(err)
@@ -28,7 +27,7 @@ func init() {
 	MongoMain = client.Database(_config.Database)
 
 	clientOptions = options.Client().ApplyURI(config.Viper.GetString(config.RemoteMongoUri))
-	remoteClient, err := mongo.Connect(context.TODO(), clientOptions)
+	remoteClient, err := mongo.Connect(clientOptions)
 	MongoSlave = remoteClient.Database(_config.Database)
 	if err != nil {
 		panic(err)

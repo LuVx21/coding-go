@@ -7,7 +7,7 @@ import (
 	"github.com/luvx21/coding-go/infra/logs"
 
 	pb "github.com/luvx21/coding-go/coding-usage/rpc/gomicro/proto"
-	"go-micro.dev/v4"
+	"go-micro.dev/v5"
 )
 
 type Greeter struct{}

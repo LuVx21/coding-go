@@ -9,7 +9,7 @@ if [[ -z $(which protoc-gen-go-grpc) ]]; then
 fi
 
 if [[ -z $(which protoc-gen-micro) ]]; then
-  go install -ldflags="-w -s" github.com/go-micro/generator/cmd/protoc-gen-micro@latest
+  go install -ldflags="-w -s" go-micro.dev/v5/cmd/protoc-gen-micro@v5.16.0
 fi
 
 protoc \

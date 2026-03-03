@@ -78,12 +78,12 @@ func main() {
 	source, sink, uk, desc := _config.Source, _config.Sink, _config.UniqueField, _config.Order != "asc"
 	sort := bson.M{uk: common_x.IfThen(desc, -1, 1)}
 
-	sourceClient, sourceErr := mongo.Connect(context.TODO(), options.Client().ApplyURI(source.Uri))
+	sourceClient, sourceErr := mongo.Connect(options.Client().ApplyURI(source.Uri))
 	if sourceErr != nil {
 		slog.Error("mongo source 连接失败", "错误", sourceErr.Error())
 		return
 	}
-	sinkClient, sinkErr := mongo.Connect(context.TODO(), options.Client().ApplyURI(sink.Uri))
+	sinkClient, sinkErr := mongo.Connect(options.Client().ApplyURI(sink.Uri))
 	if sinkErr != nil {
 		slog.Error("mongo sink 连接失败", "错误", sinkErr.Error())
 		return

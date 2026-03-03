@@ -20,7 +20,7 @@ func Test_bigcache(t *testing.T) {
 		Verbose:            true,
 		HardMaxCacheSize:   8192,
 		OnRemove: func(k string, v []byte) {
-			fmt.Println("已经删除", k, v)
+			fmt.Println("已经删除", k, string(v))
 		},
 		OnRemoveWithReason: nil,
 	}

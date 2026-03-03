@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/v2"
 	"github.com/luvx21/coding-go/infra/logs"
 )
 

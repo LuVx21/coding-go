@@ -7,10 +7,10 @@ replace luvx_service_sdk => ../luvx_service_sdk
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/klauspost/compress v1.18.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260303181325-c44bbe462c74
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260303181325-c44bbe462c74
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303181325-c44bbe462c74
-	go.etcd.io/etcd/client/v3 v3.6.7
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260303185112-e7241f1b6bef
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260303185112-e7241f1b6bef
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303185112-e7241f1b6bef
+	go.etcd.io/etcd/client/v3 v3.6.8
 	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11
 	luvx_service_sdk v0.0.0-00010101000000-000000000000
@@ -19,7 +19,7 @@ require (
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
-	github.com/coreos/go-systemd/v22 v22.6.0 // indirect
+	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/dgraph-io/ristretto/v2 v2.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
@@ -29,7 +29,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/flatbuffers v25.12.19+incompatible // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
 	github.com/lestrrat-go/strftime v1.1.1 // indirect
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6 // indirect
@@ -47,14 +47,14 @@ require (
 	github.com/spf13/viper v1.21.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	gitlab.com/greyxor/slogor v1.6.7 // indirect
-	go.etcd.io/etcd/api/v3 v3.6.7 // indirect
-	go.etcd.io/etcd/client/pkg/v3 v3.6.7 // indirect
+	go.etcd.io/etcd/api/v3 v3.6.8 // indirect
+	go.etcd.io/etcd/client/pkg/v3 v3.6.8 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.41.0 // indirect
 	go.opentelemetry.io/otel/metric v1.41.0 // indirect
 	go.opentelemetry.io/otel/trace v1.41.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.1 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
@@ -62,7 +62,7 @@ require (
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20251213004720-97cd9d5aeac2 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )

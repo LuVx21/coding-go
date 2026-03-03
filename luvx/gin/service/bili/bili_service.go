@@ -182,7 +182,7 @@ func PullAllUpVideo() {
 		for _, mid := range mongo_dao.DynamicCache.Get()["bili_update_up"].(bson.A) {
 			PullUpVideo(cast_x.ToInt64(mid))
 		}
-		mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.Update().SetUpsert(true))
+		mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": []string{}}}, options.UpdateOne().SetUpsert(true))
 		mongo_dao.DynamicCache.TryClose()
 	}
 	func2 := func() {
@@ -503,7 +503,7 @@ func getCollections() []string {
 
 	mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "bili_season"}, bson.M{"$set": bson.M{
 		"expireAt": time.Now().Add(3 * times_x.Day).Unix(), "ids": ids,
-	}}, options.Update().SetUpsert(true))
+	}}, options.UpdateOne().SetUpsert(true))
 
 	return ids
 }
@@ -610,7 +610,7 @@ func timeFlow() {
 		toSave = append(toSave, video)
 	})
 
-	mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.Update().SetUpsert(true))
+	mongo_dao.ConfigCol.UpdateOne(context.TODO(), bson.M{"key": "app_cache"}, bson.M{"$set": bson.M{"bili_update_up": lo.Keys(*updatedUpIds)}}, options.UpdateOne().SetUpsert(true))
 	mongo_dao.DynamicCache.TryClose()
 
 	// for _, s := range slices_x.Partition(toSave, 30) {

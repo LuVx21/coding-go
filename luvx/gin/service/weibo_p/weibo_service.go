@@ -26,7 +26,7 @@ import (
 	"luvx/gin/service/rss"
 
 	"github.com/bytedance/sonic"
-	"github.com/gocolly/colly"
+	"github.com/gocolly/colly/v2"
 	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
@@ -400,7 +400,7 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 func getCookie() string {
 	return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 }
-func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.M, *options.FindOptions) {
+func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.M, options.Lister[options.FindOptions]) {
 	size, ok := args["size"]
 	if !ok {
 		size = 100

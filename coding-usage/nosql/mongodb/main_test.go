@@ -9,7 +9,6 @@ import (
 
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
-	where "github.com/pywee/gobson-where"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -105,10 +104,9 @@ func Test_00(t *testing.T) {
 
 func Test_distinct(t *testing.T) {
 	defer beforeAfter("Test_distinct")()
-	distinctValues, _ := collection.Distinct(context.TODO(), "_class", bson.M{"age": 1})
-	for _, value := range distinctValues {
-		fmt.Println(value)
-	}
+	distinctValues := collection.Distinct(context.TODO(), "_class", bson.M{"age": 1})
+	arr, _ := distinctValues.Raw()
+	fmt.Println(string(arr))
 }
 
 func Test_sort(t *testing.T) {
@@ -122,12 +120,6 @@ func Test_sort(t *testing.T) {
 	print(cursor)
 }
 
-func Test_01(t *testing.T) {
-	opt := where.Parse(`sku!=123 AND (name=456 OR id=789) AND id!=1 ORDER BY name DESC LIMIT 0,10`)
-	fmt.Println(opt.Filter)
-	fmt.Println(opt.Options)
-}
-
 func Test_upsert_00(t *testing.T) {
 	defer beforeAfter("Test_upsert_00")()
 	r, e := collection.UpdateOne(context.TODO(), bson.M{"_id": "test1"},
@@ -137,7 +129,7 @@ func Test_upsert_00(t *testing.T) {
 				"ids":      []string{"a", "b"}},
 			"$setOnInsert": bson.M{"createdAt": time.Now().Unix()},
 		},
-		options.Update().SetUpsert(true))
+		options.UpdateOne().SetUpsert(true))
 	fmt.Println(r, e)
 
 	rr := collection.FindOneAndUpdate(context.TODO(), bson.M{"_id": "test2"},

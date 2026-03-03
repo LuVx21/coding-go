@@ -25,10 +25,7 @@ type MongoToDbBackuper struct {
 
 // NewBackuper 创建备份器实例
 func NewBackuper(mongoURI string, db *sql.DB, batchSize int) (*MongoToDbBackuper, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
+	mongoClient, err := mongo.Connect(options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to MongoDB")
 	}

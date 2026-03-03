@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func InsertMany(ctx context.Context, col *mongo.Collection, documents []any, opts ...*options.InsertManyOptions) (*mongo.InsertManyResult, error) {
+func InsertMany(ctx context.Context, col *mongo.Collection, documents []any, opts ...options.Lister[options.InsertManyOptions]) (*mongo.InsertManyResult, error) {
 	if many, err := col.InsertMany(ctx, documents, opts...); err == nil {
 		return many, err
 	}
@@ -19,7 +19,7 @@ func InsertMany(ctx context.Context, col *mongo.Collection, documents []any, opt
 	return nil, nil
 }
 
-func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...*options.FindOptions) (*[]bson.M, error) {
+func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...options.Lister[options.FindOptions]) (*[]bson.M, error) {
 	cur, err := col.Find(ctx, filter, opts...)
 	defer func(cur *mongo.Cursor, ctx context.Context) {
 		err := cur.Close(ctx)

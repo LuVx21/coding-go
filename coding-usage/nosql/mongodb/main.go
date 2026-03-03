@@ -23,7 +23,7 @@ func connect() (*mongo.Client, *mongo.Database, *mongo.Collection) {
 
 	clientOptions.SetMonitor(&mongodb.LogMonitor)
 
-	client, err := mongo.Connect(context.TODO(), clientOptions)
+	client, err := mongo.Connect(clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
