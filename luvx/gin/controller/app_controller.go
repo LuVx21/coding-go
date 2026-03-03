@@ -22,7 +22,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"golang.org/x/time/rate"
 )
 

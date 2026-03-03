@@ -6,8 +6,8 @@ import (
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var (

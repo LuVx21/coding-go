@@ -17,9 +17,8 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -43,7 +42,7 @@ func Rss(spiderKey string) string {
 
 func parse2RssItem(m alias_x.JsonObject) *RssItem {
 	_id := m["_id"].(int64)
-	contents := m["content"].(primitive.A)
+	contents := m["content"].(bson.A)
 
 	contentHtml := ""
 	for _, c := range contents {

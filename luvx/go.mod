@@ -21,11 +21,11 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260108102031-d5d13d1b2d8f
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260303181325-c44bbe462c74
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/sirupsen/logrus v1.9.4
@@ -33,7 +33,6 @@ require (
 	github.com/tidwall/gjson v1.18.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20251219100830-236aa1ff8acc
 	github.com/valyala/fasthttp v1.69.0
-	go.mongodb.org/mongo-driver v1.17.9
 	golang.org/x/crypto v0.48.0
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa
 	golang.org/x/sync v0.19.0
@@ -134,7 +133,7 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	gitlab.com/greyxor/slogor v1.6.7 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.5.0
 	go.uber.org/atomic v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect

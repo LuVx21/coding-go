@@ -6,7 +6,7 @@ import (
 	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/func_x"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var (

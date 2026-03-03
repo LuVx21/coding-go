@@ -58,10 +58,10 @@ require (
 	github.com/lmittmann/tint v1.0.7
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.3
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260108102031-d5d13d1b2d8f
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260108102031-d5d13d1b2d8f
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303181325-c44bbe462c74
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260303181325-c44bbe462c74
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/olekukonko/tablewriter v1.1.1
@@ -91,7 +91,7 @@ require (
 	github.com/yuin/goldmark v1.7.8
 	go-micro.dev/v4 v4.11.0
 	go.etcd.io/etcd/client/v3 v3.5.21
-	go.mongodb.org/mongo-driver v1.17.9
+	go.mongodb.org/mongo-driver/v2 v2.5.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.19.0
 	golang.org/x/time v0.12.0
@@ -207,7 +207,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
-	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/go-zookeeper/zk v1.0.3 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
@@ -278,7 +278,6 @@ require (
 	github.com/moby/sys/userns v0.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect

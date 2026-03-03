@@ -1,6 +1,6 @@
 package mongodb
 
-import "go.mongodb.org/mongo-driver/bson"
+import "go.mongodb.org/mongo-driver/v2/bson"
 
 // ArgsE Map切片
 func ArgsM(keys []string, values ...any) (r []bson.M, ok bool) {

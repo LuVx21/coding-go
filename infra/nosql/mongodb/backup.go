@@ -10,10 +10,9 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // MongoToDbBackuper 备份器
@@ -199,17 +198,17 @@ func (c DefaultTypeConverter) Convert(value any) (any, error) {
 	switch v := value.(type) {
 	// case bson.TypeObjectID:
 	// 	return v.Hex(), nil
-	case primitive.DateTime:
+	case bson.DateTime:
 		return v.Time(), nil
-	case primitive.Decimal128:
+	case bson.Decimal128:
 		return v.String(), nil
-	case primitive.Binary:
+	case bson.Binary:
 		return v.Data, nil
-	case primitive.Timestamp:
+	case bson.Timestamp:
 		return time.Unix(int64(v.T), 0), nil
-	case primitive.Regex:
+	case bson.Regex:
 		return v.String(), nil
-	case primitive.JavaScript:
+	case bson.JavaScript:
 		return string(v), nil
 	default:
 		return value, nil
