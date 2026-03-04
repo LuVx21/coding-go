@@ -91,6 +91,7 @@ func FilterTransfer[I, O any](filter funcs.Predicate[I], f funcs.Function[I, O],
 	return r
 }
 
+// TransferFilter, 可先考虑FilterTransfer
 func TransferFilter[I, O any](filter funcs.Predicate[O], f funcs.Function[I, O], s ...I) []O {
 	r := make([]O, 0)
 	for i := range s {
@@ -102,12 +103,7 @@ func TransferFilter[I, O any](filter funcs.Predicate[O], f funcs.Function[I, O],
 	return r
 }
 
-func IsEmpty[S ~[]E, E any](s S) (bool, S) {
-	if len(s) == 0 {
-		return true, s
-	}
-	return false, s
-}
+func IsNotEmpty[S ~[]E, E any](s S) (S, bool) { return s, len(s) > 0 }
 
 func ClearZeroRef[S ~[]E, E any](s S) S {
 	r := make(S, 0, len(s))

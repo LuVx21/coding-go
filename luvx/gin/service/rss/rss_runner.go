@@ -19,14 +19,6 @@ func RunnerRegister() []*service.Runner {
 
 func reset() {
 	service.RunnerLocker.LockRun("重置rss", time.Minute*3, func() {
-		db.MySQLClient.Exec("update freshrss.t_admin_feed set lastUpdate = lastUpdate-30*60 where url like '%/weibo/rss/%'")
-
-		// var feeds []map[string]any
-		// db.MySQLClient.Table("freshrss.t_admin_feed").
-		// 	Select("id").
-		// 	Find(&feeds, "url like '%/weibo/rss/%'")
-		// for _, rss := range feeds {
-		// 	db.MySQLClient.Exec("update freshrss.t_admin_feed set lastUpdate = lastUpdate-30*60 where id = ?", rss["id"])
-		// }
+		db.FreshrssDb.Exec("update feed set lastUpdate = lastUpdate-30*60 where url like '%/weibo/rss/%'")
 	})
 }

@@ -39,7 +39,7 @@ const (
 	"order": "asc",
 	"batchSize": 1024,
 	"onSuccess": "",
-	"compareField": []
+	"compareField": [],
 	"batchMove": false,
 	"batchMoveSize": 1024
 }
@@ -73,6 +73,7 @@ func main() {
 	var _config config
 	err := json.Unmarshal([]byte(_json), &_config)
 	if err != nil {
+		slog.Error("加载配置异常", "err", err.Error())
 		return
 	}
 	source, sink, uk, desc := _config.Source, _config.Sink, _config.UniqueField, _config.Order != "asc"
@@ -216,7 +217,7 @@ func postMoveError(e error, datas []any, sinkDB *mongo.Collection, _config confi
 		m := datas[we.Index].(bson.M)
 		id := m[uk]
 		if we.Code != 11000 {
-			slog.Error("同步写入错误", "错误", e.Error(), "id", id)
+			slog.Error("同步写入错误,且非E11000", "错误", e.Error(), "id", id)
 			continue
 		}
 		// 数据存在时, 针对指定字段比较, 如果不一致就修改指定的字段

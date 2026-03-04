@@ -38,3 +38,29 @@ func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...opt
 	}
 	return &results, nil
 }
+
+func MD(m bson.M) bson.D {
+	r := make(bson.D, 0, len(m))
+	for k, v := range m {
+		r = append(r, bson.E{Key: k, Value: v})
+	}
+	return r
+}
+
+func DM(es bson.D) bson.M {
+	r := make(bson.M, len(es))
+	for i := range es {
+		e := es[i]
+		r[e.Key] = e.Value
+	}
+	return r
+}
+func FindInD(es bson.D, name string) any {
+	for i := range es {
+		e := es[i]
+		if e.Key == name {
+			return e.Value
+		}
+	}
+	return nil
+}

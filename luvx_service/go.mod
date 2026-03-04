@@ -7,9 +7,9 @@ replace luvx_service_sdk => ../luvx_service_sdk
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/klauspost/compress v1.18.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303185112-e7241f1b6bef
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260304075050-caebee9b23e0
 	go.etcd.io/etcd/client/v3 v3.6.8
 	google.golang.org/grpc v1.79.1
 	google.golang.org/protobuf v1.36.11

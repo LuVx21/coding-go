@@ -6,7 +6,7 @@ import (
 )
 
 func Test_Set(t *testing.T) {
-	s := set[string]{"foobar": struct{}{}}
+	s := Set[string]{"foobar": struct{}{}}
 	s.Add("foo", "bar")
-	fmt.Println(s.Contain("foo"), s.Contain("bar1"))
+	fmt.Println(s.Contains("foo"), s.Contains("bar1"))
 }

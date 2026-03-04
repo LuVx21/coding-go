@@ -19,11 +19,6 @@ func init() {
 	defer common_x.TrackTime("初始化MySQL连接...")()
 
 	c := config.AppConfig.MySQL
-	//_ = omysql.RegisterTLSConfig("tidb", &tls.Config{
-	//    MinVersion: tls.VersionTLS12,
-	//    ServerName: c.Host,
-	//})
-	//format += "&tls=tidb"
 	dsn := dbs.MySQLConnectWithDefaultArgs(c.Host, c.Port, c.Username, c.Password, c.Dbname)
 
 	opts := &gorm.Config{

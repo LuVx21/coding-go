@@ -8,20 +8,20 @@ import (
 	"gorm.io/gorm"
 )
 
-func JsonArrayAppend(id int64, path string, value any) {
+func JsonArrayAppend(bizType CommonKVBizType, key string, path string, value any) {
 	_sql := `
 update common_key_value
 set common_value = json_array_append(common_value, ?, ?)
-where id = ?;
+where biz_type = ? and common_key = ?;
 `
-	db.MySQLClient.Exec(_sql, path, value, id)
+	db.MySQLClient.Exec(_sql, path, value, bizType, key)
 }
 
 // UpdateJsonMap 操作json字段
 // JSON_SET 有则覆盖, 无则添加
 // JSON_INSERT 有则忽略, 无则添加
 // JSON_REPLACE 有则替换, 无则忽略
-func UpdateJsonMap(bizType int32, key string, expr string, args ...any) {
+func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any) {
 	err := db.MySQLClient.
 		Debug().
 		Model(&model.CommonKeyValue{}).
@@ -34,7 +34,7 @@ func UpdateJsonMap(bizType int32, key string, expr string, args ...any) {
 	}
 }
 
-func Get(bizType int32, keys ...string) []*model.CommonKeyValue {
+func Get(bizType CommonKVBizType, keys ...string) []*model.CommonKeyValue {
 	tx := db.MySQLClient
 	var kvs []*model.CommonKeyValue
 	// tx := client.Debug()
@@ -51,7 +51,7 @@ func Get(bizType int32, keys ...string) []*model.CommonKeyValue {
 }
 
 // GetByCursor id < cursorID and biz_type = bizType and common_key in keys order by id desc limit limit
-func GetByCursor(cursorID int, limit int, bizType int32, keys ...string) ([]*model.CommonKeyValue, int, error) {
+func GetByCursor(cursorID int, limit int, bizType CommonKVBizType, keys ...string) ([]*model.CommonKeyValue, int, error) {
 	if cursorID < 0 {
 		return nil, 0, nil
 	}

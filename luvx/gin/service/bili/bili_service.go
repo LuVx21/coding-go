@@ -14,13 +14,13 @@ import (
 	"strings"
 	"time"
 
+	"luvx/gin/common"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
-	"luvx/gin/service/cookie"
 	"luvx/gin/service/rss"
 
 	"github.com/bytedance/sonic"
@@ -39,10 +39,8 @@ import (
 	"github.com/samber/lo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
-	"github.com/valyala/fasthttp"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
-	"golang.org/x/time/rate"
 )
 
 const (
@@ -63,7 +61,6 @@ var (
 		imgKey, subKey := getWbiKeys()
 		return []byte(imgKey + "|" + subKey), nil, nil
 	})
-	rateLimiter = rate.NewLimiter(0.5, 1)
 	mongoClient = mongo_dao.BiliVideoCol
 )
 
@@ -147,28 +144,17 @@ func PullSeasonList(seasonId int64) {
 }
 
 func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
-	client := &fasthttp.Client{}
-
-	req := fasthttp.AcquireRequest()
-	defer fasthttp.ReleaseRequest(req)
-	pUrl, _ := nets_x.UrlAddQuery("https://api.bilibili.com/x/space/fav/season/list", map[string]any{
+	_json := biliRequest("https://api.bilibili.com/x/space/fav/season/list", map[string]any{
 		"season_id": seasonId,
 		"pn":        cursor,
 		"ps":        limit,
-	})
-	req.SetRequestURI(pUrl.String())
-	req.Header.SetMethod(fasthttp.MethodGet)
-	resp := fasthttp.AcquireResponse()
-	defer fasthttp.ReleaseResponse(resp)
+	}, false)
 
-	_ = rateLimiter.Wait(context.TODO())
-	log.Infoln("请求:", pUrl)
-	err := client.Do(req, resp)
 	ff := make(map[string]any)
-	_ = sonic.Unmarshal(resp.Body(), &ff)
+	_ = sonic.UnmarshalString(_json, &ff)
 
 	if cast_x.ToInt32(ff["code"]) != 0 || ff["data"] == nil {
-		log.Warnln("bili->请求结果非json,cookie可能过期", err)
+		log.Warnln("bili->请求结果非json,cookie可能过期")
 		return make([]any, 0)
 	}
 
@@ -283,7 +269,7 @@ func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
 	if ms, err := mongodb.RowsMap(context.Background(), mongoClient, filter, opts); err == nil {
 		for i := range *ms {
 			m := (*ms)[i]
-			_id, upper := cast_x.ToString(m["_id"]), m["upper"].(bson.M)
+			_id, upper := cast_x.ToString(m["_id"]), common.DM(m["upper"].(bson.D))
 			img := ""
 			if m["pic"] != nil {
 				img = "<img style=\"margin: 8px 4px;width:300px\" src=\"" + cast_x.ToString(m["pic"]) + "\" referrerpolicy=\"no-referrer\">"
@@ -506,27 +492,6 @@ func getCollections() []string {
 	}}, options.UpdateOne().SetUpsert(true))
 
 	return ids
-}
-
-func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
-	pUrl, _ := nets_x.UrlAddQuery(_url, queryMap)
-
-	_ = rateLimiter.Wait(context.TODO())
-	log.Infoln("请求:", pUrl)
-	sa := consts.GoRequest.Get(pUrl.String()).
-		Set("User-Agent", consts.UserAgent).
-		Set("Referer", "https://www.bilibili.com/")
-	if useCookie {
-		sa = sa.Set("Cookie", cookie.GetCookieStrByHost(".bilibili.com"))
-	}
-	r, body, errs := sa.End()
-
-	if !sonic.ValidString(body) {
-		log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
-		return ""
-	}
-
-	return body
 }
 
 func timeFlow() {

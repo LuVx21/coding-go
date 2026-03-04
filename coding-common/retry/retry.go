@@ -15,7 +15,7 @@ func SupplyWithRetry[T any](
 	maxRetryTimes int32, retryPeriod time.Duration,
 ) (T, error) {
 	if strings_x.IsBlank(name) {
-		name = "重试" + times_x.TimeNow()
+		name = "重试" + times_x.TimeNowMicrosecond()
 	}
 
 	var times int32

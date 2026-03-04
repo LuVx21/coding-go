@@ -53,7 +53,7 @@ func Rss(c *gin.Context) {
 
 	uids := slices_x.Transfer(func(i string) int64 { return cast_x.ToInt64(i) }, strings.Split(uidStr, ",")...)
 
-	rss := weibo_p.Rss(args, groupId, word, day, uids...)
+	rss := weibo_p.Rss(c, args, groupId, word, day, uids...)
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
 }

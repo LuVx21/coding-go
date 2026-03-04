@@ -20,6 +20,7 @@ func DeferedArgs[T any](f func(T)) func(T) {
 			if err := recover(); err != nil {
 				slog.Warn("异常", "panic", err)
 				slog.Warn("异常栈", "stack", string(debug.Stack()))
+				debug.PrintStack()
 			}
 		}()
 

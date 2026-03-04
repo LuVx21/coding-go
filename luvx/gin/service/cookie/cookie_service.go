@@ -147,8 +147,7 @@ func getClient() *sql.DB {
 		if result {
 			client = db.Turso
 		} else {
-			home, _ := common_x.Dir()
-			client, _ = db.GetDataSource(home + "/data/sqlite/Cookies")
+			client = db.CookieDb
 		}
 	}
 	return client

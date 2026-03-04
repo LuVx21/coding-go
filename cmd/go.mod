@@ -11,11 +11,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260303185112-e7241f1b6bef
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260303185112-e7241f1b6bef
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260304075050-caebee9b23e0
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.18.0
@@ -64,6 +64,7 @@ require (
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
+	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
@@ -86,7 +87,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
-	gitlab.com/greyxor/slogor v1.6.4 // indirect
+	gitlab.com/greyxor/slogor v1.6.7 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
@@ -95,5 +96,4 @@ require (
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )

@@ -14,9 +14,11 @@ import (
 	"strings"
 	"time"
 
+	"luvx/gin/common"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
+	"luvx/gin/dao/freshrss_dao"
 	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/model"
 	"luvx/gin/service"
@@ -26,6 +28,7 @@ import (
 	"luvx/gin/service/rss"
 
 	"github.com/bytedance/sonic"
+	"github.com/gin-gonic/gin"
 	"github.com/gocolly/colly/v2"
 	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
@@ -41,7 +44,6 @@ import (
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
-	"github.com/parnurzeal/gorequest"
 	"github.com/samber/lo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -50,7 +52,8 @@ import (
 )
 
 const (
-	COL_NAME = "weibo_feed"
+	COL_NAME   = "weibo_feed"
+	COMMON_KEY = "rss_weibo_config"
 )
 
 var (
@@ -58,7 +61,8 @@ var (
 		"invalid", "read", "extra", "groupId", "mix_media_info",
 		// "page_info",
 	}
-	collection = mongo_dao.WeiboFeedCol
+	collection    = mongo_dao.WeiboFeedCol
+	ignoreRssUids = []int64{}
 )
 
 var (
@@ -106,7 +110,7 @@ func PullHotBand() {
 			word := vv["word"]
 			result := rowsMap[cast_x.ToString(word)]
 			if result != nil {
-				rankMap := result["rankMap"].(bson.M)
+				rankMap := common.DM(result["rankMap"].(bson.D))
 				oldRank := maps_x.GetOrDefault(rankMap, now, "99")
 				if cast_x.ToInt(oldRank) > cast_x.ToInt(rank) {
 					rankMap[now] = cast_x.ToString(rank)
@@ -353,7 +357,6 @@ func requestLongText(mblogid string) string {
 	m := map[string]any{
 		"id": mblogid,
 	}
-	_ = consts.RateLimiter.Wait(context.TODO())
 	_, body, _ := requestWeibo("https://weibo.com/ajax/statuses/longtext", m, map[string]string{"Cookie": getCookie()})
 
 	return gjson.Get(body, "data.longTextContent").String()
@@ -365,7 +368,6 @@ func requestPageOfUser(uid int64, cursor int) []any {
 		"page":    cursor,
 		"feature": 0,
 	}
-	_ = consts.RateLimiter.Wait(context.TODO())
 	_, body, _ := requestWeibo("https://weibo.com/ajax/statuses/mymblog", m, map[string]string{"Cookie": getCookie()})
 
 	ff, _ := jsons.JsonStringToMap[string, any, map[string]any](body)
@@ -385,7 +387,6 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 		"fast_refresh": 1,
 		"count":        25,
 	}
-	_ = consts.RateLimiter.Wait(context.TODO())
 	_, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 	if len(errors) > 0 {
 		return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
@@ -428,33 +429,38 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 		filter["created_at"] = bson.M{"$gte": day, "$lt": day.AddDate(0, 0, 1)}
 		DeleteLock()
 	} else {
-		_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
-			key := "rss_weibo_config"
-			m := commonkvservice.Get(common_kv_dao.BEAN, key)
-			return m[key], nil
-		})
-		kv := _kv.(*model.CommonKeyValue)
+		if len(ignoreRssUids) == 0 {
+			_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
+				m := commonkvservice.Get(common_kv_dao.BEAN, COMMON_KEY)
+				return m[COMMON_KEY], nil
+			})
+			kv := _kv.(*model.CommonKeyValue)
 
-		config := rssWeiboConfig{}
-		_ = jsons.JsonStringToObject(kv.CommonValue, &config)
-		ignore := config.Ignore
-
+			config := rssWeiboConfig{}
+			_ = jsons.JsonStringToObject(kv.CommonValue, &config)
+			ignoreRssUids = config.Ignore
+		}
 		if len(uids) == 1 && uids[0] == 0 {
-			if len(ignore) > 0 {
-				filter["user.id"] = bson.M{"$nin": ignore}
+			if len(ignoreRssUids) > 0 {
+				filter["user.id"] = bson.M{"$nin": ignoreRssUids}
 			}
 		} else {
 			filter["user.id"] = bson.M{"$in": uids}
+			flag := false
 			for _, uid := range uids {
-				if !slices.Contains(ignore, uid) {
-					common_kv_dao.JsonArrayAppend(kv.ID, "$.ignore", uid)
+				if !slices.Contains(ignoreRssUids, uid) {
+					common_kv_dao.JsonArrayAppend(common_kv_dao.BEAN, COMMON_KEY, "$.ignore", uid)
+					flag = true
 				}
+			}
+			if flag {
+				ignoreRssUids = ignoreRssUids[:0]
 			}
 		}
 	}
 	return filter, opts
 }
-func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) string {
+func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day time.Time, uids ...int64) string {
 	filter, opts := filter(args, groupId, word, day, uids...)
 
 	if cast_x.ToBool(args["deleteBefore"]) {
@@ -465,17 +471,31 @@ func Rss(args map[string]any, groupId int64, word string, day time.Time, uids ..
 	}
 
 	cursor, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
-	retweetedIds := slices_x.FilterTransfer(func(m bson.M) bool {
-		return m["retweeted_status"] != nil
-	}, func(m bson.M) int64 {
-		return cast_x.ToInt64(m["retweeted_status"])
-	}, *cursor...)
+	if len(*cursor) == 0 {
+		return fmt.Sprintf(rss.XmlFormat, "网络傻事", "")
+	}
+	ids, retweetedIds := make([]string, 64), make([]int64, 64)
+	for i := range *cursor {
+		m := (*cursor)[i]
+		ids = append(ids, cast_x.ToString(m["_id"]))
+		if m["retweeted_status"] != nil {
+			retweetedIds = append(retweetedIds, cast_x.ToInt64(m["retweeted_status"]))
+		}
+	}
+	aa := common_x.IfThenGet(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100) < 60, func() []string {
+		return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path+"%", ids)
+	}, func() []string { return []string{} })
+	existedGuids := sets.NewSet(aa...)
+
 	rows, _ := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
 	rowsMap := lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
 
 	var s0 strings.Builder
 	for i := range *cursor {
 		jo := (*cursor)[i]
+		if existedGuids.Contain(cast_x.ToString(jo["_id"])) {
+			continue
+		}
 		s0.WriteString(a(jo, rowsMap[cast_x.ToInt64(jo["retweeted_status"])]))
 	}
 
@@ -489,10 +509,10 @@ func a(jo, retweet bson.M) string {
 	if retweet != nil {
 		user, retweetUrl, uName := retweet["user"], "", ""
 		if user != nil {
-			uName = user.(bson.M)["name"].(string)
-			uId := cast_x.ToString(user.(bson.M)["id"])
+			umap := common.DM(user.(bson.D))
+			uId := cast_x.ToString(umap["id"])
 			retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
-			uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, uName)
+			uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, umap["name"].(string))
 		}
 		t := uName + strings.Repeat(consts.Ensp, 4) + time.UnixMilli(cast_x.ToInt64(retweet["created_at"])).Format(time.DateTime) +
 			common_x.IfThen(cast_x.ToBool(retweet["read"]), "<br/>pass", "")
@@ -501,7 +521,7 @@ func a(jo, retweet bson.M) string {
 	deleteUrl := addDelete(_id)
 	_contentHtml = fmt.Sprintf("%s<br/><br/>%s", _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	user := jo["user"].(bson.M)
+	user := common.DM(jo["user"].(bson.D))
 	userId := cast_x.ToInt64(user["id"])
 	screenName := user["name"]
 	url := fmt.Sprintf("https://weibo.com/%v/%v", userId, jo["mblogid"])
@@ -561,40 +581,6 @@ func aa(text string) string {
 	return fmt.Sprintf(format, r...)
 }
 
-func requestWeibo(url string, queryMap map[string]any, headerMap map[string]string) (gorequest.Response, string, []error) {
-	pUrl, _ := nets_x.UrlAddQuery(url, queryMap)
-	gg := consts.GoRequest.Get(pUrl.String())
-
-	defaultHeader := map[string]string{
-		"User-Agent": consts.UserAgent,
-		"Host":       "weibo.com",
-		"Referer":    "https://weibo.com/mygroups?gid=4670120389774996",
-	}
-	for k, v := range defaultHeader {
-		gg.Set(k, v)
-	}
-	for k, v := range headerMap {
-		gg.Set(k, v)
-	}
-
-	r, body, errs := gg.End()
-	if len(errs) > 0 {
-		log.Errorln("weibo请求异常", url, errs)
-		return nil, "", errs
-	}
-
-	isJson := sonic.ValidString(body)
-	slog.Debug("weibo请求信息", "请求", pUrl, "响应", r.StatusCode, "Json", isJson)
-	// log.Infof("请求: %s 响应: %v Json: %v", pUrl, r.StatusCode, isJson)
-	if !isJson {
-		log.Warnln("weibo->请求结果非json,cookie可能过期", r == nil, body, errs)
-		slog.Warn("weibo->请求结果非json,cookie可能过期", "响应空", r == nil, "响应体", body, "异常", errs, "url", pUrl.String())
-		return nil, "", []error{fmt.Errorf("请求结果非json,cookie可能过期")}
-	}
-
-	return r, body, nil
-}
-
 // 各种图片CDN
 func roundImgCdn(_url string) string {
 	if !config.GetSwitch("weibo.imgCdn") {
@@ -623,7 +609,6 @@ func getGroupMember(groupId int64) []int64 {
 			"list_id": groupId,
 			"page":    c,
 		}
-		_ = consts.RateLimiter.Wait(context.TODO())
 		_, body, _ := requestWeibo("https://weibo.com/ajax/profile/getGroupMembers", m, map[string]string{"Cookie": getCookie()})
 		node := fxjson.FromString(body)
 		nextCursor := node.Get("data.next_cursor").IntOr(0)

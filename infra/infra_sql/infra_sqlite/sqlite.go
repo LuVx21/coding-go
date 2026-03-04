@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	drive = "sqlite"
+	Drive, Drive3 = "sqlite", "sqlite3"
 )
 
 func Load(path string) (*sql.DB, error) {
-	return sql.Open(drive, path)
+	return sql.Open(Drive, path)
 }

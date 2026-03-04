@@ -39,16 +39,16 @@ func DeleteLock() {
 }
 func Delete() {
 	var feeds []map[string]any
-	db.MySQLClient.Table("freshrss.t_admin_feed").
+	db.FreshrssDb.Table("feed").
 		Select("id").
 		Find(&feeds, "url like '%/weibo/rss/%'")
 
 	sql := `
  select guid
- from freshrss.t_admin_entry
+ from entry
  where true
     and guid <= (select guid
-              from freshrss.t_admin_entry
+              from entry
               where true
                 and id_feed = ?
               order by guid desc
@@ -61,7 +61,7 @@ func Delete() {
 `
 	mysqlGuids, guids := make([]string, 0), make([]int64, 0)
 	for _, rss := range feeds {
-		rows, _ := db.MySQLClient.Raw(sql, rss["id"], rss["id"]).Rows()
+		rows, _ := db.FreshrssDb.Raw(sql, rss["id"], rss["id"]).Rows()
 		for rows.Next() {
 			var guid string
 			_ = rows.Scan(&guid)
@@ -83,7 +83,7 @@ func Delete() {
 		}
 	}
 
-	go db.MySQLClient.Table("freshrss.t_admin_entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
+	go db.FreshrssDb.Table("entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
 
 	if len(guids) > 0 {
 		filter = bson.M{"_id": bson.M{"$in": guids}}

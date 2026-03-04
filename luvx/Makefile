@@ -14,8 +14,6 @@ docker_build:
 
 cgo_check:
 	go list -f '{{if .CgoFiles}}{{.ImportPath}}{{end}}' all
-	# go install github.com/visualfc/cgo-check@latest
-	# cgo-check ./...
 
 deploy:
 	cp -r ../luvx_service_sdk .

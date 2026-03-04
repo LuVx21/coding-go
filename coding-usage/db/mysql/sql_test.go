@@ -42,10 +42,8 @@ func beforeAfter(caseName string) func() {
 }
 
 func tidb() *sql.DB {
-	tidbHost := os_x.Getenv("TIDB_HOST")
-	tidbUsername := os_x.Getenv("TIDB_USERNAME")
-	tidbPassword := os_x.Getenv("TIDB_PASSWORD")
-	tidbPort := os_x.Getenv("TIDB_PORT")
+	tidbHost, tidbPort := os_x.Getenv("TIDB_HOST"), os_x.Getenv("TIDB_PORT")
+	tidbUsername, tidbPassword := os_x.Getenv("TIDB_USERNAME"), os_x.Getenv("TIDB_PASSWORD")
 
 	mysql.RegisterTLSConfig("tidb", &tls.Config{
 		MinVersion: tls.VersionTLS12,
@@ -110,7 +108,7 @@ func (Cookie) TableName() string {
 }
 
 func Test_create_table(t *testing.T) {
-	defer beforeAfter("Test_select")()
+	defer beforeAfter("Test_create_table")()
 
 	gormDB, err := gorm.Open(
 		gorm_mysql.New(gorm_mysql.Config{Conn: db}),

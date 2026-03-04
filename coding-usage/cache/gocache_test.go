@@ -76,7 +76,7 @@ func Test_Gocache_Loadable(t *testing.T) {
 
 	loadFunc := func(_ context.Context, key any) ([]byte, []store.Option, error) {
 		fmt.Println("自动加载缓存...", key)
-		return []byte(cast_x.ToString(key) + "-" + times_x.TimeNow()), nil, nil
+		return []byte(cast_x.ToString(key) + "-" + times_x.TimeNowMicrosecond()), nil, nil
 	}
 	loadable := cache.NewLoadable(loadFunc, gocache)
 
