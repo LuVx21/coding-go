@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"luvx/gin/common"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
@@ -35,7 +34,6 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
-	"github.com/luvx21/coding-go/coding-common/ids"
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
@@ -57,9 +55,9 @@ const (
 )
 
 var (
-	fields = []string{"_id", "user", "mblogid", "created_at", "text_raw", "text", "retweeted_status", "pic_ids",
+	fields = []string{"_id", "user", "mblogid", "created_at", "text", "retweeted_status", "pic_ids",
 		"invalid", "read", "extra", "groupId", "mix_media_info",
-		// "page_info",
+		// "text_raw", "page_info",
 	}
 	collection    = mongo_dao.WeiboFeedCol
 	ignoreRssUids = []int64{}
@@ -95,7 +93,6 @@ func PullHotBand() {
 		client := mongo_dao.WeiboHotCol
 		bandList := ff["data"].(map[string]any)["band_list"].([]any)
 		now := times_x.TimeNowDate()
-		worker, _ := ids.NewSnowflakeIdWorker(0, 0)
 		toInsert := make([]any, 0)
 		words := slices_x.Transfer(func(item any) any { return item.(map[string]any)["word"] }, bandList...)
 		rows, _ := mongodb.RowsMap(context.TODO(), client, bson.M{"word": bson.M{"$in": words}})
@@ -110,7 +107,7 @@ func PullHotBand() {
 			word := vv["word"]
 			result := rowsMap[cast_x.ToString(word)]
 			if result != nil {
-				rankMap := common.DM(result["rankMap"].(bson.D))
+				rankMap := mongodb.DM(result["rankMap"].(bson.D))
 				oldRank := maps_x.GetOrDefault(rankMap, now, "99")
 				if cast_x.ToInt(oldRank) > cast_x.ToInt(rank) {
 					rankMap[now] = cast_x.ToString(rank)
@@ -123,7 +120,7 @@ func PullHotBand() {
 			} else {
 				d := bson.M{
 					// "_class":   "org.luvx.boot.tools.dao.mongo.weibo.HotBand",
-					"_id":      worker.NextId(),
+					"_id":      consts.IdWorker.NextId(),
 					"word":     word,
 					"category": vv["category"],
 					"rankMap":  map[string]string{now: cast_x.ToString(rank)},
@@ -301,7 +298,7 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	picUrl := make([]string, 0)
 	i2 := feed["pic_ids"]
 	if i2 != nil {
-		if b, picIds := slices_x.IsEmpty(i2.([]any)); !b {
+		if picIds, b := slices_x.IsNotEmpty(i2.([]any)); b {
 			i := feed["pic_infos"]
 			if i != nil {
 				picInfos := i.(map[string]any)
@@ -399,7 +396,8 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 }
 
 func getCookie() string {
-	return cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
+	m := cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
+	return m[".weibo.com"] + "; " + m["weibo.com"]
 }
 func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.M, options.Lister[options.FindOptions]) {
 	size, ok := args["size"]
@@ -493,7 +491,7 @@ func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day ti
 	var s0 strings.Builder
 	for i := range *cursor {
 		jo := (*cursor)[i]
-		if existedGuids.Contain(cast_x.ToString(jo["_id"])) {
+		if existedGuids.Contains(cast_x.ToString(jo["_id"])) {
 			continue
 		}
 		s0.WriteString(a(jo, rowsMap[cast_x.ToInt64(jo["retweeted_status"])]))
@@ -509,7 +507,7 @@ func a(jo, retweet bson.M) string {
 	if retweet != nil {
 		user, retweetUrl, uName := retweet["user"], "", ""
 		if user != nil {
-			umap := common.DM(user.(bson.D))
+			umap := mongodb.DM(user.(bson.D))
 			uId := cast_x.ToString(umap["id"])
 			retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
 			uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, umap["name"].(string))
@@ -521,7 +519,7 @@ func a(jo, retweet bson.M) string {
 	deleteUrl := addDelete(_id)
 	_contentHtml = fmt.Sprintf("%s<br/><br/>%s", _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	user := common.DM(jo["user"].(bson.D))
+	user := mongodb.DM(jo["user"].(bson.D))
 	userId := cast_x.ToInt64(user["id"])
 	screenName := user["name"]
 	url := fmt.Sprintf("https://weibo.com/%v/%v", userId, jo["mblogid"])

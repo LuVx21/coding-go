@@ -4,5 +4,5 @@ import (
 	"testing"
 )
 
-func Test_sample_00(t *testing.T) {
+func Test_main_00(in *testing.T) {
 }

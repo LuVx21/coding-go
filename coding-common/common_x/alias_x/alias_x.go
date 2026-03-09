@@ -24,8 +24,11 @@ type (
 type JsonObject = MapStr2Any
 type JsonArray = SliceAny
 
-type Row = MapStr2Any
-type Rows = []Row
+type (
+	Row                     = MapStr2Any
+	Rows                    = []Row
+	Table[RowId comparable] = map[RowId]Row
+)
 
 type Seq0 = func(yield func() bool)
 type Comparator[T any] = func(x, y T) int

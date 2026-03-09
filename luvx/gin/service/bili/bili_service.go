@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"luvx/gin/common"
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
@@ -266,30 +265,32 @@ func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
 	slog.Debug("mongo查询", "filter", jsons.ToJsonString(filter))
 	opts := options.Find().SetSort(bson.M{"pubtime": -1}).SetLimit(common_x.IfThen(size > 0, size, 100))
 	result := make([]*rss.RssItem, 0)
-	if ms, err := mongodb.RowsMap(context.Background(), mongoClient, filter, opts); err == nil {
-		for i := range *ms {
-			m := (*ms)[i]
-			_id, upper := cast_x.ToString(m["_id"]), common.DM(m["upper"].(bson.D))
-			img := ""
-			if m["pic"] != nil {
-				img = "<img style=\"margin: 8px 4px;width:300px\" src=\"" + cast_x.ToString(m["pic"]) + "\" referrerpolicy=\"no-referrer\">"
-			}
-			b := "from: " + m["from"].(string) + " | mid: " + cast_x.ToString(upper["mid"]) + " | seasonId: " + cast_x.ToString(upper["seasonId"])
-
-			deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
-			_contentHtml := img + "<br/>" + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
-			_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
-
-			a := &rss.RssItem{
-				Title:       upper["name"].(string) + ": " + m["title"].(string),
-				Description: _contentHtml,
-				PubDate:     time.UnixMilli(cast_x.ToInt64(m["pubtime"])).Format(time.DateTime),
-				Link:        "http://bilibili.com/" + m["bvid"].(string),
-				Guid:        _id,
-				Author:      upper["name"].(string),
-			}
-			result = append(result, a)
+	ms, err := mongodb.RowsMap(context.Background(), mongoClient, filter, opts)
+	if err != nil {
+		return ""
+	}
+	for i := range *ms {
+		m := (*ms)[i]
+		_id, upper := cast_x.ToString(m["_id"]), mongodb.DM(m["upper"].(bson.D))
+		img := ""
+		if m["pic"] != nil {
+			img = "<img style=\"margin: 8px 4px;width:300px\" src=\"" + cast_x.ToString(m["pic"]) + "\" referrerpolicy=\"no-referrer\">"
 		}
+		b := "from: " + m["from"].(string) + " | mid: " + cast_x.ToString(upper["mid"]) + " | seasonId: " + cast_x.ToString(upper["seasonId"])
+
+		deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+		_contentHtml := img + "<br/>" + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
+		_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
+
+		a := &rss.RssItem{
+			Title:       upper["name"].(string) + ": " + m["title"].(string),
+			Description: _contentHtml,
+			PubDate:     time.UnixMilli(cast_x.ToInt64(m["pubtime"])).Format(time.DateTime),
+			Link:        "http://bilibili.com/" + m["bvid"].(string),
+			Guid:        _id,
+			Author:      upper["name"].(string),
+		}
+		result = append(result, a)
 	}
 
 	return rss.ToRssXml(result, "Bilibili")

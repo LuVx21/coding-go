@@ -22,11 +22,11 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260309185002-e1340c8d9644
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/samber/lo v1.53.0

@@ -16,6 +16,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
+	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -27,15 +28,12 @@ const (
 
 func Rss(spiderKey string) string {
 	filter := bson.M{"spiderKey": spiderKey, "invalid": 0}
-	opts := options.Find().SetSort(bson.M{"pubDate": -1, "_id": -1}).SetLimit(100)
-	cursor, _ := mongo_dao.RssFeedCol.Find(context.Background(), filter, opts)
-	defer cursor.Close(context.Background())
+	opts := options.Find().SetSort(bson.D{{Key: "pubDate", Value: -1}, {Key: "_id", Value: -1}}).SetLimit(100)
+	ms, _ := mongodb.RowsMap(context.Background(), mongo_dao.RssFeedCol, filter, opts)
 
 	result := make([]*RssItem, 0)
-	for cursor.Next(context.Background()) {
-		var jo alias_x.JsonObject
-		_ = cursor.Decode(&jo)
-		result = append(result, parse2RssItem(jo))
+	for i := range *ms {
+		result = append(result, parse2RssItem((*ms)[i]))
 	}
 	return ToRssXml(result, spiderKey)
 }

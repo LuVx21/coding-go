@@ -19,6 +19,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
@@ -33,64 +35,56 @@ var (
 func HealthyCheck(c *gin.Context) {
 	args := 1
 
-	f0 := func() model.User {
-		mysql := common_x.RunWithTime("mysql", func() model.User {
+	mysql := func() any {
+		return common_x.RunWithTimeReturn("mysql", func() model.User {
 			var user model.User
-			if err := db.MySQLClient.Where("id = ?", args).First(&user).Error; err != nil {
-				panic(err)
-			}
+			db.MySQLClient.Where("id = ?", args).First(&user)
 			return user
 		})
-		return mysql
 	}
-
-	f1 := func() bson.M {
-		mongo, _ := common_x.RunWithTime2("mongodb", func() (bson.M, error) {
+	mongo := func() any {
+		return common_x.RunWithTimeReturn("mongodb", func() types_x.Pair[bson.M, error] {
 			var result bson.M
 			a := mongo_dao.UserCol.FindOne(context.TODO(), bson.M{"_id": args}).Decode(&result)
-			return result, a
-		})
-		return mongo
+			return types_x.NewPair(result, a)
+		}).K
 	}
-	f2 := func() string {
-		redis, _ := common_x.RunWithTime2("redis", func() (string, error) {
-			return redisClient.Get(context.Background(), "foo").Result()
-		})
-		return redis
+	redis := func() any {
+		return common_x.RunWithTimeReturn("redis", func() types_x.Pair[string, error] {
+			return types_x.NewPair(redisClient.Get(context.Background(), "foo").Result())
+		}).K
 	}
+	sqlite := func() any {
+		return common_x.RunWithTimeReturn("sqlite", func() types_x.Pair[[]map[string]any, error] {
+			return types_x.NewPair(dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args))
+		}).K
+	}
+	cookie := func() any {
+		return common_x.RunWithTimeReturn("cookie", func() alias_x.Table[string] {
+			return cookie.GetCookieFromDb(".weibo.com", "weibo.com")
+		})
+	}
+	turso := func() any {
+		return common_x.RunWithTimeReturn("turso", func() types_x.Pair[[]map[string]any, error] {
+			return types_x.NewPair(dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args))
+		}).K
+	}
+	fs := []func() any{mysql, mongo, redis, sqlite, cookie, turso}
+	rs := make([]any, len(fs))
 
 	wg := sync.WaitGroup{}
-	r0 := make(chan model.User, 1)
-	r1 := make(chan bson.M, 1)
-	r2 := make(chan string, 1)
-	wg.Go(func() { r0 <- f0() })
-	wg.Go(func() { r1 <- f1() })
-	wg.Go(func() { r2 <- f2() })
-
-	sqlite, _ := common_x.RunWithTime2("sqlite", func() ([]map[string]any, error) {
-		return dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args)
-	})
-	cookie := common_x.RunWithTime("cookie", func() map[string]string {
-		return cookie.GetCookieByHost(".weibo.com", "weibo.com")
-	})
-	turso, _ := common_x.RunWithTime2("turso", func() ([]map[string]any, error) {
-		return dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args)
-	})
-
+	for i, f := range fs {
+		wg.Go(func() { rs[i] = f() })
+	}
 	wg.Wait()
-	close(r0)
-	close(r1)
-	close(r2)
-	mysql := <-r0
-	mongo := <-r1
-	redis := <-r2
+
 	responsex.R(c, gin.H{
-		"mysql":  mysql,
-		"mongo":  mongo,
-		"redis":  redis,
-		"sqlite": sqlite,
-		"cookie": cookie,
-		"turso":  turso,
+		"mysql":  rs[0],
+		"mongo":  rs[1],
+		"redis":  rs[2],
+		"sqlite": rs[3],
+		"cookie": rs[4],
+		"turso":  rs[5],
 	})
 }
 
@@ -120,7 +114,7 @@ func Redirect(c *gin.Context) {
 		End()
 	if response != nil {
 		for k, v := range response.Header {
-			if ignoreHeaders.Contain(k) {
+			if ignoreHeaders.Contains(k) {
 				continue
 			}
 			c.Header(k, v[0])
@@ -129,11 +123,11 @@ func Redirect(c *gin.Context) {
 	}
 }
 
-func SyncCookie2Turso(c *gin.Context) {
+func SyncCookie2Yun(c *gin.Context) {
 	_json := make(map[string]any)
 	_ = c.BindJSON(&_json)
 	hosts := slices_x.Transfer(func(a any) string { return a.(string) }, _json["hosts"].([]any)...)
-	cookie.Sync2Turso(hosts...)
+	cookie.Sync2Yun(hosts...)
 	responsex.R(c, hosts)
 }
 

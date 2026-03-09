@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"luvx/gin/common"
 	"luvx/gin/common/consts"
 	"time"
 
 	"github.com/bytedance/sonic"
+	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
 	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/parnurzeal/gorequest"
@@ -31,7 +31,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 		gg.Set(k, v)
 	}
 
-	t, _ := retry.SupplyWithRetry("weibo请求重试", func() common.Tuple[gorequest.Response, string, []error] {
+	t, _ := retry.SupplyWithRetry("weibo请求重试", func() types_x.Tuple[gorequest.Response, string, []error] {
 		consts.GetRateLimiter(url).Wait(context.TODO())
 		r, body, errs := gg.End()
 
@@ -44,12 +44,12 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 		slog.Debug("weibo请求信息", "请求", pUrl, "响应", r.StatusCode, "Json", isJson)
 		if !isJson {
 			msg := "weibo->请求结果非json,cookie可能过期"
-			slog.Warn(msg, "响应空", r == nil, "响应体", body, "异常", errs, "url", pUrl.String())
+			slog.Warn(msg, "响应空", r == nil, "异常", errs, "url", pUrl.String())
 			// panic("fast-fail retry: " + msg)
-			return common.NewTuple[gorequest.Response](nil, "", []error{fmt.Errorf("%s", msg)})
+			return types_x.NewTuple[gorequest.Response](nil, "", []error{fmt.Errorf("%s", msg)})
 		}
 
-		return common.NewTuple(r, body, errs)
+		return types_x.NewTuple(r, body, errs)
 	}, 5, 5*time.Second)
 
 	return t.A, t.B, t.C

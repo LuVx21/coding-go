@@ -21,9 +21,14 @@ func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
 		Set("User-Agent", consts.UserAgent).
 		Set("Referer", "https://www.bilibili.com/")
 	if useCookie {
-		sa = sa.Set("Cookie", cookie.GetCookieStrByHost(".bilibili.com"))
+		sa = sa.Set("Cookie", cookie.GetCookieStrByHost(".bilibili.com")[".bilibili.com"])
 	}
 	r, body, errs := sa.End()
+
+	if len(errs) > 0 || r.StatusCode/100 != 2 {
+		log.Errorln("bili请求异常", _url, errs, r.Status)
+		return ""
+	}
 
 	if !sonic.ValidString(body) {
 		log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)

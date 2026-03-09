@@ -48,7 +48,7 @@ func (param SpiderParam) content(title, _url string) PageContent {
 				pubDate = getValue1(doc.Selection, rule)
 			}
 			contentCategoryRuleList := paramConfig.ContentCategoryRuleList
-			if empty, rules := slices_x.IsEmpty(contentCategoryRuleList); !empty {
+			if rules, empty := slices_x.IsNotEmpty(contentCategoryRuleList); empty {
 				for _, _rule := range rules {
 					afterSelect := getValueListAfterSelect(doc.Selection, _rule)
 					categorySet = append(categorySet, afterSelect...)

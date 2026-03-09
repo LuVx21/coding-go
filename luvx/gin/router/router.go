@@ -49,7 +49,7 @@ func Register0(r *gin.Engine) {
 	app.POST("/runner", controller.CallRunner)
 
 	cookie := r.Group("/cookie")
-	cookie.POST("/syncCookie2Turso", controller.SyncCookie2Turso)
+	cookie.POST("/syncCookie2Yun", controller.SyncCookie2Yun)
 
 	useful := r.Group("/useful")
 	useful.POST("/compare", useful_c.Compare)

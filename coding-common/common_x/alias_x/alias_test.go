@@ -20,3 +20,14 @@ func Test_alias_01(t *testing.T) {
 	m := Map[uint, string]{1: "a", 2: "b"}
 	fmt.Println(m)
 }
+
+func Test_table_01(t *testing.T) {
+	r := make(Table[string], 20)
+	kv, ok := r["a"]
+	if !ok {
+		kv = make(Row)
+		r["a"] = kv
+	}
+	kv["aa"] = "aaa"
+	fmt.Println(r)
+}

@@ -31,6 +31,7 @@ func init() {
 	if err != nil {
 		slog.Error("sqlite-SqliteClient", "err", err.Error())
 	}
+	go configureSQLite(SqliteClient)
 	CookieDb, err = GetDataSource(consts.Home + "/data/sqlite/Cookies")
 	if err != nil {
 		slog.Error("sqlite-cookie", "err", err.Error())

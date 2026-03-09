@@ -2,6 +2,7 @@ package common_x
 
 import (
 	"fmt"
+	"log/slog"
 	"testing"
 	"time"
 )
@@ -20,21 +21,17 @@ func Test_m1(t *testing.T) {
 }
 
 func Test_RunWithTime(t *testing.T) {
-	withTime := RunWithTime("m1", func() string {
-		//time.Sleep(time.Second)
+	slog.SetLogLoggerLevel(slog.LevelDebug)
+	withTime := RunWithTimeReturn("m1", func() string {
+		time.Sleep(time.Second)
 		return "ok"
 	})
 
 	fmt.Println(withTime)
-
-	time2, s := RunWithTime2("m2", func() (string, int) {
-		return "ok", 1
-	})
-	fmt.Println(time2, s)
 }
 
 func Test_01(t *testing.T) {
+	slog.SetLogLoggerLevel(slog.LevelDebug)
 	defer TrackTime1("main", time.Now())
 	defer TrackTime("main1")()
-	time.Sleep(time.Second * 1)
 }

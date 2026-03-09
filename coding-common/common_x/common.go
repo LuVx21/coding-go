@@ -17,10 +17,7 @@ func IfThen[T any](expr bool, a T, b T) T {
 
 // IfThenGet 使用时不简洁
 func IfThenGet[T any](expr bool, a, b func() T) T {
-	if expr {
-		return a()
-	}
-	return b()
+	return IfThen(expr, a, b)()
 }
 
 // RunCatching 捕捉异常,避免异常退出
@@ -36,31 +33,30 @@ func RunCatchingReturn[T any](fn func() T) T {
 		if r := recover(); r != nil {
 			buf := make([]byte, 4096)
 			n := runtime.Stack(buf, false)
-			stackInfo := string(buf[:n])
-			logrus.Errorln("fast-fail", "panic", r, "错误栈信息", stackInfo)
+			logrus.Errorln("fast-fail", "panic", r, "错误栈信息", string(buf[:n]))
 		}
 	}()
 	return fn()
 }
 
-func RunWithTime[R any](name string, f func() R) R {
-	defer TrackTime1(name, time.Now())
-	return f()
+func RunWithTime(name string, f func()) {
+	RunWithTimeReturn(name, func() int {
+		f()
+		return 0
+	})
 }
 
-func RunWithTime2[R1 any, R2 any](name string, f func() (R1, R2)) (R1, R2) {
-	defer TrackTime1(name, time.Now())
+// RunWithTimeReturn 统计函数执行耗时
+func RunWithTimeReturn[R any](name string, f func() R) R {
+	defer TrackTime(name)()
 	return f()
 }
 
 func TrackTime1(name string, start time.Time) {
-	elapsed := time.Since(start)
-	slog.Debug(name, "执行时间", elapsed)
+	slog.Info("耗时统计", "被统计", name, "执行时间", time.Since(start))
 }
 
 func TrackTime(name string) func() {
 	start := time.Now()
-	return func() {
-		slog.Info(name, "执行时间", time.Since(start))
-	}
+	return func() { TrackTime1(name, start) }
 }

@@ -7,6 +7,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspace:cached
+      - $HOME/data:/root/data
       - $HOME/go/pkg/mod:/go/pkg/mod
     networks:
       - net_common

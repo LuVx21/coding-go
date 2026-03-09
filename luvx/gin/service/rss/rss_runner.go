@@ -1,6 +1,8 @@
 package rss
 
 import (
+	"log/slog"
+	"runtime/debug"
 	"time"
 
 	"luvx/gin/db"
@@ -20,5 +22,11 @@ func RunnerRegister() []*service.Runner {
 func reset() {
 	service.RunnerLocker.LockRun("重置rss", time.Minute*3, func() {
 		db.FreshrssDb.Exec("update feed set lastUpdate = lastUpdate-30*60 where url like '%/weibo/rss/%'")
+
+		start := time.Now()
+		// runtime.GC()
+		debug.FreeOSMemory()
+		elapsed := time.Since(start)
+		slog.Debug("GC 完成", "耗时", elapsed)
 	})
 }

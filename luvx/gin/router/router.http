@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://{{host}}/cookie/syncCookie2Turso
+POST http://{{host}}/cookie/syncCookie2Yun
 Content-Type: application/json
 
 {

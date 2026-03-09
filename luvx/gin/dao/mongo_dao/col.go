@@ -4,6 +4,7 @@ import "luvx/gin/db"
 
 var (
 	ConfigCol    = db.GetMainCollection("config")
+	CookieCol    = db.GetMainCollection("cookie")
 	UserCol      = db.GetMainCollection("user")
 	WeiboFeedCol = db.GetMainCollection("weibo_feed")
 	WeiboHotCol  = db.GetMainCollection("weibo_hot_band")

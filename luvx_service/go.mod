@@ -7,11 +7,11 @@ replace luvx_service_sdk => ../luvx_service_sdk
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/klauspost/compress v1.18.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260304075050-caebee9b23e0
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260304075050-caebee9b23e0
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260309185002-e1340c8d9644
 	go.etcd.io/etcd/client/v3 v3.6.8
-	google.golang.org/grpc v1.79.1
+	google.golang.org/grpc v1.79.2
 	google.golang.org/protobuf v1.36.11
 	luvx_service_sdk v0.0.0-00010101000000-000000000000
 )
@@ -36,6 +36,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
+	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
@@ -59,10 +60,9 @@ require (
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
 	golang.org/x/net v0.51.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 )
