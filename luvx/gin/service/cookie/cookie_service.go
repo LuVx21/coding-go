@@ -110,7 +110,7 @@ func readDb(hosts ...string) (alias_x.Rows, error) {
 	if len(hosts) == 0 {
 		return alias_x.Rows{}, nil
 	}
-	if redis_dao.GetSwitch("remote_cookie") {
+	if redis_dao.GetSwitch(redis_dao.R_K_REMOTE_COOKIE) {
 		datas, err := mongodb.RowsMap(context.TODO(), mongo_dao.CookieCol, bson.M{"host_key": bson.M{"$in": hosts}})
 		return slices_x.Transfer(func(m bson.M) alias_x.Row { return alias_x.Row(m) }, *datas...), err
 	}

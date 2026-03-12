@@ -1,0 +1,8 @@
+.devcontainer/
+.git/
+.vscode/
+*.log
+tmp/
+vendor/  # 如果你不使用 vendor
+go.sum   # 已单独处理
+go.mod   # 已单独处理

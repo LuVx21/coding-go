@@ -1,11 +1,18 @@
 package db
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
+	"log/slog"
+	"path/filepath"
+
+	"luvx/gin/common/consts"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	turso "turso.tech/database/tursogo"
+
 	"luvx/gin/config"
-	"luvx/gin/db/turso/remote"
 )
 
 var Turso *sql.DB
@@ -15,5 +22,25 @@ func init() {
 
 	c := config.AppConfig.Turso
 	// Turso = embedded.Embedded(c.Dbname, c.Token)
-	Turso = remote.Remote(c.Dbname, c.Token)
+	// Turso = remote.Remote(c.Dbname, c.Token)
+
+	funcName(c)
+}
+
+func funcName(c config.Turso) {
+	db, err := turso.NewTursoSyncDb(context.TODO(), turso.TursoSyncDbConfig{
+		Path:      filepath.Join(consts.Home+"/data/sqlite/turso", c.Dbname, "sqlite.db"),
+		RemoteUrl: fmt.Sprintf("https://%s.%s.turso.io", c.Dbname, "aws-ap-northeast-1"),
+		AuthToken: c.Token,
+	})
+	if err != nil {
+		slog.Error("turso", "err", err.Error())
+		return
+	}
+
+	Turso, err = db.Connect(context.TODO())
+	if err != nil {
+		slog.Error("turso db", "err", err.Error())
+		return
+	}
 }

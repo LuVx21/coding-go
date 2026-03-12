@@ -1,4 +1,4 @@
-module luvx_service_sdk
+module github.com/luvx21/coding-go/luvx_service_sdk
 
 go 1.26
 

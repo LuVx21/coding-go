@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	kv "luvx_service_sdk/proto_gen/proto_kv"
+	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"testing"
 
 	"github.com/luvx21/coding-go/coding-common/sets"

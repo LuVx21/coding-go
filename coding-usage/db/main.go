@@ -1,7 +1,7 @@
 package db
 
 var (
-	Token = ""
+	Db, Region, Token = "", "", ""
 
 	MysqlHost     = ""
 	MysqlPort     = 3306

@@ -2,6 +2,7 @@ package weibo_p
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"luvx/gin/dao/redis_dao"
@@ -56,12 +57,16 @@ func Delete() {
    and id_feed = ?
    and is_read = 1
    and is_favorite = 0
- order by guid
+-- order by guid
  limit 100
 `
 	mysqlGuids, guids := make([]string, 0), make([]int64, 0)
 	for _, rss := range feeds {
-		rows, _ := db.FreshrssDb.Raw(sql, rss["id"], rss["id"]).Rows()
+		rows, err := db.FreshrssDb.Raw(sql, rss["id"], rss["id"]).Rows()
+		if err != nil {
+			slog.Error("查询freshrss db错误", "err", err.Error())
+			continue
+		}
 		for rows.Next() {
 			var guid string
 			_ = rows.Scan(&guid)

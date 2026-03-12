@@ -16,8 +16,8 @@ cgo_check:
 	go list -f '{{if .CgoFiles}}{{.ImportPath}}{{end}}' all
 
 deploy:
-	cp -r ../luvx_service_sdk .
+# 	cp -r ../luvx_service_sdk .
 	sed -i '' 's|=> \.\./|=> ./|g' go.mod
 	docker compose up --build -d --scale app=1
-	rm -fr luvx_service_sdk
+# 	rm -fr luvx_service_sdk
 	sed -i '' 's|=> ./|=> \.\./|g' go.mod

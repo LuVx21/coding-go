@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	kv "luvx_service_sdk/proto_gen/proto_kv"
+	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"math/rand"
 	"testing"
 	"time"

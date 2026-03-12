@@ -13,6 +13,7 @@ services:
       - "58090:8090"
     volumes:
       - $HOME/data:/root/data
+      - $HOME/.kv:/root/.kv
       - ./config/config-dev.yml:/app/config/config-dev.yml
     environment:
       TZ: Asia/Shanghai

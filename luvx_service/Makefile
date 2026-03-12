@@ -12,10 +12,10 @@ clean:
 	rm -f $(app)
 
 deploy:
-	cp -r ../luvx_service_sdk . && cd luvx_service_sdk && make clean gen && cd ..
+# 	cp -r ../luvx_service_sdk . && cd luvx_service_sdk && make clean gen && cd ..
 	cp ../luvx/Dockerfile .
 	sed -i '' 's|=> \.\./|=> ./|g' go.mod
 	docker compose -p luvx up --build -d
 	sed -i '' 's|=> ./|=> \.\./|g' go.mod
-	rm -fr luvx_service_sdk
+# 	rm -fr luvx_service_sdk
 	rm -fr Dockerfile

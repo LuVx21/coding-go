@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"luvx_service_sdk/proto_gen/proto_kv"
+	"github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"math"
 	"math/rand"
 	"net/url"

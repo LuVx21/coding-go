@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"slices"
 
-	"luvx_service_sdk/proto_gen/proto_kv"
+	"github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"

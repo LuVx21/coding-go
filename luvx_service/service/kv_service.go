@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	kv "luvx_service_sdk/proto_gen/proto_kv"
+	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 
 	"github.com/dgraph-io/badger/v4"
 	"github.com/dgraph-io/badger/v4/options"

@@ -11,11 +11,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260312132928-59f5d9910dba
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.18.0

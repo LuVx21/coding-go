@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260312132928-59f5d9910dba
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/viper v1.21.0
@@ -31,8 +31,8 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/term v0.40.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/term v0.41.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
 )

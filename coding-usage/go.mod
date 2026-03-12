@@ -66,10 +66,10 @@ require (
 	github.com/lmittmann/tint v1.1.3
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260309185002-e1340c8d9644
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260309185002-e1340c8d9644
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260312132928-59f5d9910dba
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.34
 	github.com/olekukonko/tablewriter v1.1.3
@@ -103,7 +103,7 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.21
 	go.mongodb.org/mongo-driver/v2 v2.5.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.19.0
+	golang.org/x/sync v0.20.0
 	golang.org/x/time v0.14.0
 	google.golang.org/grpc v1.71.1
 	google.golang.org/protobuf v1.36.11
@@ -111,6 +111,7 @@ require (
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.1
 	resty.dev/v3 v3.0.0-beta.6
+	turso.tech/database/tursogo v0.5.1
 )
 
 require (
@@ -185,6 +186,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
+	github.com/ebitengine/purego v0.9.1 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.8.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
@@ -319,6 +321,7 @@ require (
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
+	github.com/tursodatabase/turso-go-platform-libs v0.5.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/uber/jaeger-client-go v2.29.1+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
@@ -352,15 +355,15 @@ require (
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.24.0 // indirect
-	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
 	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260209163413-e7419c687ee4 // indirect
-	golang.org/x/term v0.40.0 // indirect
-	golang.org/x/text v0.34.0 // indirect
+	golang.org/x/term v0.41.0 // indirect
+	golang.org/x/text v0.35.0 // indirect
 	golang.org/x/tools v0.42.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/appengine v1.6.8 // indirect

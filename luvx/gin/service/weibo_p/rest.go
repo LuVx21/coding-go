@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"luvx/gin/common/consts"
 	"time"
+
+	"luvx/gin/common/consts"
 
 	"github.com/bytedance/sonic"
 	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
+	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/luvx21/coding-go/coding-common/retry"
 	"github.com/parnurzeal/gorequest"
 	log "github.com/sirupsen/logrus"
@@ -45,6 +47,8 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 		if !isJson {
 			msg := "weibo->请求结果非json,cookie可能过期"
 			slog.Warn(msg, "响应空", r == nil, "异常", errs, "url", pUrl.String())
+			os_x.Command("kv", "set", "weibo_cookie", "1")
+			// redis_dao.SetSwitch("remote_cookie", true)
 			// panic("fast-fail retry: " + msg)
 			return types_x.NewTuple[gorequest.Response](nil, "", []error{fmt.Errorf("%s", msg)})
 		}

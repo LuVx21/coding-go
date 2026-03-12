@@ -66,6 +66,7 @@ func configureSQLite(db *sql.DB) {
 		"PRAGMA foreign_keys = ON",     // 启用外键
 		"PRAGMA cache_size = -2000",    // 2MB缓存
 		"PRAGMA mmap_size = 268435456", // 256MB内存映射
+		"PRAGMA wal_autocheckpoint = 800", // 当 WAL 文件达到约 1000 页时自动触发检查点
 	}
 
 	for _, pragma := range pragmas {
