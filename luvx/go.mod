@@ -22,11 +22,12 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260312132928-59f5d9910dba
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260312132928-59f5d9910dba
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260312132928-59f5d9910dba
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260312132928-59f5d9910dba
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260312132928-59f5d9910dba
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260315044215-f83756b616a6
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/samber/lo v1.53.0
@@ -44,7 +45,6 @@ require (
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.31.1
 	gorm.io/plugin/dbresolver v1.6.2
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260312132928-59f5d9910dba
 	modernc.org/sqlite v1.46.1
 	turso.tech/database/tursogo v0.5.1
 )

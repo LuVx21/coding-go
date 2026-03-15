@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
-	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"math/rand"
 	"testing"
 	"time"
+
+	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 
 	"github.com/luvx21/coding-go/coding-common/test"
 	"github.com/luvx21/coding-go/infra/infra_kv/etcds"

@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/valyala/fasthttp"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/valyala/fasthttp"
 )
 
 func main() {

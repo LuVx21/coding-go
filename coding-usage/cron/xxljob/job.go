@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/xxl-job/xxl-job-executor-go"
 	"time"
+
+	"github.com/xxl-job/xxl-job-executor-go"
 )
 
 func TestJob1(ctx context.Context, param *xxl.RunReq) (msg string) {

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/luvx21/coding-go/coding-common/fmt_x"
-	"github.com/yanyiwu/gojieba"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/luvx21/coding-go/coding-common/fmt_x"
+	"github.com/yanyiwu/gojieba"
 )
 
 func Test_jieba_00(t *testing.T) {

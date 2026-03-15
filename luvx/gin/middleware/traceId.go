@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"luvx/gin/common/consts"
+
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/consts_x"
-	"luvx/gin/common/consts"
 )
 
 func traceId(ctx *gin.Context) {

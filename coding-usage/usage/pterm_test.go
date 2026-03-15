@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/pterm/pterm"
 	"testing"
 	"time"
+
+	"github.com/pterm/pterm"
 )
 
 func Test_pterm_00(t *testing.T) {

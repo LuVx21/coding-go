@@ -1,10 +1,11 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"luvx/gin/common/errorx"
 	"luvx/gin/common/responsex"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Login struct {

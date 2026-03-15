@@ -3,10 +3,11 @@ package rueidis
 import (
 	"context"
 	"fmt"
-	"github.com/luvx21/coding-go/coding-usage/nosql"
-	"github.com/redis/rueidis"
 	"log"
 	"testing"
+
+	"github.com/luvx21/coding-go/coding-usage/nosql"
+	"github.com/redis/rueidis"
 )
 
 var rdb rueidis.Client

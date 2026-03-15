@@ -123,7 +123,7 @@ func PullSeasonList(seasonId int64) {
 			return
 		}
 
-		media["invalid"] = 0
+		media["invalid"], media["is_charging_arc"] = 0, false
 		maps_x.ComputeIfPresent(media, "pubtime", func(k string, v any) any {
 			return time.Unix(cast_x.ToInt64(v), 0)
 		})
@@ -151,11 +151,6 @@ func requestSeasonVideo(seasonId int64, cursor int, limit int) []any {
 
 	ff := make(map[string]any)
 	_ = sonic.UnmarshalString(_json, &ff)
-
-	if cast_x.ToInt32(ff["code"]) != 0 || ff["data"] == nil {
-		log.Warnln("bili->请求结果非json,cookie可能过期")
-		return make([]any, 0)
-	}
 
 	medias := ff["data"].(map[string]any)["medias"].([]any)
 	return medias
@@ -228,6 +223,9 @@ func PullUpVideo(mid int64) []string {
 		}
 
 		video["from"], video["invalid"], video["pubtime"] = "go-up", 0, time.Unix(cast_x.ToInt64(video["created"]), 0)
+		if cast_x.ToBool(video["is_charging_arc"]) {
+			video["invalid"] = 2
+		}
 		upper := map[string]any{
 			"mid":  cast_x.ToInt64(video["mid"]),
 			"name": video["author"],

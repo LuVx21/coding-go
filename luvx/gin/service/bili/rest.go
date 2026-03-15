@@ -25,15 +25,17 @@ func biliRequest(_url string, queryMap map[string]any, useCookie bool) string {
 	}
 	r, body, errs := sa.End()
 
-	if len(errs) > 0 || r.StatusCode/100 != 2 {
-		log.Errorln("bili请求异常", _url, errs, r.Status)
+	if len(errs) > 0 || r.StatusCode/100 != 2 || !sonic.ValidString(body) {
+		log.Errorln("bili请求异常", _url, errs, r.Status, body)
 		return ""
 	}
 
-	if !sonic.ValidString(body) {
-		log.Warnln("bili->请求结果非json,cookie可能过期", r == nil, body, errs)
-		return ""
-	}
+	// ff := make(map[string]any)
+	// _ = sonic.UnmarshalString(body, &ff)
+	// if cast_x.ToInt32(ff["code"]) != 0 || ff["data"] == nil {
+	// 	log.Errorln("bili->请求结果码非0", _url, errs, r.Status, body)
+	// 	return ""
+	// }
 
 	return body
 }

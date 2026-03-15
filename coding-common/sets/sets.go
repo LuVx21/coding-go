@@ -29,7 +29,7 @@ func (s *Set[E]) Remove(e ...E) {
 	}
 }
 
-func (s *Set[E]) Clear(e ...E) {
+func (s *Set[E]) Clear() {
 	for k := range *s {
 		delete(*s, k)
 	}
@@ -40,8 +40,8 @@ func (s *Set[E]) Contains(e E) bool {
 	return exist
 }
 
-func (s *Set[E]) ToSlice(e E) []E {
-	r := make([]E, s.Len())
+func (s *Set[E]) ToSlice() []E {
+	r := make([]E, 0, s.Len())
 	for k := range *s {
 		r = append(r, k)
 	}

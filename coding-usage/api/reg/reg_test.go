@@ -1,10 +1,11 @@
 package reg
 
 import (
-	"github.com/luvx21/coding-go/coding-common/fmt_x"
-	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"regexp"
 	"testing"
+
+	"github.com/luvx21/coding-go/coding-common/fmt_x"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
 func Test_00(t *testing.T) {

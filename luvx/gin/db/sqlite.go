@@ -60,12 +60,12 @@ func configureSQLite(db *sql.DB) {
 
 	// 执行PRAGMA配置
 	pragmas := []string{
-		"PRAGMA journal_mode = WAL",    // 启用WAL模式，支持读写并发
-		"PRAGMA synchronous = NORMAL",  // 平衡性能与安全
-		"PRAGMA busy_timeout = 5000",   // 5秒锁定超时
-		"PRAGMA foreign_keys = ON",     // 启用外键
-		"PRAGMA cache_size = -2000",    // 2MB缓存
-		"PRAGMA mmap_size = 268435456", // 256MB内存映射
+		"PRAGMA journal_mode = WAL",       // 启用WAL模式，支持读写并发
+		"PRAGMA synchronous = NORMAL",     // 平衡性能与安全
+		"PRAGMA busy_timeout = 5000",      // 5秒锁定超时
+		"PRAGMA foreign_keys = ON",        // 启用外键
+		"PRAGMA cache_size = -2000",       // 2MB缓存
+		"PRAGMA mmap_size = 268435456",    // 256MB内存映射
 		"PRAGMA wal_autocheckpoint = 800", // 当 WAL 文件达到约 1000 页时自动触发检查点
 	}
 

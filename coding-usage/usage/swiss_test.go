@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/dolthub/swiss"
 	"testing"
+
+	"github.com/dolthub/swiss"
 )
 
 func Test_swiss_00(t *testing.T) {

@@ -6,12 +6,12 @@ import (
 	"log"
 	"log/slog"
 	"luvx_service/service"
-	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"net"
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/infra/infra_kv/etcds"
+	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"google.golang.org/grpc"
 )
 

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/luvx21/coding-go/coding-usage/rpc/native/service"
 	"net"
 	"net/rpc"
+
+	"github.com/luvx21/coding-go/coding-usage/rpc/native/service"
 )
 
 type Hello struct{}

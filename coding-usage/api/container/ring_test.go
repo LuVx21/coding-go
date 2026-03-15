@@ -3,8 +3,9 @@ package container
 import (
 	"container/ring"
 	"fmt"
-	ringx "github.com/smallnest/exp/container/ring"
 	"testing"
+
+	ringx "github.com/smallnest/exp/container/ring"
 )
 
 func Test_ring_00(t *testing.T) {

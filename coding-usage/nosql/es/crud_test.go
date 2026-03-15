@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/cch123/elasticsql"
 	"testing"
+
+	"github.com/cch123/elasticsql"
 )
 
 var client = NewEsClient()

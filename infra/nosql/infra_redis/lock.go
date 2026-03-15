@@ -1,4 +1,4 @@
-package redis
+package infra_redis
 
 import (
 	"context"
@@ -18,8 +18,8 @@ func NewLocker[T any](c *redis.Client) *Locker[T] {
 }
 
 func (l *Locker[T]) TryLock(key T, exp time.Duration) bool {
-	r := l.Client.SetNX(context.TODO(), cast_x.ToString(key), 1, exp)
-	return r.Val()
+	r := l.Client.Set(context.TODO(), cast_x.ToString(key), 1, exp)
+	return r.Err() == nil
 }
 func (l *Locker[T]) Unlock(key T) bool {
 	r := l.Client.Del(context.TODO(), cast_x.ToString(key))

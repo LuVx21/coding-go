@@ -27,8 +27,8 @@ var (
 )
 
 const (
-	redis_key_last_sync_time = "app:rss:%s:last_sync_time"
 	redis_key_time           = "app:rss"
+	redis_key_last_sync_time = redis_key_time + ":%s:last_sync_time"
 )
 
 func a() {
@@ -44,12 +44,12 @@ func a() {
 			func() []string { return strings.Split(keys, ",") },
 		)
 		keySli = slices_x.FlatMap(keySli, func(s string) []string { return brace.Expand(s) })
-		lastSyncTimeStr, err := db.RedisClient.Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Result()
+		lastSyncTimeStr := db.RedisClient.Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Val()
 		lastSyncTime := time.Now().Add(time.Hour * 24 * -3)
-		if err == nil {
-			lastSyncTime, _ = time.Parse(time.DateTime, lastSyncTimeStr)
+		if lastSyncTimeStr == "" {
+			slog.Warn("rss pull读取无值", "cate", cate)
 		} else {
-			slog.Warn("redis读取错误", "err", err)
+			lastSyncTime, _ = time.Parse(time.DateTime, lastSyncTimeStr)
 		}
 		values := make([]any, 0)
 		for _, key := range keySli {
@@ -93,6 +93,8 @@ func a() {
 					"content": {Value: strings.Join(maps.Keys(mm), "\n")},
 				},
 			)
+			db.RedisClient.Del(context.Background(), redis_key_time+":"+cate)
+			db.RedisClient.Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
 		}
 	}
 }

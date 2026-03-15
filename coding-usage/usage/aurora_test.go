@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	. "github.com/logrusorgru/aurora"
 	"testing"
+
+	. "github.com/logrusorgru/aurora"
 )
 
 func Test_aurora_00(t *testing.T) {

@@ -3,9 +3,10 @@ package logs
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"path"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (

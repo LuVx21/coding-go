@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
+	"sync/atomic"
+
 	"github.com/sourcegraph/conc"
 	"github.com/sourcegraph/conc/panics"
 	"github.com/sourcegraph/conc/pool"
-	"sort"
-	"sync/atomic"
 )
 
 func main() {

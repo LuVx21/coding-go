@@ -1,8 +1,9 @@
 package exp
 
 import (
-	"github.com/puzpuzpuz/xsync/v3"
 	"testing"
+
+	"github.com/puzpuzpuz/xsync/v3"
 )
 
 func Test_map_00(t *testing.T) {

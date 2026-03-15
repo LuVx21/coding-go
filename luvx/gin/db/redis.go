@@ -1,9 +1,10 @@
 package db
 
 import (
+	"luvx/gin/config"
+
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/redis/go-redis/v9"
-	"luvx/gin/config"
 )
 
 func NewRedisClient() *redis.Client {

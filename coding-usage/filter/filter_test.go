@@ -2,9 +2,10 @@ package filter
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/bits-and-blooms/bloom/v3"
 	"github.com/linvon/cuckoo-filter"
-	"testing"
 )
 
 func Test_00(t *testing.T) {

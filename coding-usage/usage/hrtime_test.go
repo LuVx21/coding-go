@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/loov/hrtime"
 	"testing"
 	"time"
+
+	"github.com/loov/hrtime"
 )
 
 func Test_hrtime_00(t *testing.T) {

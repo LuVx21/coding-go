@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/IBM/sarama" // // "github.com/segmentio/kafka-go"
 	"log"
+
+	"github.com/IBM/sarama" // // "github.com/segmentio/kafka-go"
 )
 
 const (

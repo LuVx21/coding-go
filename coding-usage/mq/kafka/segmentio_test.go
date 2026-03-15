@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/segmentio/kafka-go"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/segmentio/kafka-go"
 )
 
 func Test01(t *testing.T) {

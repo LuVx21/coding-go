@@ -3,8 +3,9 @@ package cmap
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/luvx21/coding-go/coding-common/hash_x/fnv_x"
 	"sync"
+
+	"github.com/luvx21/coding-go/coding-common/hash_x/fnv_x"
 )
 
 var ShardCount = 32

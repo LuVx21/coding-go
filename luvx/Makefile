@@ -2,6 +2,7 @@ SERVICE_NAME=luvx/go_app
 SERVICE_VERSION=latest
 
 gotool:
+	goimports -w .
 	go fmt ./
 	go vet ./
 	go fix ./...
@@ -17,7 +18,7 @@ cgo_check:
 
 deploy:
 # 	cp -r ../luvx_service_sdk .
-	sed -i '' 's|=> \.\./|=> ./|g' go.mod
+# 	sed -i '' 's|=> \.\./|=> ./|g' go.mod
 	docker compose up --build -d --scale app=1
 # 	rm -fr luvx_service_sdk
-	sed -i '' 's|=> ./|=> \.\./|g' go.mod
+# 	sed -i '' 's|=> ./|=> \.\./|g' go.mod

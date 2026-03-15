@@ -21,6 +21,10 @@ func InsertMany(ctx context.Context, col *mongo.Collection, documents []any, opt
 
 func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...options.Lister[options.FindOptions]) (*[]bson.M, error) {
 	cur, err := col.Find(ctx, filter, opts...)
+	if err != nil {
+		slog.Warn("mongo查询错误", "err", err.Error())
+		return nil, err
+	}
 	defer func(cur *mongo.Cursor, ctx context.Context) {
 		err := cur.Close(ctx)
 		if err != nil {
@@ -28,9 +32,6 @@ func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...opt
 		}
 	}(cur, ctx)
 
-	if err != nil {
-		return nil, err
-	}
 	var results []bson.M
 	err = cur.All(ctx, &results)
 	if err != nil {

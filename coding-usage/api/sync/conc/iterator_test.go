@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/sourcegraph/conc/iter"
-	"github.com/sourcegraph/conc/stream"
 	"testing"
 	"time"
+
+	"github.com/sourcegraph/conc/iter"
+	"github.com/sourcegraph/conc/stream"
 )
 
 func Test_iterator(t *testing.T) {

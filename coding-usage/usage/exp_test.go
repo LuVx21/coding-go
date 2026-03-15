@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	setx "github.com/smallnest/exp/container/set"
 	"testing"
+
+	setx "github.com/smallnest/exp/container/set"
 )
 
 func Test_set_01(t *testing.T) {

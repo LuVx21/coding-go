@@ -23,12 +23,7 @@ func RunnerRegister() []*service.Runner {
 		return make([]*service.Runner, 0)
 	}
 	return []*service.Runner{
-		// {Name: "拉取微博热搜", Crontab: "0 7/10 * * * *", Fn: func() {
-		// 	common_x.RunCatching(func() {
-		// 		service.RunnerLocker.LockRun("拉取微博热搜", time.Minute*10, PullHotBand)
-		// 	})
-		// }},
-		service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
+		// service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
 		{Name: "拉取分组微博-日", Crontab: "0 4/4 7-23 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
 		{Name: "拉取分组微博-夜", Crontab: "0 4/20 0-6 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
 		{Name: "删除weibo已读", Crontab: "0 1/2 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},

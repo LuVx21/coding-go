@@ -7,7 +7,7 @@ WORKDIR /build
 
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct CGO_ENABLED=0 GOOS=linux
 RUN go install -ldflags="-w -s" github.com/luvx21/coding-go/cmd/kv@latest && upx -9 /go/bin/kv
-COPY go.mod go.sum .
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .

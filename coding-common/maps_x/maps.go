@@ -217,3 +217,13 @@ func MapEntries[M ~map[K1]V1, K1, K2 comparable, V1, V2 any](m M, f func(K1, V1)
 	}
 	return result
 }
+
+func GetByKeys[M ~map[K]V, K comparable, V any](m M, ks ...K) map[K]V {
+	result := make(map[K]V, len(ks))
+	for _, k := range ks {
+		if v, ok := m[k]; ok {
+			result[k] = v
+		}
+	}
+	return result
+}

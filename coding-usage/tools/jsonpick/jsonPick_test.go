@@ -5,8 +5,9 @@ https://www.codeleading.com/article/17814079501/
 */
 import (
 	"fmt"
-	"github.com/thedevsaddam/gojsonq/v2"
 	"os"
+
+	"github.com/thedevsaddam/gojsonq/v2"
 
 	"testing"
 )

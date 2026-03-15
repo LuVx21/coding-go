@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/luvx21/coding-go/coding-usage/rpc/native/service"
 	"net/rpc"
+
+	"github.com/luvx21/coding-go/coding-usage/rpc/native/service"
 )
 
 func main() {

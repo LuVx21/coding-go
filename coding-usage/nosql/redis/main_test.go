@@ -30,7 +30,7 @@ func Test_00(t *testing.T) {
 	r := rdb.Del(context.TODO(), "lock_"+"01")
 	fmt.Println(r.Result())
 
-	b := rdb.SetNX(context.TODO(), "lock_"+"01", 1, time.Second*60)
+	b := rdb.Set(context.TODO(), "lock_"+"01", 1, time.Second*60)
 	fmt.Println(b.Result())
 }
 

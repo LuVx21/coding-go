@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/bits-and-blooms/bloom/v3"
 	"testing"
+
+	"github.com/bits-and-blooms/bloom/v3"
 )
 
 func Test_bloom_00(t *testing.T) {
