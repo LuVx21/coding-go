@@ -80,7 +80,8 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 		return false
 	}
 	// 检查锁是否已过期
-	if time.Now().UnixMilli() < expAt && existingOwner != l.ownerID {
+	// 不判断owner
+	if time.Now().UnixMilli() < expAt {
 		slog.Debug("现有锁未过期", "expAt", expAt, "持锁ownerID", existingOwner)
 		return false
 	}

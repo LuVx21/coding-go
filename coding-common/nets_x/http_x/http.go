@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	User_Agent = "User-Agent"
-	Accept     = "Accept"
+	User_Agent              = "User-Agent"
+	Accept, Cookie, Referer = "Accept", "Cookie", "Referer"
 )
 
 func HttpClient() *http.Client {

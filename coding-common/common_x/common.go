@@ -53,7 +53,7 @@ func RunWithTimeReturn[R any](name string, f func() R) R {
 }
 
 func TrackTime1(name string, start time.Time) {
-	slog.Info("耗时统计", "被统计", name, "执行时间", time.Since(start))
+	slog.Info("耗时统计", "统计项", name, "执行时间", time.Since(start))
 }
 
 func TrackTime(name string) func() {

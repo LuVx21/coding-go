@@ -28,6 +28,7 @@ require (
 	github.com/deckarep/golang-set/v2 v2.8.0
 	github.com/dgraph-io/ristretto/v2 v2.4.0
 	github.com/dolthub/swiss v0.2.1
+	github.com/ebitengine/purego v0.9.1
 	github.com/eko/gocache/lib/v4 v4.2.3
 	github.com/eko/gocache/store/bigcache/v4 v4.2.4
 	github.com/eko/gocache/store/redis/v4 v4.2.6
@@ -57,7 +58,7 @@ require (
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/json-iterator/go v1.1.12
-	github.com/klauspost/compress v1.18.4
+	github.com/klauspost/compress v1.18.5
 	github.com/labstack/echo/v4 v4.15.1
 	github.com/levigross/grequests v0.0.0-20250606031859-3f3c12e4e704
 	github.com/lib/pq v1.10.9
@@ -65,11 +66,12 @@ require (
 	github.com/linxGnu/grocksdb v1.10.7
 	github.com/lmittmann/tint v1.1.3
 	github.com/logrusorgru/aurora v2.0.3+incompatible
+	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260315044215-f83756b616a6
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260315044215-f83756b616a6
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260315044215-f83756b616a6
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260323143924-babc37508603
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.34
 	github.com/olekukonko/tablewriter v1.1.3
@@ -186,7 +188,6 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/ebitengine/purego v0.9.1 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.8.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
@@ -253,6 +254,8 @@ require (
 	github.com/lestrrat-go/strftime v1.1.1 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect
+	github.com/liuzl/cedar-go v0.0.0-20170805034717-80a9c64b256d // indirect
+	github.com/liuzl/da v0.0.0-20180704015230-14771aad5b1d // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6 // indirect
@@ -360,7 +363,7 @@ require (
 	golang.org/x/mod v0.33.0 // indirect
 	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/telemetry v0.0.0-20260209163413-e7419c687ee4 // indirect
 	golang.org/x/term v0.41.0 // indirect
 	golang.org/x/text v0.35.0 // indirect

@@ -13,13 +13,14 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/exp/maps"
+
 	"github.com/antchfx/xmlquery"
 	"github.com/luvx21/coding-go/coding-common/brace"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/exp/maps"
 )
 
 var (
@@ -82,9 +83,7 @@ func a() {
 		if len(values) == 0 {
 			return
 		}
-
-		db.RedisClient.HMSet(context.Background(), redis_key_time+":"+cate, values...)
-		mm := db.RedisClient.HGetAll(context.Background(), redis_key_time+":"+cate).Val()
+		mm := slices_x.ToMap(values, func(_ int, a any) string { return a.(string) }, func(_ int, a any) string { return a.(string) })
 		if len(mm) > 0 {
 			log.Infoln("有新版的组件", strings.Join(maps.Keys(mm), ","))
 			webhook.SendMessage(webhook.TO_USER, mongo_dao.DynamicConfig.Get()["template_id_2"].(string),
@@ -93,14 +92,17 @@ func a() {
 					"content": {Value: strings.Join(maps.Keys(mm), "\n")},
 				},
 			)
-			db.RedisClient.Del(context.Background(), redis_key_time+":"+cate)
-			db.RedisClient.Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
 		}
+		db.RedisClient.Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
+		db.RedisClient.HMSet(context.Background(), redis_key_time+":"+cate, values...)
 	}
 }
 
 func parseRemoteUrl(_url string) []string {
-	_, body, _ := consts.GoRequest.Get(_url).End()
+	_, body, errs := consts.GoRequest.Get(_url).End()
+	if len(errs) > 0 {
+		return nil
+	}
 	return strings.Split(body, "\n")[3:]
 }
 

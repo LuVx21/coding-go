@@ -6,7 +6,7 @@ require (
 	github.com/blockloop/scan v1.3.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260315044215-f83756b616a6
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
 	github.com/parnurzeal/gorequest v0.3.0
 	modernc.org/sqlite v1.46.1
 )
@@ -31,7 +31,7 @@ require (
 	github.com/smartystreets/goconvey v1.8.1 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
 	golang.org/x/net v0.51.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	modernc.org/libc v1.67.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect

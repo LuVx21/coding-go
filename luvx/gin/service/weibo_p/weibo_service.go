@@ -56,8 +56,8 @@ const (
 
 var (
 	fields = []string{"_id", "user", "mblogid", "created_at", "text", "retweeted_status", "pic_ids",
-		"invalid", "read", "extra", "groupId", "mix_media_info",
-		// "text_raw", "page_info",
+		"invalid", "read", "extra", "groupId",
+		// "mix_media_info", "text_raw", "page_info",
 	}
 	collection    = mongo_dao.WeiboFeedCol
 	ignoreRssUids = []int64{}
@@ -384,14 +384,20 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 		"fast_refresh": 1,
 		"count":        25,
 	}
-	_, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
-	if len(errors) > 0 {
-		return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
+	var list []any
+	var maxId int64 = 0
+	for list == nil {
+		r, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
+		if len(errors) > 0 {
+			return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
+		}
+		ff, _ := jsons.JsonStringToMap[string, any, bson.M](body)
+		if ff["statuses"] == nil {
+			slog.Error("异常响应数据", "url", r.Request.URL.String(), "body", body)
+		} else {
+			list, maxId = ff["statuses"].([]any), cast_x.ToInt64(ff["max_id"])
+		}
 	}
-	ff, _ := jsons.JsonStringToMap[string, any, bson.M](body)
-	list := ff["statuses"].([]any)
-	maxId := cast_x.ToInt64(ff["max_id"])
-
 	return types_x.NewPair(list, maxId)
 }
 
@@ -468,8 +474,8 @@ func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day ti
 		PullByGroupLock()
 	}
 
-	cursor, _ := mongodb.RowsMap(context.TODO(), collection, filter, opts)
-	if len(*cursor) == 0 {
+	cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+	if err != nil || len(*cursor) == 0 {
 		return fmt.Sprintf(rss.XmlFormat, "网络傻事", "")
 	}
 	ids, retweetedIds := make([]string, 64), make([]int64, 64)

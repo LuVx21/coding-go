@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type TimeFormatType int
+type TimeFormatType = int
 type TimeFormat struct {
 	Format string
 	Typ    TimeFormatType
@@ -16,6 +16,11 @@ const (
 	Year      = 365 * Day
 	YEAR_LEAP = 366 * Day
 
+	DateTimeMilli = time.DateTime + ".000"
+	DateTimeMicro = DateTimeMilli + ".000"
+	DateTimeNano  = DateTimeMicro + ".000"
+)
+const (
 	TimeFormatNoTimezone TimeFormatType = iota
 	TimeFormatNamedTimezone
 	TimeFormatNumericTimezone

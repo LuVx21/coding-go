@@ -7,9 +7,7 @@ import (
 )
 
 const (
-	ENV_HTTP_PROXY  = "http_proxy"
-	ENV_HTTPS_PROXY = "https_proxy"
-	ENV_ALL_PROXY   = "all_proxy"
+	ENV_HTTP_PROXY, ENV_HTTPS_PROXY, ENV_ALL_PROXY = "http_proxy", "https_proxy", "all_proxy"
 )
 
 func Getenv(key string) string {

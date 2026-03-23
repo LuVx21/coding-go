@@ -19,6 +19,8 @@ import (
 
 func requestWeibo(url string, queryMap map[string]any, headerMap map[string]string) (gorequest.Response, string, []error) {
 	pUrl, _ := nets_x.UrlAddQuery(url, queryMap)
+	consts.GetRateLimiter(url).Wait(context.TODO())
+
 	gg := consts.GoRequest.Get(pUrl.String())
 
 	defaultHeader := map[string]string{
@@ -34,7 +36,6 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 	}
 
 	t, _ := retry.SupplyWithRetry("weibo请求重试", func() types_x.Tuple[gorequest.Response, string, []error] {
-		consts.GetRateLimiter(url).Wait(context.TODO())
 		r, body, errs := gg.End()
 
 		if len(errs) > 0 || r.StatusCode/100 != 2 {
