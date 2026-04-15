@@ -6,22 +6,18 @@ import (
 	"time"
 
 	"luvx/gin/service"
-
-	"github.com/luvx21/coding-go/coding-common/common_x"
 )
 
 func RunnerRegister() []*service.Runner {
 	return []*service.Runner{
-		{Name: "gc", Crontab: "0 7/15 * * * *", Fn: func() { common_x.RunCatching(gc) }},
+		service.NewRunner("gc", "0 7/15 * * * *", time.Minute*10, gc),
 	}
 }
 
 func gc() {
-	service.RunnerLocker.LockRun("GC", time.Minute*3, func() {
-		start := time.Now()
-		// runtime.GC()
-		debug.FreeOSMemory()
-		elapsed := time.Since(start)
-		slog.Debug("GC 完成", "耗时", elapsed)
-	})
+	start := time.Now()
+	// runtime.GC()
+	debug.FreeOSMemory()
+	elapsed := time.Since(start)
+	slog.Debug("GC 完成", "耗时", elapsed)
 }

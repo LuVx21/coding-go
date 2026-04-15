@@ -8,8 +8,8 @@ import (
 
 	"slices"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/funcs"
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 )
 
 // Contains 适合较多数据或重复检查存在的场景(空间换时间)
@@ -73,7 +73,7 @@ func LastOr[S ~[]E, E any](s S, def E) E {
 	return s[l-1]
 }
 
-func Transfer[I, O any](f funcs.Function[I, O], s ...I) []O {
+func Transfer[I, O any](f a.Function[I, O], s ...I) []O {
 	r := make([]O, len(s))
 	for i := range s {
 		r[i] = f(s[i])
@@ -81,7 +81,7 @@ func Transfer[I, O any](f funcs.Function[I, O], s ...I) []O {
 	return r
 }
 
-func FilterTransfer[I, O any](filter funcs.Predicate[I], f funcs.Function[I, O], s ...I) []O {
+func FilterTransfer[I, O any](filter a.Predicate[I], f a.Function[I, O], s ...I) []O {
 	r := make([]O, 0)
 	for i := range s {
 		if filter(s[i]) {
@@ -92,7 +92,7 @@ func FilterTransfer[I, O any](filter funcs.Predicate[I], f funcs.Function[I, O],
 }
 
 // TransferFilter, 可先考虑FilterTransfer
-func TransferFilter[I, O any](filter funcs.Predicate[O], f funcs.Function[I, O], s ...I) []O {
+func TransferFilter[I, O any](filter a.Predicate[O], f a.Function[I, O], s ...I) []O {
 	r := make([]O, 0)
 	for i := range s {
 		a := f(s[i])
@@ -186,7 +186,7 @@ func Delete[S ~[]E, E comparable](arr S, t E) S {
 	return r
 }
 
-func AllTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
+func AllTrue[S ~[]E, E any](s S, fn a.Predicate[E]) bool {
 	for i := range s {
 		if !fn(s[i]) {
 			return false
@@ -194,7 +194,7 @@ func AllTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
 	}
 	return true
 }
-func AnyTrue[S ~[]E, E any](s S, fn funcs.Predicate[E]) bool {
+func AnyTrue[S ~[]E, E any](s S, fn a.Predicate[E]) bool {
 	return slices.ContainsFunc(s, fn)
 }
 
@@ -217,7 +217,7 @@ func Sort[S ~[]E, E cmp.Ordered](s S) S {
 }
 
 // SortBy 新slice
-func SortBy[S ~[]E, E any](s S, less funcs.BiPredicate[E, E]) S {
+func SortBy[S ~[]E, E any](s S, less a.BiPredicate[E, E]) S {
 	if len(s) <= 1 {
 		return s
 	}
@@ -241,7 +241,7 @@ func LastN[S ~[]E, E any](s S, n int) (r S) {
 	return s[len(s)-n:]
 }
 
-func Filter[S ~[]E, E any](s S, predicate funcs.Predicate[E]) (r S) {
+func Filter[S ~[]E, E any](s S, predicate a.Predicate[E]) (r S) {
 	for i := range s {
 		if predicate(s[i]) {
 			r = append(r, s[i])
@@ -270,7 +270,7 @@ func FlatMap[S ~[]E, E, O any](s S, transfer func(E) []O) (r []O) {
 	return r
 }
 
-func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper funcs.Function[E, K], valueMapper funcs.Function[E, V]) map[K][]V {
+func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper a.Function[E, K], valueMapper a.Function[E, V]) map[K][]V {
 	groups := make(map[K][]V)
 	for i := range s {
 		key, value := keyMapper(s[i]), valueMapper(s[i])
@@ -279,7 +279,7 @@ func GroupBy[S ~[]E, E any, K comparable, V any](s S, keyMapper funcs.Function[E
 	return groups
 }
 
-func Reduce[S ~[]E, E any, O any](ss S, reducer funcs.BiFunction[E, O, O]) (el O) {
+func Reduce[S ~[]E, E any, O any](ss S, reducer a.BiFunction[E, O, O]) (el O) {
 	if len(ss) == 0 {
 		return
 	}
@@ -289,16 +289,16 @@ func Reduce[S ~[]E, E any, O any](ss S, reducer funcs.BiFunction[E, O, O]) (el O
 	return
 }
 
-func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []types_x.Pair[E1, E2] {
+func Zip[E1, E2 any](ss1 []E1, ss2 []E2) []t.Pair[E1, E2] {
 	minLen := min(len(ss1), len(ss2))
-	var r []types_x.Pair[E1, E2]
+	var r []t.Pair[E1, E2]
 	for i := range minLen {
-		r = append(r, types_x.NewPair(ss1[i], ss2[i]))
+		r = append(r, t.NewPair(ss1[i], ss2[i]))
 	}
 	return r
 }
 
-func Sum[S ~[]E, E types_x.Number](s S) (sum E) {
+func Sum[S ~[]E, E t.Number](s S) (sum E) {
 	for i := range s {
 		sum += s[i]
 	}

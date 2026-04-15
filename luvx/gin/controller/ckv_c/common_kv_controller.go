@@ -1,4 +1,4 @@
-package common_kv_controller
+package ckv_c
 
 import (
 	"luvx/gin/common/responsex"

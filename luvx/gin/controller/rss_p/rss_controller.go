@@ -7,21 +7,18 @@ import (
 	"luvx/gin/db"
 	"luvx/gin/service/rss"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"golang.org/x/exp/maps"
 )
 
 func Rss(c *gin.Context) {
 	rss := rss.Rss(c.Param("spiderKey"))
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
-}
-
-func PullByKey(c *gin.Context) {
-	rss.PullByKey()
-	c.String(http.StatusOK, "ok")
 }
 
 func DeleteById(c *gin.Context) {
@@ -42,4 +39,17 @@ func DeleteById(c *gin.Context) {
 		one, _ := cli.UpdateOne(context.TODO(), bson.M{"_id": id, "invalid": 0}, update)
 		responsex.R(c, one)
 	}
+}
+
+func RssPull(c *gin.Context) {
+	a := func(k string) any {
+		m := db.RedisClient.HGetAll(context.Background(), rss.Redis_key_time+":"+k).Val()
+		m["all"] = strings.Join(maps.Keys(m), ",")
+		return m
+	}
+
+	responsex.R(c, map[string]any{
+		"docker": a("docker"),
+		"github": a("github"),
+	})
 }

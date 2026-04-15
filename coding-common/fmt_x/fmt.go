@@ -74,14 +74,15 @@ func Println0[T any](rows ...[]T) {
 		strRows = append(strRows, strRow)
 	}
 
-	line := "+"
+	var line strings.Builder
+	line.WriteString("+")
 	for _, w := range width {
-		line += strings.Repeat("-", w) + "+"
+		line.WriteString(strings.Repeat("-", w) + "+")
 	}
-	line += "\n"
+	line.WriteString("\n")
 
 	var sb strings.Builder
-	sb.WriteString(line)
+	sb.WriteString(line.String())
 	for _, row := range strRows {
 		sb.WriteString("|")
 		for i, col := range row {
@@ -92,7 +93,7 @@ func Println0[T any](rows ...[]T) {
 			sb.WriteString("|")
 		}
 		sb.WriteString("\n")
-		sb.WriteString(line)
+		sb.WriteString(line.String())
 	}
 	fmt.Println(sb.String())
 }

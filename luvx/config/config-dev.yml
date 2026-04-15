@@ -1,35 +1,90 @@
 log:
-  logDir: ./.logs/
-  mainLog: main-%Y-%m-%d.log
-  errorLog: error-%Y-%m-%d.log
+  level: debug
+  logDir: $HOME/data/logs
+  # mainLog: main-%Y-%m-%d.log
+  # errorLog: error-%Y-%m-%d.log
+  mainLog: main
+  errorLog: error
+  logFormat: text
 
+# ------------------------------------------------------------------------------------------------
 mysql:
-  host: 127.0.0.1:3306
+  host: luvx
+  port: 3306
   username: root
   password: 1121
   dbname: boot
+  # args:
+  #   tls: tidb
 
 redis:
-  host: 127.0.0.1:6379
-  username: xx
+  host: xxx:xxx
+  username: default
   password: xx
   timeout: 200
   maxActive: 30
   maxIdle: 30
 
 mongodb:
-  uri: mongodb+srv://xxx:xxx@cluster0.r8xxd.mongodb.net
+  uri: mongodb+srv://xxx:xxx@cluster0.xxx.mongodb.net
   database: boot
+  remote:
+    uri: mongodb+srv://xxx:xxx@cluster0.xxx.mongodb.net
 
 turso:
   dbname: xxx
   token: xxx
+
 server:
   port: ":8090"
   debug: true
 
-docker:
-  rss:
-    # https://rsshub.umzzz.com/dockerhub/build/library/buildpack-deps/latest
-    rsshub: https://rsshub.umzzz.com
-    images: buildpack-deps:latest,golang:latest
+# ------------------------------------------------------------------------------------------------
+
+switch:
+  bili:
+    updateUpId: false
+  weibo:
+    imgCdn: false
+
+rss:
+  weibo:
+    sourceGroup: 3639801313908027,4670120389774996
+    saveImageGroup: 3639801313908027
+  github:
+    pullFrom: https://github.com/%s/releases.atom
+    remote: false
+    # clash-verge-rev/clash-verge-rev
+    keys: alibaba/Sentinel,apache/{rocketmq-dashboard,maven-mvnd},charles-001/dolphie,dbcli/{litecli,mycli,pgcli},DiceDB/dice,duckdb/duckdb,laixintao/iredis,liaoliao666/v2ex,loggerhead/json4u,ReadYouApp/ReadYou,Textualize/{toolong,frogmouth},upx/upx,zyx0814/Pichome,localsend/localsend,MoonTechLab/Selene,mihomo-party-org/clash-party,Abdenasser/neohtop,PGshen/mini-clipboard,ddlmanus/MacOptimizer,MetaCubeX/{ClashX.Meta,ClashMetaForAndroid},golang/go,vicanso/zedis,hoowhoami/EchoMusic
+    keyUrl: ""
+    parsePath: "//feed//entry//updated"
+  docker:
+    pullFrom: https://rsshub.umzzz.com/dockerhub/build/%s/%s/%s
+    remote: false
+    keys: alpine:{latest,3{,.20,.21,.22,.23}}|debian:{latest,{12,13,bookworm,trixie}{,-slim}}|golang:{latest,1{,.25,.26}{,-alpine3.22,-alpine,-bookworm,-trixie}}|python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}|redis:{latest,{7,8}{,-alpine,-bookworm}}|rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}|buildpack-deps:{latest,curl,scm,{bookworm,trixie}{,-curl,-scm}}|hectorqin/reader:{,openj9-}latest|eclipse-temurin:{latest,{8,11,17,21,25,26}{,-jdk,-jre}}
+    keyUrl: https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/images.txt
+    parsePath: "//pubDate"
+
+webhook:
+  weixin:
+    appId: xxx
+    secret: xxx
+
+webclient:
+  header:
+    weibo:
+      referer: https://weibo.com/mygroups?gid=xxx
+    bili:
+      referer: https://bilibili.com/
+
+keeplive:
+  vercel:
+    type: redis
+    host: xxx
+    username: default
+    password: xxx
+  upstash:
+    type: redis
+    host: xxx
+    username: default
+    password: xxx

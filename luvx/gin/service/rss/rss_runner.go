@@ -1,32 +1,20 @@
 package rss
 
 import (
-	"log/slog"
-	"runtime/debug"
 	"time"
 
 	"luvx/gin/db"
 	"luvx/gin/service"
-
-	"github.com/luvx21/coding-go/coding-common/common_x"
 )
 
 func RunnerRegister() []*service.Runner {
 	return []*service.Runner{
-		{Name: "重置rss", Crontab: "0 3/5 * * * *", Fn: func() { common_x.RunCatching(reset) }},
-		{Name: "rss_spider", Crontab: "0 7 0/2 * * *", Fn: func() { common_x.RunCatching(PullByKey) }},
-		{Name: "新版本时间拉新", Crontab: "23 29 4/12 * * *", Fn: func() { common_x.RunCatching(a) }},
+		service.NewRunner("重置rss", "0 3/5 * * * *", time.Minute*10, reset),
+		service.NewRunner("rss_spider", "0 7 0/2 * * *", time.Minute*10, PullByKey),
+		service.NewRunner("新版本时间拉新", "23 29 4/12 * * *", time.Minute*10, pullLatest),
 	}
 }
 
 func reset() {
-	service.RunnerLocker.LockRun("重置rss", time.Minute*3, func() {
-		db.FreshrssDb.Exec("update feed set lastUpdate = lastUpdate-30*60 where url like '%/weibo/rss/%'")
-
-		start := time.Now()
-		// runtime.GC()
-		debug.FreeOSMemory()
-		elapsed := time.Since(start)
-		slog.Debug("GC 完成", "耗时", elapsed)
-	})
+	db.FreshrssDb.Exec("update feed set lastUpdate = lastUpdate-30*60 where url like '%/weibo/rss/%'")
 }

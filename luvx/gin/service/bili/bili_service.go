@@ -44,7 +44,6 @@ import (
 
 const (
 	ckv_key_up, ckv_key_season = "bili_up", "bili_season"
-	COL_NAME                   = "bili_video"
 )
 
 var (
@@ -276,7 +275,7 @@ func Rss(uname string, includeUids, excludeUids []int64, size int64) string {
 		}
 		b := "from: " + m["from"].(string) + " | mid: " + cast_x.ToString(upper["mid"]) + " | seasonId: " + cast_x.ToString(upper["seasonId"])
 
-		deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+		deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, mongo_dao.COL_NAME_bili_video, _id)
 		_contentHtml := img + "<br/>" + b + "<br/>" + strings.ReplaceAll(cast_x.ToString(m["description"]), "\n", "<br/>")
 		_contentHtml = fmt.Sprintf("%s<br/><br/>%s<br/><br/>%s", deleteUrl, _contentHtml, deleteUrl)
 

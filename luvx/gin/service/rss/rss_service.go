@@ -5,25 +5,19 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"luvx/gin/common/consts"
 	"luvx/gin/dao/mongo_dao"
-	"luvx/gin/service"
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/soup"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
-)
-
-const (
-	COL_NAME = "rss_feed"
 )
 
 func Rss(spiderKey string) string {
@@ -38,7 +32,7 @@ func Rss(spiderKey string) string {
 	return ToRssXml(result, spiderKey)
 }
 
-func parse2RssItem(m alias_x.JsonObject) *RssItem {
+func parse2RssItem(m a.JsonObject) *RssItem {
 	_id := m["_id"].(int64)
 	contents := m["content"].(bson.A)
 
@@ -52,7 +46,7 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 		}
 	}
 
-	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, COL_NAME, _id)
+	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, mongo_dao.COL_NAME_rss_feed, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
 
 	return &RssItem{
@@ -66,16 +60,14 @@ func parse2RssItem(m alias_x.JsonObject) *RssItem {
 }
 
 func PullByKey() {
-	service.RunnerLocker.LockRun("rss_spider", time.Minute*10, func() {
-		m := common_kv.Get(8)
-		for k, v := range m {
-			runs.Go(func() {
-				log.Infoln("spider拉取:", k)
-				items := spiderIndexPage(k, v.CommonValue)
-				_, _ = mongo_dao.RssFeedCol.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
-			})
-		}
-	})
+	m := common_kv.Get(8)
+	for k, v := range m {
+		runs.Go(func() {
+			log.Infoln("spider拉取:", k)
+			items := spiderIndexPage(k, v.CommonValue)
+			_, _ = mongo_dao.RssFeedCol.InsertMany(context.TODO(), slices_x.ToAnySliceE(items...))
+		})
+	}
 }
 
 func spiderIndexPage(key, paramJson string) []soup.PageContent {

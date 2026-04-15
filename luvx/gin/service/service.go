@@ -9,8 +9,8 @@ import (
 	"github.com/luvx21/coding-go/infra/infra_sql"
 )
 
-var db1, _ = db.MySQLClient.DB()
 var (
+	db1, _       = db.MySQLClient.DB()
 	RunnerLocker = infra_sql.NewLocker[string](db1)
 )
 

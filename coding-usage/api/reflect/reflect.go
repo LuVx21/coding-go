@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 )
 
 func main() {
-	p := types_x.NewPair("foo", "bar")
+	p := t.NewPair("foo", "bar")
 	v := reflect.ValueOf(&p)
 	if v.Kind() == reflect.Pointer {
 		v = v.Elem()

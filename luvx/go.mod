@@ -18,26 +18,26 @@ require (
 	github.com/eko/gocache/lib/v4 v4.2.3
 	github.com/eko/gocache/store/bigcache/v4 v4.2.4
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-co-op/gocron/v2 v2.20.0
+	github.com/go-co-op/gocron/v2 v2.21.0
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.7.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260409123519-dbeabff8c017
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/samber/lo v1.53.0
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.18.0
-	go.mongodb.org/mongo-driver/v2 v2.5.0
-	golang.org/x/crypto v0.49.0
-	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90
+	go.mongodb.org/mongo-driver/v2 v2.5.1
+	golang.org/x/crypto v0.50.0
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f
 	golang.org/x/sync v0.20.0
 	golang.org/x/time v0.15.0
 	google.golang.org/grpc v1.80.0
@@ -46,7 +46,7 @@ require (
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.31.1
 	gorm.io/plugin/dbresolver v1.6.2
-	modernc.org/sqlite v1.48.1
+	modernc.org/sqlite v1.48.2
 	turso.tech/database/tursogo v0.5.3
 )
 
@@ -138,19 +138,19 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/arch v0.25.0 // indirect
-	golang.org/x/mod v0.34.0 // indirect
-	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/arch v0.26.0 // indirect
+	golang.org/x/mod v0.35.0 // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/term v0.41.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
-	golang.org/x/tools v0.43.0 // indirect
+	golang.org/x/term v0.42.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260406210006-6f92a3bedf2d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gorm.io/datatypes v1.2.4 // indirect
 	gorm.io/hints v1.1.0 // indirect
-	modernc.org/libc v1.70.0 // indirect
+	modernc.org/libc v1.72.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )

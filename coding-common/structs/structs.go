@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 )
 
 // ToMap 结构体转为Map[string]any
@@ -48,8 +48,8 @@ func ToSingleMap(in any, tag string) (map[string]any, error) {
 	}
 
 	result := make(map[string]any)
-	queue := make([]types_x.Pair[any, string], 0, 1)
-	queue = append(queue, types_x.NewPair(in, ""))
+	queue := make([]t.Pair[any, string], 0, 1)
+	queue = append(queue, t.NewPair(in, ""))
 
 	for len(queue) > 0 {
 		e := queue[0]
@@ -58,20 +58,20 @@ func ToSingleMap(in any, tag string) (map[string]any, error) {
 			v = v.Elem()
 		}
 		queue = queue[1:]
-		t := v.Type()
+		ty := v.Type()
 		for i := range v.NumField() {
 			field := v.Field(i)
 			kind := field.Kind()
-			ti := t.Field(i)
+			ti := ty.Field(i)
 			tagName := ti.Tag.Get(tag)
 			if kind == reflect.Pointer {
 				field = field.Elem()
 				if field.Kind() == reflect.Struct {
-					queue = append(queue, types_x.NewPair(field.Interface(), tagName+"."))
+					queue = append(queue, t.NewPair(field.Interface(), tagName+"."))
 					continue
 				}
 			} else if kind == reflect.Struct {
-				queue = append(queue, types_x.NewPair(field.Interface(), tagName+"."))
+				queue = append(queue, t.NewPair(field.Interface(), tagName+"."))
 				continue
 			}
 			if tagName != "" {

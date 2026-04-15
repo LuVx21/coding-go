@@ -11,11 +11,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260409123519-dbeabff8c017
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.18.0
@@ -46,14 +46,14 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
-	github.com/klauspost/compress v1.18.4 // indirect
+	github.com/klauspost/compress v1.18.5 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
 	github.com/lestrrat-go/strftime v1.1.1 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
 	github.com/luvx12/logrus-prefixed-formatter v0.5.6 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/mattn/go-tty v0.0.3 // indirect
@@ -65,7 +65,7 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/pelletier/go-toml/v2 v2.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
@@ -93,7 +93,7 @@ require (
 	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
 	golang.org/x/net v0.52.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/term v0.41.0 // indirect
 	golang.org/x/text v0.35.0 // indirect
 )

@@ -21,7 +21,7 @@ import (
 	"github.com/allegro/bigcache/v3"
 	"github.com/bytedance/sonic"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/infra_sql"
@@ -49,8 +49,8 @@ func GetCookieStrByHost(hosts ...string) map[string]string {
 	return r
 }
 
-func GetCookieFromCache(hosts ...string) alias_x.Table[string] {
-	r := make(alias_x.Table[string], len(hosts))
+func GetCookieFromCache(hosts ...string) a.Table[string] {
+	r := make(a.Table[string], len(hosts))
 	readDb := make([]string, 0)
 	for _, host := range hosts {
 		b, err := cache.Get(host)
@@ -70,8 +70,8 @@ func GetCookieFromCache(hosts ...string) alias_x.Table[string] {
 	return r
 }
 
-func GetCookieFromDb(hosts ...string) alias_x.Table[string] {
-	r := make(alias_x.Table[string], len(hosts))
+func GetCookieFromDb(hosts ...string) a.Table[string] {
+	r := make(a.Table[string], len(hosts))
 	if len(hosts) == 0 {
 		return r
 	}
@@ -80,7 +80,7 @@ func GetCookieFromDb(hosts ...string) alias_x.Table[string] {
 		host_key := row["host_key"].(string)
 		cookie, ok := r[host_key]
 		if !ok {
-			cookie = make(alias_x.Row)
+			cookie = make(a.Row)
 			r[host_key] = cookie
 		}
 		cookie[row["name"].(string)] = row["value"].(string)
@@ -90,7 +90,7 @@ func GetCookieFromDb(hosts ...string) alias_x.Table[string] {
 
 func Sync2Yun(hosts ...string) {
 	table := GetCookieFromDb(hosts...)
-	rows := make(alias_x.Rows, 0, len(table))
+	rows := make(a.Rows, 0, len(table))
 	for host_key, cookie := range table {
 		mongo_dao.CookieCol.DeleteMany(context.TODO(), bson.M{"host_key": host_key})
 		doc := map[string]any{
@@ -106,13 +106,13 @@ func Sync2Yun(hosts ...string) {
 	_ = ClearCache()
 }
 
-func readDb(hosts ...string) (alias_x.Rows, error) {
+func readDb(hosts ...string) (a.Rows, error) {
 	if len(hosts) == 0 {
-		return alias_x.Rows{}, nil
+		return a.Rows{}, nil
 	}
 	if redis_dao.GetSwitch(redis_dao.R_K_REMOTE_COOKIE) {
 		datas, err := mongodb.RowsMap(context.TODO(), mongo_dao.CookieCol, bson.M{"host_key": bson.M{"$in": hosts}})
-		return slices_x.Transfer(func(m bson.M) alias_x.Row { return alias_x.Row(m) }, *datas...), err
+		return slices_x.Transfer(func(m bson.M) a.Row { return a.Row(m) }, *datas...), err
 	}
 
 	_sql := `

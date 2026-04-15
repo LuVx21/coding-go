@@ -28,11 +28,11 @@ var (
 )
 
 const (
-	redis_key_time           = "app:rss"
-	redis_key_last_sync_time = redis_key_time + ":%s:last_sync_time"
+	Redis_key_time           = "app:rss"
+	redis_key_last_sync_time = Redis_key_time + ":%s:last_sync_time"
 )
 
-func a() {
+func pullLatest() {
 	rss := config.Viper.GetStringMap("rss")
 	for _, cate := range []string{"docker", "github"} {
 		m := rss[cate].(map[string]any)
@@ -42,7 +42,7 @@ func a() {
 
 		keySli := common_x.IfThenGet(remote,
 			func() []string { return parseRemoteUrl(keyUrl) },
-			func() []string { return strings.Split(keys, ",") },
+			func() []string { return strings.Split(keys, "|") },
 		)
 		keySli = slices_x.FlatMap(keySli, func(s string) []string { return brace.Expand(s) })
 		lastSyncTimeStr := db.RedisClient.Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Val()
@@ -94,7 +94,7 @@ func a() {
 			)
 		}
 		db.RedisClient.Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
-		db.RedisClient.HMSet(context.Background(), redis_key_time+":"+cate, values...)
+		db.RedisClient.HMSet(context.Background(), Redis_key_time+":"+cate, values...)
 	}
 }
 
@@ -103,7 +103,7 @@ func parseRemoteUrl(_url string) []string {
 	if len(errs) > 0 {
 		return nil
 	}
-	return strings.Split(body, "\n")[3:]
+	return strings.Split(strings.TrimSpace(body), "\n")[3:]
 }
 
 func parseDockerImage(image string) (owner string, imageName string, tag string) {

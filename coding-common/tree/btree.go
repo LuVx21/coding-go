@@ -16,9 +16,10 @@ func NewTreeNode[T any](v T, left, right *TreeNode[T]) *TreeNode[T] {
 
 func NewCBT[T any](arr ...T) *TreeNode[T] {
 	_len := len(arr)
-	if _len == 0 {
+	switch _len {
+	case 0:
 		return nil
-	} else if _len == 1 {
+	case 1:
 		return &TreeNode[T]{Val: arr[0]}
 	}
 

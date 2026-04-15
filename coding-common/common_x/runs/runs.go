@@ -8,12 +8,13 @@ import (
 	"syscall"
 )
 
+// Defered 函数外包装一层recover 不带入参
 func Defered(f func()) func() {
 	f1 := func(_ int) { f() }
 	return func() { DeferedArgs(f1)(-1) }
 }
 
-// DeferedArgs 函数外包装一层recover
+// DeferedArgs 函数外包装一层recover 带入参
 func DeferedArgs[T any](f func(T)) func(T) {
 	return func(t T) {
 		defer func() {

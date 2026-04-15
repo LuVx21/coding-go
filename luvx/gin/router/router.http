@@ -4,9 +4,6 @@
 GET http://{{host}}
 
 ###
-GET http://{{host}}/app/:path
-
-###
 GET http://{{host}}/app/healthyCheck
 
 ###
@@ -53,6 +50,10 @@ GET http://{{host}}/weibo/rss/:uid
 
 ###
 GET http://{{host}}/rss/pullbykey
+
+###
+GET http://{{host}}/rss/info/pulled
+Content-Type: application/json
 
 ### useful
 POST http://{{host}}/useful/compare
