@@ -2,18 +2,25 @@ package router
 
 import (
 	"luvx/gin/common/consts"
+	"luvx/gin/common/errorx"
 	"luvx/gin/common/responsex"
 	"luvx/gin/controller"
 	"luvx/gin/controller/ai_c"
-	"luvx/gin/controller/common_kv_controller"
+	"luvx/gin/controller/ckv_c"
 	"luvx/gin/controller/rss_p"
 	"luvx/gin/controller/useful_c"
 	"luvx/gin/controller/weibo_p"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/infra/logs"
 	log "github.com/sirupsen/logrus"
 )
+
+type Login struct {
+	User     string `form:"user" json:"user" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
 
 // AddTraceId TODO 不太正确
 func AddTraceId(c *gin.Context) {
@@ -26,7 +33,6 @@ func Register(r *gin.Engine) {
 
 	routers := []func(*gin.Engine){
 		Register0,
-		RegisterApp,
 		RegisterUser,
 		RegisterBili,
 		RegisterWeibo,
@@ -37,6 +43,20 @@ func Register(r *gin.Engine) {
 }
 
 func Register0(r *gin.Engine) {
+	// 绑定JSON ({"user": "foo", "password": "bar"})
+	// 绑定QueryString (/login?user=foo&password=bar)
+	r.GET("/login", func(c *gin.Context) {
+		var login Login
+		if err := c.ShouldBind(&login); err == nil {
+			responsex.R(c, gin.H{
+				"user":     login.User,
+				"password": login.Password,
+			})
+		} else {
+			responsex.R(c, errorx.NewCodeMsgError(http.StatusBadRequest, "异常"))
+		}
+	})
+
 	r.GET("/redirect", controller.Redirect)
 
 	r.GET("/", func(c *gin.Context) {
@@ -53,10 +73,11 @@ func Register0(r *gin.Engine) {
 
 	useful := r.Group("/useful")
 	useful.POST("/compare", useful_c.Compare)
-	useful.GET("/c_k_v", common_kv_controller.GetCommonKeyValue)
-	useful.POST("/c_k_v", common_kv_controller.CreateCommonKeyValue)
-	useful.DELETE("/c_k_v", common_kv_controller.DeleteCommonKeyValue)
-	useful.PUT("/c_k_v/:id", common_kv_controller.UpdateCommonKeyValue)
+
+	useful.GET("/c_k_v", ckv_c.GetCommonKeyValue)
+	useful.POST("/c_k_v", ckv_c.CreateCommonKeyValue)
+	useful.DELETE("/c_k_v", ckv_c.DeleteCommonKeyValue)
+	useful.PUT("/c_k_v/:id", ckv_c.UpdateCommonKeyValue)
 
 	cache := r.Group("/cache")
 	cache.GET("clear", controller.ClearCache)
@@ -86,7 +107,7 @@ func RegisterWeibo(r *gin.Engine) {
 	_rss := r.Group("/rss")
 	_rss.GET("/feed/:spiderKey", rss_p.Rss)
 	_rss.GET("/delete/:source/:id", rss_p.DeleteById)
-	_rss.GET("pullbykey", rss_p.PullByKey)
+	_rss.GET("/info/pulled", rss_p.RssPull)
 
 	_ai := r.Group("/ai")
 	_ai.POST("/v1/chat/completions", ai_c.HandleChatCompletion)

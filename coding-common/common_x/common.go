@@ -4,8 +4,6 @@ import (
 	"log/slog"
 	"runtime"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 func IfThen[T any](expr bool, a T, b T) T {
@@ -33,7 +31,7 @@ func RunCatchingReturn[T any](fn func() T) T {
 		if r := recover(); r != nil {
 			buf := make([]byte, 4096)
 			n := runtime.Stack(buf, false)
-			logrus.Errorln("fast-fail", "panic", r, "错误栈信息", string(buf[:n]))
+			slog.Error("fast-fail", "panic", r, "错误栈信息", string(buf[:n]))
 		}
 	}()
 	return fn()

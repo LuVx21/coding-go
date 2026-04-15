@@ -32,7 +32,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 	"github.com/luvx21/coding-go/coding-common/iterators"
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
@@ -50,12 +50,11 @@ import (
 )
 
 const (
-	COL_NAME   = "weibo_feed"
 	COMMON_KEY = "rss_weibo_config"
 )
 
 var (
-	fields = []string{"_id", "user", "mblogid", "created_at", "text", "retweeted_status", "pic_ids",
+	fields = []string{"_id", "user", "user_id", "mblogid", "created_at", "text", "retweeted_status", "pic_ids",
 		"invalid", "read", "extra", "groupId",
 		// "mix_media_info", "text_raw", "page_info",
 	}
@@ -66,9 +65,7 @@ var (
 var (
 	sourceGroup    = strings.Split(config.Viper.GetString("rss.weibo.sourceGroup"), ",")
 	saveImageGroup = strings.Split(config.Viper.GetString("rss.weibo.saveImageGroup"), ",")
-)
 
-var (
 	sampleRegexp = regexp.MustCompile(`<a\s+[^>]*href="(.*?)".*?>(.*?)<\/a>`)
 	replacer     = strings.NewReplacer(
 		"\n", "<br/>",
@@ -158,7 +155,7 @@ func PullByUserAll() {
 func PullByUser(uid int64) {
 	opts := options.FindOne().SetSort(bson.M{"_id": -1})
 	var latest bson.M
-	_ = collection.FindOne(context.TODO(), bson.M{"user.id": uid}, opts).Decode(&latest)
+	_ = collection.FindOne(context.TODO(), bson.M{"user_id": uid}, opts).Decode(&latest)
 
 	cursor := 1
 	iterator := iterators.NewCursorIteratorSimple(
@@ -220,10 +217,10 @@ func PullByGroup(groupId int64) {
 	var cursor int64 = 0
 	iterator := iterators.NewCursorIterator(
 		cursor, false,
-		func(_cursor int64) types_x.Pair[[]any, int64] {
+		func(_cursor int64) t.Pair[[]any, int64] {
 			return requestPageOfGroup(groupId, _cursor)
 		},
-		func(curId int64, p types_x.Pair[[]any, int64]) int64 {
+		func(curId int64, p t.Pair[[]any, int64]) int64 {
 			items := p.K
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
@@ -235,7 +232,7 @@ func PullByGroup(groupId int64) {
 			}
 			return p.V
 		},
-		func(p types_x.Pair[[]any, int64]) []any {
+		func(p t.Pair[[]any, int64]) []any {
 			return p.K
 		},
 		func(i int64) bool {
@@ -331,12 +328,11 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	i := feed["user"]
 	if i != nil {
 		user := i.(map[string]any)
-		feed["user"] = map[string]any{
-			"id":   cast_x.ToInt64(user["id"]),
-			"name": user["screen_name"],
-		}
+		feed["user_id"] = cast_x.ToInt64(user["id"])
+		feed["user"] = map[string]any{"name": user["screen_name"]}
 	} else {
-		feed["user"] = map[string]any{"id": 0, "name": ""}
+		feed["user_id"] = 0
+		feed["user"] = map[string]any{"name": ""}
 	}
 	feed["invalid"] = 0
 	feed["read"] = 0
@@ -376,7 +372,7 @@ func requestPageOfUser(uid int64, cursor int) []any {
 	return list
 }
 
-func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] {
+func requestPageOfGroup(groupId int64, cursor int64) t.Pair[[]any, int64] {
 	m := map[string]any{
 		"list_id":      groupId,
 		"max_id":       cursor,
@@ -389,7 +385,7 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 	for list == nil {
 		r, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 		if len(errors) > 0 {
-			return types_x.NewPair[[]any, int64](nil, math.MaxInt64)
+			return t.NewPair[[]any, int64](nil, math.MaxInt64)
 		}
 		ff, _ := jsons.JsonStringToMap[string, any, bson.M](body)
 		if ff["statuses"] == nil {
@@ -398,7 +394,7 @@ func requestPageOfGroup(groupId int64, cursor int64) types_x.Pair[[]any, int64] 
 			list, maxId = ff["statuses"].([]any), cast_x.ToInt64(ff["max_id"])
 		}
 	}
-	return types_x.NewPair(list, maxId)
+	return t.NewPair(list, maxId)
 }
 
 func getCookie() string {
@@ -446,10 +442,10 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 		}
 		if len(uids) == 1 && uids[0] == 0 {
 			if len(ignoreRssUids) > 0 {
-				filter["user.id"] = bson.M{"$nin": ignoreRssUids}
+				filter["user_id"] = bson.M{"$nin": ignoreRssUids}
 			}
 		} else {
-			filter["user.id"] = bson.M{"$in": uids}
+			filter["user_id"] = common_x.IfThen[any](len(uids) == 1, uids[0], bson.M{"$in": uids})
 			flag := false
 			for _, uid := range uids {
 				if !slices.Contains(ignoreRssUids, uid) {
@@ -465,6 +461,7 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 	return filter, opts
 }
 func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day time.Time, uids ...int64) string {
+	k := strconv.FormatInt(uids[0], 10)
 	filter, opts := filter(args, groupId, word, day, uids...)
 
 	if cast_x.ToBool(args["deleteBefore"]) {
@@ -474,39 +471,51 @@ func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day ti
 		PullByGroupLock()
 	}
 
-	cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+	p := common_x.RunWithTimeReturn(k+":weibo_rss_1", func() t.Pair[*[]bson.M, error] {
+		cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+		return t.NewPair(cursor, err)
+	})
+	cursor, err := p.Unpack()
 	if err != nil || len(*cursor) == 0 {
-		return fmt.Sprintf(rss.XmlFormat, "网络傻事", "")
+		return rss.ToRssXml(nil, "网络傻事")
 	}
-	ids, retweetedIds := make([]string, 64), make([]int64, 64)
+	ids, retweetedIds := make([]string, 0), make([]int64, 0)
 	for i := range *cursor {
-		m := (*cursor)[i]
-		ids = append(ids, cast_x.ToString(m["_id"]))
-		if m["retweeted_status"] != nil {
-			retweetedIds = append(retweetedIds, cast_x.ToInt64(m["retweeted_status"]))
+		jo := (*cursor)[i]
+		ids = append(ids, cast_x.ToString(jo["_id"]))
+		if jo["retweeted_status"] != nil {
+			retweetedIds = append(retweetedIds, cast_x.ToInt64(jo["retweeted_status"]))
 		}
 	}
-	aa := common_x.IfThenGet(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100) < 60, func() []string {
-		return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path+"%", ids)
-	}, func() []string { return []string{} })
+	var rowsMap = map[int64]bson.M{}
+	if len(retweetedIds) > 0 {
+		p := common_x.RunWithTimeReturn(k+":weibo_rss_2", func() t.Pair[*[]bson.M, error] {
+			rows, err := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
+			return t.NewPair(rows, err)
+		})
+		rows, _ := p.Unpack()
+		rowsMap = lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
+	}
+
+	aa := common_x.IfThenGet(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100) < 60,
+		func() []string { return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path+"%", ids) },
+		func() []string { return []string{} },
+	)
 	existedGuids := sets.NewSet(aa...)
 
-	rows, _ := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
-	rowsMap := lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
-
-	var s0 strings.Builder
+	feeds := make([]*rss.RssItem, 0)
 	for i := range *cursor {
 		jo := (*cursor)[i]
 		if existedGuids.Contains(cast_x.ToString(jo["_id"])) {
 			continue
 		}
-		s0.WriteString(a(jo, rowsMap[cast_x.ToInt64(jo["retweeted_status"])]))
+		feeds = append(feeds, rssItem(jo, rowsMap[cast_x.ToInt64(jo["retweeted_status"])]))
 	}
 
-	return fmt.Sprintf(rss.XmlFormat, "网络傻事", s0.String())
+	return rss.ToRssXml(feeds, "网络傻事")
 }
 
-func a(jo, retweet bson.M) string {
+func rssItem(jo, retweet bson.M) *rss.RssItem {
 	_id := cast_x.ToInt64(jo["_id"])
 	// title := jo["text_raw"].(string)
 	_contentHtml := contentHtml(jo)
@@ -514,7 +523,7 @@ func a(jo, retweet bson.M) string {
 		user, retweetUrl, uName := retweet["user"], "", ""
 		if user != nil {
 			umap := mongodb.DM(user.(bson.D))
-			uId := cast_x.ToString(umap["id"])
+			uId := cast_x.ToString(retweet["user_id"])
 			retweetUrl = fmt.Sprintf("<a href=\"https://weibo.com/%s/%s\">转发自</a>", uId, retweet["mblogid"])
 			uName = fmt.Sprintf("<a href=\"https://weibo.com/u/%s\">@%s</a>", uId, umap["name"].(string))
 		}
@@ -525,32 +534,23 @@ func a(jo, retweet bson.M) string {
 	deleteUrl := addDelete(_id)
 	_contentHtml = fmt.Sprintf("%s<br/><br/>%s", _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	user := mongodb.DM(jo["user"].(bson.D))
-	userId := cast_x.ToInt64(user["id"])
-	screenName := user["name"]
-	url := fmt.Sprintf("https://weibo.com/%v/%v", userId, jo["mblogid"])
-	return fmt.Sprintf(
-		`
-           <item>
-               <title>
-                   <![CDATA[ %v ]]>
-               </title>
-               <description>
-                   <![CDATA[ %v ]]>
-               </description>
-               <pubDate>%v</pubDate>
-               <link>%v</link>
-               <guid>%v</guid>
-               <author>
-                   <![CDATA[ %v ]]>
-               </author>
-           </item>
-`, "title", _contentHtml, createdAt, url, _id, screenName)
+	screenName := mongodb.DM(jo["user"].(bson.D))["name"]
+	url := fmt.Sprintf("https://weibo.com/%v/%v", cast_x.ToInt64(jo["user_id"]), jo["mblogid"])
+	rssItem := rss.RssItem{
+		Title:       "title",
+		Description: _contentHtml,
+		PubDate:     createdAt,
+		Link:        url,
+		Guid:        cast_x.ToString(_id),
+		Author:      screenName.(string),
+		Categories:  []string{},
+	}
+	return &rssItem
 }
 
 func addDelete(_id int64) string {
 	format := `<a href="http://` + consts.ServiceDomain + `/rss/delete/%s/%v?real=true">删除<a/>`
-	return fmt.Sprintf(format, COL_NAME, _id)
+	return fmt.Sprintf(format, mongo_dao.COL_NAME_weibo_feed, _id)
 }
 
 func contentHtml(jo bson.M) string {

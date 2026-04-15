@@ -68,10 +68,10 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260323143924-babc37508603
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260409123519-dbeabff8c017
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.34
 	github.com/olekukonko/tablewriter v1.1.3
@@ -103,7 +103,7 @@ require (
 	gitlab.com/greyxor/slogor v1.6.7
 	go-micro.dev/v5 v5.16.0
 	go.etcd.io/etcd/client/v3 v3.5.21
-	go.mongodb.org/mongo-driver/v2 v2.5.0
+	go.mongodb.org/mongo-driver/v2 v2.5.1
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.20.0
 	golang.org/x/time v0.14.0
@@ -262,7 +262,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/mattn/go-runewidth v0.0.20 // indirect
 	github.com/mattn/go-tty v0.0.3 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
@@ -290,7 +290,7 @@ require (
 	github.com/olekukonko/ll v0.1.4-0.20260115111900-9e59c2286df0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
-	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
+	github.com/pelletier/go-toml/v2 v2.3.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.25 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
@@ -358,16 +358,16 @@ require (
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.24.0 // indirect
-	golang.org/x/crypto v0.49.0 // indirect
+	golang.org/x/crypto v0.50.0 // indirect
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
-	golang.org/x/mod v0.33.0 // indirect
-	golang.org/x/net v0.51.0 // indirect
+	golang.org/x/mod v0.34.0 // indirect
+	golang.org/x/net v0.52.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260209163413-e7419c687ee4 // indirect
-	golang.org/x/term v0.41.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
-	golang.org/x/tools v0.42.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260311193753-579e4da9a98c // indirect
+	golang.org/x/term v0.42.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/tools v0.43.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20250303144028-a0af3efb3deb // indirect

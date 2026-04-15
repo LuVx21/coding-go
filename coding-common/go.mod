@@ -8,7 +8,6 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.14
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa

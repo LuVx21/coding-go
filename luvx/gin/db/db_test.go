@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"gorm.io/gorm"
 )
 
@@ -19,7 +19,7 @@ func Test_00(t *testing.T) {
 }
 
 func Test_mysql(t *testing.T) {
-	var results SliceMapStr2Any
+	var results a.SAMS
 	MySQLClient.Debug().Raw("select * from user order by id;").
 		//Scan(&results)
 		Find(&results)

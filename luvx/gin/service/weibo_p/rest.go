@@ -9,7 +9,7 @@ import (
 	"luvx/gin/common/consts"
 
 	"github.com/bytedance/sonic"
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
 	"github.com/luvx21/coding-go/coding-common/os_x"
 	"github.com/luvx21/coding-go/coding-common/retry"
@@ -35,7 +35,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 		gg.Set(k, v)
 	}
 
-	t, _ := retry.SupplyWithRetry("weibo请求重试", func() types_x.Tuple[gorequest.Response, string, []error] {
+	t, _ := retry.SupplyWithRetry("weibo请求重试", func() t.Tuple[gorequest.Response, string, []error] {
 		r, body, errs := gg.End()
 
 		if len(errs) > 0 || r.StatusCode/100 != 2 {
@@ -51,10 +51,10 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 			os_x.Command("kv", "set", "weibo_cookie", "1")
 			// redis_dao.SetSwitch("remote_cookie", true)
 			// panic("fast-fail retry: " + msg)
-			return types_x.NewTuple[gorequest.Response](nil, "", []error{fmt.Errorf("%s", msg)})
+			return t.NewTuple[gorequest.Response](nil, "", []error{fmt.Errorf("%s", msg)})
 		}
 
-		return types_x.NewTuple(r, body, errs)
+		return t.NewTuple(r, body, errs)
 	}, 5, 5*time.Second)
 
 	return t.A, t.B, t.C

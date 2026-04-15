@@ -3,7 +3,7 @@ package optional_x
 import (
 	"fmt"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/funcs"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-common/reflects"
 )
 
@@ -38,13 +38,13 @@ func (op Optional[T]) IsEmpty() bool {
 	return !op.IsPresent()
 }
 
-func (op Optional[T]) IfPresent(consumer funcs.Consumer[T]) {
+func (op Optional[T]) IfPresent(consumer a.Consumer[T]) {
 	if op.IsPresent() {
 		consumer(op.data)
 	}
 }
 
-func (op Optional[T]) IfPresentOrElse(consumer funcs.Consumer[T], run funcs.Runnable) {
+func (op Optional[T]) IfPresentOrElse(consumer a.Consumer[T], run a.Runnable) {
 	if op.IsPresent() {
 		consumer(op.data)
 	} else {
@@ -52,7 +52,7 @@ func (op Optional[T]) IfPresentOrElse(consumer funcs.Consumer[T], run funcs.Runn
 	}
 }
 
-func (op Optional[T]) Filter(predicate funcs.Predicate[T]) Optional[T] {
+func (op Optional[T]) Filter(predicate a.Predicate[T]) Optional[T] {
 	if op.IsEmpty() {
 		return op
 	}
@@ -62,21 +62,21 @@ func (op Optional[T]) Filter(predicate funcs.Predicate[T]) Optional[T] {
 	return Empty[T]()
 }
 
-func (op Optional[T]) Map(mapper funcs.Function[T, T]) Optional[T] {
+func (op Optional[T]) Map(mapper a.Function[T, T]) Optional[T] {
 	if op.IsEmpty() {
 		return Empty[T]()
 	}
 	return OfNullable(mapper(op.data))
 }
 
-func (op Optional[T]) FlatMap(mapper funcs.Function[T, Optional[T]]) Optional[T] {
+func (op Optional[T]) FlatMap(mapper a.Function[T, Optional[T]]) Optional[T] {
 	if op.IsEmpty() {
 		return Empty[T]()
 	}
 	return mapper(op.data)
 }
 
-func (op Optional[T]) Or(supplier funcs.Supplier[Optional[T]]) Optional[T] {
+func (op Optional[T]) Or(supplier a.Supplier[Optional[T]]) Optional[T] {
 	if op.IsPresent() {
 		return op
 	}
@@ -90,7 +90,7 @@ func (op Optional[T]) OrElse(value T) T {
 	return value
 }
 
-func (op Optional[T]) OrElseGet(supplier funcs.Supplier[T]) T {
+func (op Optional[T]) OrElseGet(supplier a.Supplier[T]) T {
 	if op.IsPresent() {
 		return op.data
 	}

@@ -9,6 +9,7 @@ import (
 
 	"luvx/gin/common/consts"
 	"luvx/gin/common/responsex"
+	"luvx/gin/dao"
 	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/db"
 	"luvx/gin/model"
@@ -18,8 +19,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/common_x/alias_x"
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	dbs "github.com/luvx21/coding-go/infra/infra_sql"
@@ -37,36 +38,34 @@ func HealthyCheck(c *gin.Context) {
 
 	mysql := func() any {
 		return common_x.RunWithTimeReturn("mysql", func() model.User {
-			var user model.User
-			db.MySQLClient.Where("id = ?", args).First(&user)
-			return user
+			return *(dao.GetUserById(args))
 		})
 	}
 	mongo := func() any {
-		return common_x.RunWithTimeReturn("mongodb", func() types_x.Pair[bson.M, error] {
+		return common_x.RunWithTimeReturn("mongodb", func() t.Pair[bson.M, error] {
 			var result bson.M
 			a := mongo_dao.UserCol.FindOne(context.TODO(), bson.M{"_id": args}).Decode(&result)
-			return types_x.NewPair(result, a)
+			return t.NewPair(result, a)
 		}).K
 	}
 	redis := func() any {
-		return common_x.RunWithTimeReturn("redis", func() types_x.Pair[string, error] {
-			return types_x.NewPair(redisClient.Get(context.Background(), "foo").Result())
+		return common_x.RunWithTimeReturn("redis", func() t.Pair[string, error] {
+			return t.NewPair(redisClient.Get(context.Background(), "foo").Result())
 		}).K
 	}
 	sqlite := func() any {
-		return common_x.RunWithTimeReturn("sqlite", func() types_x.Pair[[]map[string]any, error] {
-			return types_x.NewPair(dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args))
+		return common_x.RunWithTimeReturn("sqlite", func() t.Pair[[]map[string]any, error] {
+			return t.NewPair(dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args))
 		}).K
 	}
 	cookie := func() any {
-		return common_x.RunWithTimeReturn("cookie", func() alias_x.Table[string] {
+		return common_x.RunWithTimeReturn("cookie", func() a.Table[string] {
 			return cookie.GetCookieFromDb(".weibo.com", "weibo.com")
 		})
 	}
 	turso := func() any {
-		return common_x.RunWithTimeReturn("turso", func() types_x.Pair[[]map[string]any, error] {
-			return types_x.NewPair(dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args))
+		return common_x.RunWithTimeReturn("turso", func() t.Pair[[]map[string]any, error] {
+			return t.NewPair(dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args))
 		}).K
 	}
 	fs := []func() any{mysql, mongo, redis, sqlite, cookie, turso}

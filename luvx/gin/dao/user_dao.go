@@ -6,6 +6,12 @@ import (
 	"luvx/gin/model"
 )
 
+func GetUserById(id int) *model.User {
+	var user model.User
+	db.MySQLClient.Where("id = ?", id).First(&user)
+	return &user
+}
+
 func GetUserByUsername(username string) (*model.User, error) {
 	var user model.User
 	if err := db.MySQLClient.Where("user_name = ?", username).First(&user).Error; err != nil {

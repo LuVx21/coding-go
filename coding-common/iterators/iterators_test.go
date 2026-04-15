@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 )
 
 type Item struct {
@@ -14,7 +14,7 @@ type Item struct {
 	name string
 }
 
-func dao0(cursor int, limit int) types_x.Pair[[]Item, int] {
+func dao0(cursor int, limit int) t.Pair[[]Item, int] {
 	res := make([]Item, 0)
 	var cnt = 1
 	for i := 0; i <= 112 && cnt <= limit; i++ {
@@ -28,14 +28,14 @@ func dao0(cursor int, limit int) types_x.Pair[[]Item, int] {
 		}
 	}
 	log.Printf("cursor:%d limit:%d data:%v", cursor, limit, res)
-	return types_x.NewPair(res, cursor+limit)
+	return t.NewPair(res, cursor+limit)
 }
 
 func dao1(cursor int, limit int) []Item {
 	return dao0(cursor, limit).K
 }
 
-func dao2(pageNo int, limit int) types_x.Pair[[]Item, int] {
+func dao2(pageNo int, limit int) t.Pair[[]Item, int] {
 	return dao0((pageNo-1)*limit, limit)
 }
 
@@ -43,22 +43,22 @@ func dao2(pageNo int, limit int) types_x.Pair[[]Item, int] {
 // 	return dao2(pageNo, limit).K
 // }
 
-func Test_00(t *testing.T) {
+func Test_00(tt *testing.T) {
 	const limit = 10
 	iterator := NewCursorIterator(
 		0,
 		false,
-		func(id int) types_x.Pair[[]Item, int] {
+		func(id int) t.Pair[[]Item, int] {
 			return dao0(id, limit)
 		},
-		func(curId int, p types_x.Pair[[]Item, int]) int {
+		func(curId int, p t.Pair[[]Item, int]) int {
 			items := p.K
 			if len(items) < limit {
 				return -1
 			}
 			return items[len(items)-1].id + 1
 		},
-		func(p types_x.Pair[[]Item, int]) []Item {
+		func(p t.Pair[[]Item, int]) []Item {
 			return p.K
 		},
 		func(i int) bool {
@@ -96,15 +96,15 @@ func Test_01(t *testing.T) {
 	})
 }
 
-func Test_page(t *testing.T) {
+func Test_page(tt *testing.T) {
 	const limit = 10
 	iterator := NewPageIterator(
 		0,
 		false,
-		func(pageNo int) types_x.Pair[[]Item, int] {
+		func(pageNo int) t.Pair[[]Item, int] {
 			return dao2(pageNo, limit)
 		},
-		func(p types_x.Pair[[]Item, int]) []Item {
+		func(p t.Pair[[]Item, int]) []Item {
 			return p.K
 		},
 		func(pageNo int) bool {

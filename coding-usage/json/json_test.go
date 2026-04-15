@@ -7,7 +7,7 @@ import (
 
 	"github.com/bytedance/sonic"
 	goJson "github.com/json-iterator/go"
-	. "github.com/luvx21/coding-go/coding-common/common_x/alias_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-usage/api/common"
 )
 
@@ -25,12 +25,12 @@ func Test_00(t *testing.T) {
 	fmt.Printf("%+v\n", users)
 
 	// 不反序列化为对象, 直接操作
-	var f SliceAny
+	var f a.AS
 	//ff := make(JsonObject)
 	_ = json.Unmarshal(jsonBlob, &f)
 
 	for k, v := range f {
-		if kvs, ok := v.(JsonObject); ok {
+		if kvs, ok := v.(a.JsonObject); ok {
 			fmt.Println(k, "Id: ", kvs["Id"], "name: ", kvs["name"])
 		}
 	}
@@ -49,11 +49,11 @@ func Test_b(t *testing.T) {
     },
     "aa": 1
 }`
-	m := make(JsonObject)
+	m := make(a.JsonObject)
 	_ = json.Unmarshal([]byte(body), &m)
 
 	a2 := m["data"]
-	if kvs, ok := a2.(JsonObject); ok {
+	if kvs, ok := a2.(a.JsonObject); ok {
 		fmt.Println(a2, kvs["body"])
 	}
 }

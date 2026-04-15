@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/luvx21/coding-go/coding-common/common_x/funcs"
+	funcs "github.com/luvx21/coding-go/coding-common/common_x/a"
 )
 
 // Backward 返回值是个函数, 该函数无出参, 入参仍为一个函数
@@ -67,7 +67,7 @@ func Test_rangefunc_00(t *testing.T) {
 }
 
 func Test_rangefunc_01(t *testing.T) {
-	var fn = func(fun BiPredicate[int, byte]) {
+	var fn = func(fun funcs.BiPredicate[int, byte]) {
 		for i := range 26 {
 			if !fun(i, byte('a'+i)) {
 				return

@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/dgraph-io/ristretto/v2 v2.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260323143924-babc37508603
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.3
 	go.etcd.io/etcd/api/v3 v3.6.8
@@ -39,10 +39,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
-	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250303144028-a0af3efb3deb // indirect
 	google.golang.org/grpc v1.71.1 // indirect

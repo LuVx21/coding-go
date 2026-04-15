@@ -7,6 +7,7 @@ import (
 
 func Test_Expand_00(t *testing.T) {
 	ss := []string{
+		"", // TODO 空时应该返回空切片
 		"a{b,c}d",
 		"x{a,{b{1..3},c{,d,e}}}y",
 		"file_{1..3}.txt",

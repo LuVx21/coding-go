@@ -3,10 +3,10 @@ package maths_x
 import (
 	"cmp"
 
-	"github.com/luvx21/coding-go/coding-common/common_x/types_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/t"
 )
 
-func Abs[T types_x.Number](val T) T {
+func Abs[T t.Number](val T) T {
 	if val < 0 {
 		return -val
 	}

@@ -40,7 +40,7 @@ const (
 	"batchSize": 1024,
 	"onSuccess": "",
 	"compareField": [],
-	"batchMove": false,
+	"batchMove": true,
 	"batchMoveSize": 1024
 }
 `
@@ -118,7 +118,7 @@ func main() {
 	iterator := iterators.NewCursorIteratorSimple(
 		cursor, false,
 		func(_cursor int64) []bson.M {
-			_filter := append(filter, bson.E{Key: uk, Value: bson.M{common_x.IfThen(desc, "$lt", "$gt"): cursor}})
+			_filter := append(filter, bson.E{Key: uk, Value: bson.M{common_x.IfThen(desc, "$lt", "$gt"): _cursor}})
 			opts := options.Find().SetSort(sort).SetLimit(_config.BatchSize)
 			rowsMap, _ := mongodb.RowsMap(context.Background(), sourceDb, _filter, opts)
 			return *rowsMap
@@ -128,8 +128,7 @@ func main() {
 			if int64(len(items)) < _config.BatchSize {
 				return -1
 			}
-			cursor = cast_x.ToInt64(items[len(items)-1][uk])
-			return cursor
+			return cast_x.ToInt64(items[len(items)-1][uk])
 		},
 		func(i int64) bool {
 			return i <= 0
