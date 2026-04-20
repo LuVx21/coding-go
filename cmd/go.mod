@@ -11,17 +11,17 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260420061638-54eef7256145
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.18.0
 	github.com/urfave/cli/v3 v3.7.0
 	go.etcd.io/bbolt v1.4.3
-	go.mongodb.org/mongo-driver/v2 v2.5.0
+	go.mongodb.org/mongo-driver/v2 v2.5.1
 	golang.org/x/time v0.14.0
 )
 
@@ -89,11 +89,11 @@ require (
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
 	gitlab.com/greyxor/slogor v1.6.7 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.49.0 // indirect
-	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
-	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/term v0.41.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/term v0.42.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 )

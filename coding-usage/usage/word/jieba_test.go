@@ -1,4 +1,4 @@
-package main
+package word
 
 import (
 	"regexp"
@@ -20,12 +20,10 @@ func Test_jieba_00(t *testing.T) {
 	words = x.CutAll(s)
 	fmt_x.PrintlnRow0("全模式", s, strings.Join(words, "/"))
 
-	words = x.Cut(s, use_hmm)
-	fmt_x.PrintlnRow0("精确模式", s, strings.Join(words, "/"))
-
-	s = "比特币"
-	words = x.Cut(s, use_hmm)
-	fmt_x.PrintlnRow0("精确模式", s, strings.Join(words, "/"))
+	for _, s := range []string{s, "比特币"} {
+		words = x.Cut(s, use_hmm)
+		fmt_x.PrintlnRow0("精确模式", s, strings.Join(words, "/"))
+	}
 
 	x.AddWord("比特币")
 	// `AddWordEx` 支持指定词语的权重，作为 `AddWord` 权重太低加词失败的补充。

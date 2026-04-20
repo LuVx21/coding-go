@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
+	"sync"
 
 	"luvx/gin/common/consts"
 
@@ -15,19 +16,17 @@ import (
 	"luvx/gin/config"
 )
 
-var Turso *sql.DB
+var (
+	Turso = sync.OnceValue(createTursoCli)
+)
 
-func init() {
+func createTursoCli() *sql.DB {
 	defer common_x.TrackTime("初始化Turso连接...")()
 
 	c := config.AppConfig.Turso
 	// Turso = embedded.Embedded(c.Dbname, c.Token)
 	// Turso = remote.Remote(c.Dbname, c.Token)
 
-	funcName(c)
-}
-
-func funcName(c config.Turso) {
 	db, err := turso.NewTursoSyncDb(context.TODO(), turso.TursoSyncDbConfig{
 		Path:      filepath.Join(consts.Home+"/data/sqlite/turso", c.Dbname, "sqlite.db"),
 		RemoteUrl: fmt.Sprintf("https://%s.%s.turso.io", c.Dbname, "aws-ap-northeast-1"),
@@ -35,12 +34,13 @@ func funcName(c config.Turso) {
 	})
 	if err != nil {
 		slog.Error("turso", "err", err.Error())
-		return
+		panic(err)
 	}
 
-	Turso, err = db.Connect(context.TODO())
+	cli, err := db.Connect(context.TODO())
 	if err != nil {
 		slog.Error("turso db", "err", err.Error())
-		return
+		panic(err)
 	}
+	return cli
 }

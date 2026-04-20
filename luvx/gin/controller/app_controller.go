@@ -29,10 +29,6 @@ import (
 	"golang.org/x/time/rate"
 )
 
-var (
-	redisClient = db.InitRedisClient()
-)
-
 func HealthyCheck(c *gin.Context) {
 	args := 1
 
@@ -50,7 +46,7 @@ func HealthyCheck(c *gin.Context) {
 	}
 	redis := func() any {
 		return common_x.RunWithTimeReturn("redis", func() t.Pair[string, error] {
-			return t.NewPair(redisClient.Get(context.Background(), "foo").Result())
+			return t.NewPair(db.RedisClient().Get(context.Background(), "foo").Result())
 		}).K
 	}
 	sqlite := func() any {
@@ -65,7 +61,7 @@ func HealthyCheck(c *gin.Context) {
 	}
 	turso := func() any {
 		return common_x.RunWithTimeReturn("turso", func() t.Pair[[]map[string]any, error] {
-			return t.NewPair(dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args))
+			return t.NewPair(dbs.RowsMap(context.TODO(), db.Turso(), "select * from user where id = ?", args))
 		}).K
 	}
 	fs := []func() any{mysql, mongo, redis, sqlite, cookie, turso}

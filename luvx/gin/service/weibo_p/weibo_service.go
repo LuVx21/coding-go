@@ -55,7 +55,7 @@ const (
 
 var (
 	fields = []string{"_id", "user", "user_id", "mblogid", "created_at", "text", "retweeted_status", "pic_ids",
-		"invalid", "read", "extra", "groupId",
+		"invalid", "read", "extra", "groupId", "category",
 		// "mix_media_info", "text_raw", "page_info",
 	}
 	collection    = mongo_dao.WeiboFeedCol
@@ -202,7 +202,7 @@ func PullByUser(uid int64) {
 }
 
 func PullByGroupLock() {
-	service.RunnerLocker.LockRun("拉取分组微博", time.Minute*3, func() {
+	service.RunnerLocker().LockRun("拉取分组微博", time.Minute*3, func() {
 		for _, groupId := range sourceGroup {
 			PullByGroup(cast_x.ToInt64(groupId))
 		}
@@ -290,6 +290,10 @@ func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
 	feed["_id"] = id
 	if cast_x.ToBool(feed["isLongText"]) {
 		feed["text"] = requestLongText(feed["mblogid"].(string))
+	}
+	category := extractTagsManual(feed["text"].(string))
+	if len(category) > 0 {
+		feed["category"] = category
 	}
 
 	picUrl := make([]string, 0)
@@ -518,8 +522,16 @@ func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day ti
 func rssItem(jo, retweet bson.M) *rss.RssItem {
 	_id := cast_x.ToInt64(jo["_id"])
 	// title := jo["text_raw"].(string)
+	var categories bson.A
+	if cs, ok := jo["category"]; ok && cs != nil {
+		categories = append(categories, cs.(bson.A)...)
+	}
 	_contentHtml := contentHtml(jo)
 	if retweet != nil {
+		if cs, ok := retweet["category"]; ok && cs != nil {
+			categories = append(categories, cs.(bson.A)...)
+		}
+
 		user, retweetUrl, uName := retweet["user"], "", ""
 		if user != nil {
 			umap := mongodb.DM(user.(bson.D))
@@ -543,7 +555,7 @@ func rssItem(jo, retweet bson.M) *rss.RssItem {
 		Link:        url,
 		Guid:        cast_x.ToString(_id),
 		Author:      screenName.(string),
-		Categories:  []string{},
+		Categories:  slices_x.Transfer(func(a any) string { return cast_x.ToString(a) }, categories...),
 	}
 	return &rssItem
 }
@@ -640,4 +652,28 @@ func getGroupMember(groupId int64) []int64 {
 	}
 
 	return r
+}
+
+func extractTagsManual(s string) []string {
+	var tags []string
+	var inTag bool
+	var tagStart int
+
+	for i := 0; i < len(s); i++ {
+		if s[i] != '#' {
+			continue
+		}
+		if inTag {
+			// 结束标签
+			if i > tagStart+1 { // 避免 ##
+				tags = append(tags, s[tagStart+1:i])
+			}
+			inTag = false
+		} else {
+			// 开始标签
+			tagStart = i
+			inTag = true
+		}
+	}
+	return tags
 }

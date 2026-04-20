@@ -1,6 +1,7 @@
 package service
 
 import (
+	"sync"
 	"time"
 
 	"luvx/gin/db"
@@ -10,8 +11,10 @@ import (
 )
 
 var (
-	db1, _       = db.MySQLClient.DB()
-	RunnerLocker = infra_sql.NewLocker[string](db1)
+	RunnerLocker = sync.OnceValue(func() *infra_sql.DbLocker[string] {
+		db1, _ := db.MySQLClient().DB()
+		return infra_sql.NewLocker[string](db1)
+	})
 )
 
 type Runner struct {
@@ -20,6 +23,6 @@ type Runner struct {
 }
 
 func NewRunner(key, crontab string, exp time.Duration, f func()) *Runner {
-	fn := func() { RunnerLocker.LockRun(key, exp, f) }
+	fn := func() { RunnerLocker().LockRun(key, exp, f) }
 	return &Runner{Name: key, Crontab: crontab, Fn: func() { common_x.RunCatching(fn) }}
 }

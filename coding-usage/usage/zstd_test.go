@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"testing"
 
+	"github.com/andybalholm/brotli"
 	"github.com/golang/snappy"
-	"github.com/google/brotli/go/cbrotli"
 	"github.com/klauspost/compress/zstd"
 )
 
@@ -28,10 +30,25 @@ func Test_zstd_00(t *testing.T) {
 	fmt.Printf("压缩: %d bytes -> %d bytes (%.1f%%)\n", len(bytes), len(compressed), float64(len(compressed))/float64(len(bytes))*100)
 }
 func Test_brotli_00(t *testing.T) {
-	bytes, _ := cbrotli.Encode(originalData, cbrotli.WriterOptions{Quality: 11})
-	compressed, _ := cbrotli.Decode(bytes)
-	fmt.Printf("压缩: %d bytes -> %d bytes (%.1f%%)\n", len(bytes), len(compressed), float64(len(compressed))/float64(len(bytes))*100)
+	var buf bytes.Buffer
+	writer := brotli.NewWriterLevel(&buf, brotli.DefaultCompression)
+	writer.Write(originalData)
+	defer writer.Close()
+	bs := buf.Bytes()
+
+	reader := brotli.NewReader(bytes.NewReader(bs))
+	compressed, _ := io.ReadAll(reader)
+	fmt.Printf("压缩: %d bytes -> %d bytes (%.1f%%)\n", len(bs), len(compressed), float64(len(compressed))/float64(len(bs))*100)
 }
+
+// github.com/google/brotli/go/cbrotli
+// github.com/google/brotli/go/brotli
+//
+//	func Test_brotli_00(t *testing.T) {
+//		bs, _ := cbrotli.Encode(originalData, cbrotli.WriterOptions{Quality: 11})
+//		compressed, _ := cbrotli.Decode(bs)
+//		fmt.Printf("压缩: %d bytes -> %d bytes (%.1f%%)\n", len(bs), len(compressed), float64(len(compressed))/float64(len(bs))*100)
+//	}
 func Test_snappy_00(t *testing.T) {
 	bytes := snappy.Encode(nil, originalData)
 	compressed, _ := snappy.Decode(nil, bytes)

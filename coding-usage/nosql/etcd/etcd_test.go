@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/luvx21/coding-go/coding-common/test"
+	test "github.com/luvx21/coding-go/coding-common/tests"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 

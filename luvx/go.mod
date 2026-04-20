@@ -2,14 +2,6 @@ module luvx
 
 go 1.26
 
-replace (
-	// github.com/luvx21/coding-go/coding-common => ../coding-common
-	// github.com/luvx21/coding-go/infra/infra_sql => ../infra/infra_sql
-	// github.com/luvx21/coding-go/infra/logs => ../infra/logs
-	// github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
-	// github.com/luvx21/coding-go/luvx_service_sdk => ../luvx_service_sdk
-)
-
 require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/allegro/bigcache/v3 v3.1.0
@@ -18,17 +10,16 @@ require (
 	github.com/eko/gocache/lib/v4 v4.2.3
 	github.com/eko/gocache/store/bigcache/v4 v4.2.4
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-co-op/gocron/v2 v2.21.0
+	github.com/go-co-op/gocron/v2 v2.21.1
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
-	github.com/google/wire v0.7.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260409123519-dbeabff8c017
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260409123519-dbeabff8c017
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260420061638-54eef7256145
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/samber/lo v1.53.0
@@ -46,7 +37,7 @@ require (
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.31.1
 	gorm.io/plugin/dbresolver v1.6.2
-	modernc.org/sqlite v1.48.2
+	modernc.org/sqlite v1.49.1
 	turso.tech/database/tursogo v0.5.3
 )
 
@@ -80,7 +71,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gopherjs/gopherjs v1.20.1 // indirect
-	github.com/jedib0t/go-pretty/v6 v6.7.9 // indirect
+	github.com/jedib0t/go-pretty/v6 v6.7.10 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect
@@ -146,7 +137,7 @@ require (
 	golang.org/x/text v0.36.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260414002931-afd174a4e478 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260420184626-e10c466a9529 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gorm.io/datatypes v1.2.4 // indirect
 	gorm.io/hints v1.1.0 // indirect

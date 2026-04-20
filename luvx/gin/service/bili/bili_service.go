@@ -176,7 +176,7 @@ func PullAllUpVideo() {
 		}
 	}
 
-	service.RunnerLocker.LockRun("拉取bili_up", time.Minute*10, common_x.IfThen(config.GetSwitch("bili.updateUpId"), func2, func1))
+	service.RunnerLocker().LockRun("拉取bili_up", time.Minute*10, common_x.IfThen(config.GetSwitch("bili.updateUpId"), func2, func1))
 }
 
 func PullUpVideo(mid int64) []string {

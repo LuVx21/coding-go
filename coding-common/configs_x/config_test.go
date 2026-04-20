@@ -20,7 +20,9 @@ func Test_config_00(t *testing.T) {
 	fmt.Println("反序列化所有", jsons.ToJsonString(AppConfig))
 
 	subv := viper.Sub("webclient")
-	fmt.Println("sub", jsons.ToJsonString(subv.AllSettings()))
+	if subv != nil {
+		fmt.Println("sub", jsons.ToJsonString(subv.AllSettings()))
+	}
 
 	webclient0 := make(map[string]any)
 	subv.Unmarshal(&webclient0)

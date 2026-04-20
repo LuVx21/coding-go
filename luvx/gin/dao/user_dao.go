@@ -8,13 +8,13 @@ import (
 
 func GetUserById(id int) *model.User {
 	var user model.User
-	db.MySQLClient.Where("id = ?", id).First(&user)
+	db.MySQLClient().Where("id = ?", id).First(&user)
 	return &user
 }
 
 func GetUserByUsername(username string) (*model.User, error) {
 	var user model.User
-	if err := db.MySQLClient.Where("user_name = ?", username).First(&user).Error; err != nil {
+	if err := db.MySQLClient().Where("user_name = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -23,7 +23,7 @@ func GetUserByUsername(username string) (*model.User, error) {
 //lint:ignore U1000 忽略
 func crud() {
 	// 插入记录
-	client := db.MySQLClient
+	client := db.MySQLClient()
 	client.Create(&model.User{UserName: "xxx", Age: 18, Password: "xxx"})
 
 	var users []model.User

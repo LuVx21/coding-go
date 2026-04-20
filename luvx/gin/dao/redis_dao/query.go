@@ -14,7 +14,7 @@ const (
 )
 
 func GetSwitch(key string) bool {
-	result, err := db.RedisClient.HGet(context.TODO(), consts.AppSwitchKey, key).Bool()
+	result, err := db.RedisClient().HGet(context.TODO(), consts.AppSwitchKey, key).Bool()
 	if err != nil {
 		logrus.Warnln("开关未启用", err, result, "redis key="+key)
 	}
@@ -22,6 +22,6 @@ func GetSwitch(key string) bool {
 }
 
 func SetSwitch(key string, value bool) bool {
-	r := db.RedisClient.HSet(context.TODO(), consts.AppSwitchKey, key, value)
+	r := db.RedisClient().HSet(context.TODO(), consts.AppSwitchKey, key, value)
 	return r.Val() > 0
 }

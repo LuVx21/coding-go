@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/test"
+	test "github.com/luvx21/coding-go/coding-common/tests"
 	"github.com/redis/go-redis/v9"
 )
 

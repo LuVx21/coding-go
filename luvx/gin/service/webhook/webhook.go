@@ -35,7 +35,7 @@ var (
 )
 
 func getAccessToken() string {
-	if token, err := db.RedisClient.Get(context.TODO(), redis_key_access_token).Result(); err == nil {
+	if token, err := db.RedisClient().Get(context.TODO(), redis_key_access_token).Result(); err == nil {
 		return token
 	}
 
@@ -43,7 +43,7 @@ func getAccessToken() string {
 	fj := fxjson.FromString(b)
 	token, exp := fj.Get("access_token").StringOr(""), time.Second*time.Duration(fj.Get("expires_in").IntOr(0))
 	if exp > 0 {
-		db.RedisClient.Set(context.TODO(), redis_key_access_token, token, exp)
+		db.RedisClient().Set(context.TODO(), redis_key_access_token, token, exp)
 	}
 	return token
 }

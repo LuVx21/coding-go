@@ -11,6 +11,7 @@ import (
 	"luvx/gin/service/common_kv"
 	"luvx/gin/service/soup"
 
+	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
@@ -48,6 +49,7 @@ func parse2RssItem(m a.JsonObject) *RssItem {
 
 	deleteUrl := fmt.Sprintf(`<a href="http://`+consts.ServiceDomain+`/rss/delete/%s/%v">删除<a/>`, mongo_dao.COL_NAME_rss_feed, _id)
 	contentHtml = deleteUrl + `<br/>` + contentHtml + `<br/>` + deleteUrl
+	cs := slices_x.Transfer(func(a any) string { return cast_x.ToString(a) }, (m["categorySet"].(bson.A))...)
 
 	return &RssItem{
 		Title:       m["title"].(string),
@@ -56,6 +58,7 @@ func parse2RssItem(m a.JsonObject) *RssItem {
 		Link:        m["url"].(string),
 		Guid:        strconv.FormatInt(_id, 10),
 		Author:      "未知",
+		Categories:  cs,
 	}
 }
 

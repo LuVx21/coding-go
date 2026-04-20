@@ -43,7 +43,7 @@ func DeleteById(c *gin.Context) {
 
 func RssPull(c *gin.Context) {
 	a := func(k string) any {
-		m := db.RedisClient.HGetAll(context.Background(), rss.Redis_key_time+":"+k).Val()
+		m := db.RedisClient().HGetAll(context.Background(), rss.Redis_key_time+":"+k).Val()
 		m["all"] = strings.Join(maps.Keys(m), ",")
 		return m
 	}

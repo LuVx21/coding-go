@@ -3,13 +3,13 @@ package fmt_x
 import (
 	"fmt"
 	"io"
+	"os"
 
 	"github.com/logrusorgru/aurora"
-	"github.com/mattn/go-colorable"
 )
 
 var (
-	output = colorable.NewColorableStdout()
+	output = os.Stdout
 )
 
 // Fsuccessf writes green colored text in manner of fmt.Fprintf

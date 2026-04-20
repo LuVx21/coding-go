@@ -158,6 +158,7 @@ func batch(iterator *iterators.CursorIterator[bson.M, int64, []bson.M], sourceDb
 			imr, e := sinkDB.InsertMany(context.TODO(), temp, options.InsertMany().SetOrdered(false))
 			if e != nil {
 				postMoveError(e, temp, sinkDB, _config)
+				return
 			}
 			if len(imr.InsertedIDs) > 0 {
 				slog.Info("批量迁移", "移动数量:", len(imr.InsertedIDs))

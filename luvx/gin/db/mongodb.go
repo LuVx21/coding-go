@@ -13,16 +13,16 @@ import (
 var (
 	MongoMain = func_x.Lazy(func() *mongo.Database {
 		_config := config.AppConfig.MongoDB
-		return createCli(_config.Uri, _config.Database)
+		return createMoncgoCli(_config.Uri, _config.Database)
 	})
 	MongoSlave = func_x.Lazy(func() *mongo.Database {
 		_config := config.AppConfig.MongoDB
-		return createCli(config.Viper.GetString(config.RemoteMongoUri), _config.Database)
+		return createMoncgoCli(config.Viper.GetString(config.RemoteMongoUri), _config.Database)
 	})
 	mongoMainMap, mongoSlaveMap = make(map[string]*mongo.Collection, 4), make(map[string]*mongo.Collection, 4)
 )
 
-func createCli(uri, db string) *mongo.Database {
+func createMoncgoCli(uri, db string) *mongo.Database {
 	defer common_x.TrackTime("初始化MongoDB连接...")()
 	remoteClient, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {

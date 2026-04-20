@@ -10,7 +10,15 @@ import (
 
 const (
 	XmlFormat = `<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
     <channel>
         <title><![CDATA[%s]]></title>
 %s
@@ -48,25 +56,20 @@ type RssItem struct {
 func (aa *RssItem) ToString() string {
 	c := ""
 	if len(aa.Categories) > 0 {
-		c = strings.Join(slices_x.Transfer(func(s string) string { return "    <category><![CDATA[ " + s + " ]]></category>" }, aa.Categories...), "\n")
+		c = strings.Join(slices_x.Transfer(func(s string) string { return "    <category><![CDATA[" + s + "]]></category>" }, aa.Categories...), "\n")
 	}
 
 	return fmt.Sprintf(`
 <item>
-    <title>
-        <![CDATA[ %v ]]>
-    </title>
-    <description>
-        <![CDATA[ %v ]]>
-    </description>
+    <title><![CDATA[%v]]></title>
+    <description><![CDATA[%v]]></description>
+    <content:encoded><![CDATA[%v]]></content:encoded>
     <pubDate>%v</pubDate>
     <link>%v</link>
     <guid>%v</guid>
-    <author>
-        <![CDATA[ %v ]]>
-    </author>
+    <author><![CDATA[%v]]></author>
 %s
-</item>`, aa.Title, aa.Description, aa.PubDate, aa.Link, aa.Guid, aa.Author, c)
+</item>`, aa.Title, aa.Description, aa.Description, aa.PubDate, aa.Link, aa.Guid, aa.Author, c)
 }
 
 func ToRssXml(items []*RssItem, title string) string {

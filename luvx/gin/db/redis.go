@@ -2,9 +2,14 @@ package db
 
 import (
 	"luvx/gin/config"
+	"sync"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/redis/go-redis/v9"
+)
+
+var (
+	RedisClient = sync.OnceValue(NewRedisClient)
 )
 
 func NewRedisClient() *redis.Client {

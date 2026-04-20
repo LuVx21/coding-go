@@ -31,7 +31,7 @@ func RunnerRegister() []*service.Runner {
 }
 
 func DeleteLock() {
-	service.RunnerLocker.LockRun("删除weibo已读", time.Minute*2, Delete)
+	service.RunnerLocker().LockRun("删除weibo已读", time.Minute*2, Delete)
 }
 func Delete() {
 	var feeds []map[string]any

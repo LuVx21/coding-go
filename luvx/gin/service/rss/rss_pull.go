@@ -45,7 +45,7 @@ func pullLatest() {
 			func() []string { return strings.Split(keys, "|") },
 		)
 		keySli = slices_x.FlatMap(keySli, func(s string) []string { return brace.Expand(s) })
-		lastSyncTimeStr := db.RedisClient.Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Val()
+		lastSyncTimeStr := db.RedisClient().Get(context.Background(), fmt.Sprintf(redis_key_last_sync_time, cate)).Val()
 		lastSyncTime := time.Now().Add(time.Hour * 24 * -3)
 		if lastSyncTimeStr == "" {
 			slog.Warn("rss pull读取无值", "cate", cate)
@@ -93,8 +93,8 @@ func pullLatest() {
 				},
 			)
 		}
-		db.RedisClient.Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
-		db.RedisClient.HMSet(context.Background(), Redis_key_time+":"+cate, values...)
+		db.RedisClient().Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
+		db.RedisClient().HMSet(context.Background(), Redis_key_time+":"+cate, values...)
 	}
 }
 

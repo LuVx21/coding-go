@@ -5,3 +5,5 @@ if [[ -z $(which wire) ]]; then
 fi
 
 wire
+
+go run main.go provider.go wire_gen.go

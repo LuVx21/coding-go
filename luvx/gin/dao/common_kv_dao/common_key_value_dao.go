@@ -14,7 +14,7 @@ update common_key_value
 set common_value = json_array_append(common_value, ?, ?)
 where biz_type = ? and common_key = ?;
 `
-	db.MySQLClient.Exec(_sql, path, value, bizType, key)
+	db.MySQLClient().Exec(_sql, path, value, bizType, key)
 }
 
 // UpdateJsonMap 操作json字段
@@ -22,7 +22,7 @@ where biz_type = ? and common_key = ?;
 // JSON_INSERT 有则忽略, 无则添加
 // JSON_REPLACE 有则替换, 无则忽略
 func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any) {
-	err := db.MySQLClient.
+	err := db.MySQLClient().
 		Debug().
 		Model(&model.CommonKeyValue{}).
 		Where("biz_type = ? and invalid = 0", bizType).
@@ -35,7 +35,7 @@ func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any
 }
 
 func Get(bizType CommonKVBizType, keys ...string) []*model.CommonKeyValue {
-	tx := db.MySQLClient
+	tx := db.MySQLClient()
 	var kvs []*model.CommonKeyValue
 	// tx := client.Debug()
 	tx = tx.Where("biz_type = ? and invalid = 0", bizType)
@@ -56,7 +56,7 @@ func GetByCursor(cursorID int, limit int, bizType CommonKVBizType, keys ...strin
 		return nil, 0, nil
 	}
 
-	tx := db.MySQLClient
+	tx := db.MySQLClient()
 	// tx := client.Debug()
 	if cursorID > 0 {
 		tx = tx.Where("id < ?", cursorID)
@@ -86,13 +86,13 @@ func GetByCursor(cursorID int, limit int, bizType CommonKVBizType, keys ...strin
 }
 
 func Create(kv *model.CommonKeyValue) error {
-	return db.MySQLClient.Create(kv).Error
+	return db.MySQLClient().Create(kv).Error
 }
 
 func Delete(ids []int) error {
-	return db.MySQLClient.Where("id in ?", ids).Delete(&model.CommonKeyValue{}).Error
+	return db.MySQLClient().Where("id in ?", ids).Delete(&model.CommonKeyValue{}).Error
 }
 
 func Update(kv *model.CommonKeyValue) error {
-	return db.MySQLClient.Save(kv).Error
+	return db.MySQLClient().Save(kv).Error
 }

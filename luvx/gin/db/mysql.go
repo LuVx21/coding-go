@@ -1,6 +1,8 @@
 package db
 
 import (
+	"sync"
+
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/dbs"
 
@@ -13,9 +15,11 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var MySQLClient *gorm.DB
+var (
+	MySQLClient = sync.OnceValue(createMySQLCli)
+)
 
-func init() {
+func createMySQLCli() *gorm.DB {
 	defer common_x.TrackTime("初始化MySQL连接...")()
 
 	c := config.AppConfig.MySQL
@@ -30,8 +34,9 @@ func init() {
 	}
 
 	var err error
-	MySQLClient, err = gorm.Open(mysql.New(mysql.Config{DSN: dsn}), opts)
+	cli, err := gorm.Open(mysql.New(mysql.Config{DSN: dsn}), opts)
 	if err != nil {
 		panic(err)
 	}
+	return cli
 }

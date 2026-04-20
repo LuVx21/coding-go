@@ -55,7 +55,7 @@ rss:
     pullFrom: https://github.com/%s/releases.atom
     remote: false
     # clash-verge-rev/clash-verge-rev
-    keys: alibaba/Sentinel,apache/{rocketmq-dashboard,maven-mvnd},charles-001/dolphie,dbcli/{litecli,mycli,pgcli},DiceDB/dice,duckdb/duckdb,laixintao/iredis,liaoliao666/v2ex,loggerhead/json4u,ReadYouApp/ReadYou,Textualize/{toolong,frogmouth},upx/upx,zyx0814/Pichome,localsend/localsend,MoonTechLab/Selene,mihomo-party-org/clash-party,Abdenasser/neohtop,PGshen/mini-clipboard,ddlmanus/MacOptimizer,MetaCubeX/{ClashX.Meta,ClashMetaForAndroid},golang/go,vicanso/zedis,hoowhoami/EchoMusic
+    keys: alibaba/Sentinel,apache/{rocketmq-dashboard,maven-mvnd},charles-001/dolphie,dbcli/{litecli,mycli,pgcli},DiceDB/dice,duckdb/duckdb,laixintao/iredis,liaoliao666/v2ex,loggerhead/json4u,ReadYouApp/ReadYou,Textualize/{toolong,frogmouth},upx/upx,zyx0814/Pichome,localsend/localsend,MoonTechLab/Selene,mihomo-party-org/clash-party,Abdenasser/neohtop,PGshen/mini-clipboard,ddlmanus/MacOptimizer,MetaCubeX/{ClashX.Meta,ClashMetaForAndroid},golang/go,vicanso/zedis,hoowhoami/EchoMusic,lifedever/PasteMemo-app,AnInsomniacy/motrix-next
     keyUrl: ""
     parsePath: "//feed//entry//updated"
   docker:
