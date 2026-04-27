@@ -3,7 +3,7 @@ module github.com/luvx21/coding-go/infra/nosql/mongodb
 go 1.26
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
 	github.com/tidwall/gjson v1.18.0
 	go.mongodb.org/mongo-driver/v2 v2.5.1
 )

@@ -17,7 +17,7 @@ import (
 // 可调节数字控制异常出现的概率
 func retryable() (num int, err error) {
 	num = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100)
-	fmt.Println(times_x.TimeNowDateSecond(), "生成随机数:", num)
+	fmt.Println(times_x.TimeNowSecond(), "生成随机数:", num)
 	if num < 70 {
 		return 0, fmt.Errorf("人造错误")
 	}

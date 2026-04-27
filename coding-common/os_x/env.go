@@ -24,12 +24,8 @@ func LookupEnv(key string, defaultValue string) (string, bool) {
 		return value, true
 	}
 
-	cmd := exec.Command("sh", "-c", "kv get "+key)
-	var out bytes.Buffer
-	cmd.Stderr, cmd.Stdout = os.Stderr, &out
-	err := cmd.Run()
-	if err == nil {
-		return out.String(), true
+	if value, exist := Command("sh", "-c", "kv get "+key); exist {
+		return value, true
 	}
 
 	return defaultValue, false

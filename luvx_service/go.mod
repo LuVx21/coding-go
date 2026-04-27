@@ -5,10 +5,10 @@ go 1.26
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/klauspost/compress v1.18.5
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260423141831-d93b3216990e
 	go.etcd.io/etcd/client/v3 v3.6.8
 	google.golang.org/grpc v1.80.0
 	google.golang.org/protobuf v1.36.11

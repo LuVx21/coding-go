@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
-	"github.com/luvx21/coding-go/coding-common/test"
+	"github.com/luvx21/coding-go/coding-common/tests"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
@@ -21,7 +21,7 @@ var (
 	etcdEndpoints = []string{"etcd1:2379", "etcd2:2379", "etcd3:2379"}
 	cli           *clientv3.Client
 	beforeAfter   = func(name string) func() {
-		return test.BeforeAfterTest(name, func() {
+		return tests.BeforeAfterTest(name, func() {
 			if cli == nil {
 				var err error
 				cli, err = clientv3.New(clientv3.Config{

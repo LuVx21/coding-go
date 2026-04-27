@@ -6,6 +6,7 @@ replace (
 	github.com/luvx21/coding-go/coding-common => ../coding-common
 	github.com/luvx21/coding-go/infra/infra_sql => ../infra/infra_sql
 	github.com/luvx21/coding-go/infra/logs => ../infra/logs
+	github.com/luvx21/coding-go/infra/nosql/infra_redis => ../infra/nosql/infra_redis
 	github.com/luvx21/coding-go/infra/nosql/mongodb => ../infra/nosql/mongodb
 )
 
@@ -74,10 +75,11 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260423141831-d93b3216990e
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/olekukonko/tablewriter v1.1.4
@@ -376,16 +378,16 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.14.0 // indirect
 	golang.org/x/crypto v0.50.0 // indirect
-	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/image v0.39.0 // indirect
-	golang.org/x/mod v0.34.0 // indirect
-	golang.org/x/net v0.52.0 // indirect
+	golang.org/x/mod v0.35.0 // indirect
+	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/oauth2 v0.32.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260311193753-579e4da9a98c // indirect
+	golang.org/x/telemetry v0.0.0-20260409153401-be6f6cb8b1fa // indirect
 	golang.org/x/term v0.42.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
-	golang.org/x/tools v0.43.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20250303144028-a0af3efb3deb // indirect

@@ -12,13 +12,13 @@ import (
 	badger "github.com/dgraph-io/badger/v4"
 	"github.com/dgraph-io/ristretto/v2/z"
 	"github.com/luvx21/coding-go/coding-common/common_x"
-	"github.com/luvx21/coding-go/coding-common/test"
+	"github.com/luvx21/coding-go/coding-common/tests"
 )
 
 var (
 	db          *badger.DB
 	beforeAfter = func(caseName string) func() {
-		return test.BeforeAfterTest(caseName, func() {
+		return tests.BeforeAfterTest(caseName, func() {
 			if db != nil {
 				return
 			}

@@ -93,7 +93,7 @@ func pullLatest() {
 				},
 			)
 		}
-		db.RedisClient().Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowDateSecond(), -1)
+		db.RedisClient().Set(context.TODO(), fmt.Sprintf(redis_key_last_sync_time, cate), times_x.TimeNowSecond(), -1)
 		db.RedisClient().HMSet(context.Background(), Redis_key_time+":"+cate, values...)
 	}
 }

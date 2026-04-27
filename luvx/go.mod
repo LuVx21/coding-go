@@ -14,12 +14,12 @@ require (
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260420061638-54eef7256145
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260420061638-54eef7256145
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260423141831-d93b3216990e
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.18.0
 	github.com/samber/lo v1.53.0

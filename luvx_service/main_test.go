@@ -8,8 +8,8 @@ import (
 	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 
 	"github.com/luvx21/coding-go/coding-common/sets"
+	"github.com/luvx21/coding-go/coding-common/tests"
 
-	"github.com/luvx21/coding-go/coding-common/test"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -19,7 +19,7 @@ var conn *grpc.ClientConn
 var kvClient kv.KVClient
 
 var beforeAfter = func(name string) func() {
-	return test.BeforeAfterTest(name, func() {
+	return tests.BeforeAfterTest(name, func() {
 		conn, _ = grpc.NewClient("localhost:18888", grpc.WithTransportCredentials(insecure.NewCredentials()))
 		kvClient = kv.NewKVClient(conn)
 	}, func() { conn.Close() })

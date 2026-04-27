@@ -21,11 +21,6 @@ type (
 		B T2 `json:"b"`
 		C T3 `json:"c"`
 	}
-	// ListNode 链表节点
-	ListNode[T any] struct {
-		Val       T
-		Pre, Next *ListNode[T]
-	}
 )
 type (
 	// KV 键值对
@@ -67,14 +62,5 @@ func (t *Tuple[T1, T2, T3]) A_() T1               { return t.A }
 func (t *Tuple[T1, T2, T3]) B_() T2               { return t.B }
 func (t *Tuple[T1, T2, T3]) C_() T3               { return t.C }
 func (t *Tuple[T1, T2, T3]) Unpack() (T1, T2, T3) { return t.A, t.B, t.C }
-
-// ------------------------------------------------------------------------------------------------------------------------
-
-func NewListNode[T any](v T, pre, next *ListNode[T]) *ListNode[T] {
-	return &ListNode[T]{Pre: pre, Val: v, Next: next}
-}
-func (n *ListNode[T]) Data() T             { return n.Val }
-func (n *ListNode[T]) Prev() *ListNode[T]  { return n.Pre }
-func (n *ListNode[T]) NextN() *ListNode[T] { return n.Next }
 
 // ------------------------------------------------------------------------------------------------------------------------

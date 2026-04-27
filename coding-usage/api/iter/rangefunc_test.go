@@ -6,21 +6,10 @@ import (
 	"io"
 	"iter"
 	"slices"
-	"strings"
 	"testing"
 
 	funcs "github.com/luvx21/coding-go/coding-common/common_x/a"
 )
-
-// Backward 返回值是个函数, 该函数无出参, 入参仍为一个函数
-func Backward[Slice ~[]E, E string](s Slice) iter.Seq2[int, E] {
-	return func(fn func(int, E) bool) {
-		for i := len(s) - 1; i >= 0; i-- {
-			upper := strings.ToUpper(string(s[i]))
-			fn(i, E(upper))
-		}
-	}
-}
 
 func Pairs[V any](seq iter.Seq[V]) iter.Seq2[V, V] {
 	return func(yield func(V, V) bool) {
@@ -47,7 +36,7 @@ func Pairs[V any](seq iter.Seq[V]) iter.Seq2[V, V] {
 }
 
 // Lines 返回一个迭代器，用于逐行读取 io.Reader 的内容, 迭代器不能重复使用
-func Lines(r io.Reader) func(func(string) bool) {
+func Lines(r io.Reader) iter.Seq[string] {
 	scanner := bufio.NewScanner(r)
 	return func(yield func(string) bool) {
 		for scanner.Scan() {
@@ -60,9 +49,23 @@ func Lines(r io.Reader) func(func(string) bool) {
 
 //export GOEXPERIMENT=rangefunc
 func Test_rangefunc_00(t *testing.T) {
-	sl := []string{"hello", "world", "golang"}
-	for i, s := range Backward(sl) {
-		fmt.Printf("%d : %s\n", i, s)
+	genFib := func() iter.Seq[int] {
+		return func(yield func(int) bool) {
+			a, b := 1, 1
+
+			for {
+				if !yield(a) {
+					return
+				}
+				a, b = b, a+b
+			}
+		}
+	}
+	for n := range genFib() {
+		if n >= 10 {
+			break
+		}
+		fmt.Println(n)
 	}
 }
 
@@ -76,11 +79,11 @@ func Test_rangefunc_01(t *testing.T) {
 	}
 
 	for k, v := range fn {
-		fmt.Printf("%d: %c\n", k, v)
+		fmt.Printf("%d: %c\n", k+1, v)
 	}
 
 	fn(func(k int, v byte) bool {
-		fmt.Printf("%d: %c\n", k, v)
+		fmt.Printf("%d: %c\n", k+1, v)
 		return true
 	})
 }
@@ -99,4 +102,7 @@ func Test_rangefunc_02(t *testing.T) {
 	for i, s := range slices.Backward(sl) {
 		fmt.Printf("%d : %s\n", i, s)
 	}
+}
+
+func Test_rangefunc_03(t *testing.T) {
 }

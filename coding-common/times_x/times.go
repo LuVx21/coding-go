@@ -86,21 +86,10 @@ func parseDateWith(s string, location *time.Location, formats []TimeFormat) (d t
 	return d, fmt.Errorf("unable to parse date: %s", s)
 }
 
-func TimeNowString(layout string) string {
-	return time.Now().Format(layout)
-}
-
-func TimeNowDate() string {
-	return TimeNowString(time.DateOnly)
-}
-
-func TimeNowDateSecond() string {
-	return TimeNowString(time.DateTime)
-}
-
-func TimeNowMicrosecond() string {
-	return TimeNowString(time.DateTime + ".999999")
-}
+func TimeNowString(layout string) string { return time.Now().Format(layout) }
+func TimeNowDate() string                { return TimeNowString(time.DateOnly) }
+func TimeNowSecond() string              { return TimeNowString(time.DateTime) }
+func TimeNowMicrosecond() string         { return TimeNowString(time.DateTime + ".999999") }
 
 func ParseStr2Time(s string) (time.Time, error) {
 	return time.ParseInLocation(time.DateTime, s, time.Local)

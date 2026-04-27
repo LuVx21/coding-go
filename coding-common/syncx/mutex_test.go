@@ -15,8 +15,8 @@ func Test_lock_00(t *testing.T) {
 	// mu.Lock()
 	defer mu.Unlock()
 
-	fmt.Println(times_x.TimeNowDateSecond())
+	fmt.Println(times_x.TimeNowSecond())
 	b := TryLockWithTimeout(&mu, time.Second*3)
 	fmt.Println(b)
-	fmt.Println(times_x.TimeNowDateSecond())
+	fmt.Println(times_x.TimeNowSecond())
 }

@@ -24,17 +24,17 @@ func Test_02(t *testing.T) {
 
 func Test_color_00(t *testing.T) {
 	// 31: 红色前景
-	fmt.Println(colorRed + "这是红色文本" + colorReset)
+	fmt.Println(ColorRed + "这是红色文本" + ColorReset)
 
 	// 32: 绿色前景
-	fmt.Println(colorGreen + "这是绿色文本" + colorReset)
+	fmt.Println(ColorGreen + "这是绿色文本" + ColorReset)
 
 	// 33: 黄色前景
-	fmt.Println(colorYellow + "这是黄色文本" + colorReset)
+	fmt.Println(ColorYellow + "这是黄色文本" + ColorReset)
 
 	// 带背景色
-	fmt.Println(a + "红色文本绿色背景" + colorReset)
+	fmt.Println(a + "红色文本绿色背景" + ColorReset)
 
 	// 加粗
-	fmt.Println(b + "加粗红色文本" + colorReset)
+	fmt.Println(b + "加粗红色文本" + ColorReset)
 }

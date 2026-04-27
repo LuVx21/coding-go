@@ -10,7 +10,7 @@ import (
 
 	kv "github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 
-	"github.com/luvx21/coding-go/coding-common/test"
+	"github.com/luvx21/coding-go/coding-common/tests"
 	"github.com/luvx21/coding-go/infra/infra_kv/etcds"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/client/v3/naming/resolver"
@@ -25,7 +25,7 @@ var (
 )
 
 var beforeAfter = func(name string) func() {
-	return test.BeforeAfterTest(name, func() {
+	return tests.BeforeAfterTest(name, func() {
 		addrs, err := etcds.DiscoverServiceV1(endpoints, serviceKey+"/")
 		if err != nil || len(addrs) == 0 {
 			log.Fatal("未找到可用服务")
@@ -37,7 +37,7 @@ var beforeAfter = func(name string) func() {
 }
 
 var beforeAfter1 = func(name string) func() {
-	return test.BeforeAfterTest(name, func() {
+	return tests.BeforeAfterTest(name, func() {
 		cli, err := clientv3.New(clientv3.Config{
 			Endpoints:   endpoints,
 			DialTimeout: 5 * time.Second,

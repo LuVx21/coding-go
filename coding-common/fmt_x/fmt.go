@@ -12,20 +12,42 @@ import (
 const (
 	// 格式: \033[显示方式;前景色;背景色m
 	prefix      = "\033["
-	colorRed    = prefix + "31m"
-	colorGreen  = prefix + "32m"
-	colorYellow = prefix + "33m"
-	// colorBlue   = prefix + "34m"
-	// colorPurple = prefix + "35m"
-	// colorCyan   = prefix + "36m"
-	// colorGray   = prefix + "37m"
-	// colorWhite  = prefix + "97m"
-	colorReset = prefix + "0m"
+	ColorReset  = prefix + "0m"
+	ColorRed    = prefix + "31m"
+	ColorGreen  = prefix + "32m"
+	ColorYellow = prefix + "33m"
+	ColorBlue   = prefix + "34m"
+	ColorPurple = prefix + "35m"
+	ColorCyan   = prefix + "36m"
+	ColorGray   = prefix + "37m"
+	ColorWhite  = prefix + "97m"
+)
+const (
+	BgRed    = prefix + "41m"
+	BgGreen  = prefix + "42m"
+	BgYellow = prefix + "43m"
+	BgBlue   = prefix + "44m"
+
 	// 红色文本绿色背景
 	a = prefix + "31;42m"
 	// 加粗红色
 	b = prefix + "1;31m"
 )
+
+const (
+	StyleBold      = prefix + "1m"
+	StyleUnderline = prefix + "4m"
+	StyleReverse   = prefix + "7m"
+)
+
+func ColorPrintln(color, text string) {
+	fmt.Printf("%s%s%s\n", color, text, ColorReset)
+}
+
+// 带格式的彩色打印
+func ColorPrintf(color, format string, args ...any) {
+	fmt.Printf("%s%s%s", color, fmt.Sprintf(format, args...), ColorReset)
+}
 
 func PrintlnRow(item ...any) {
 	Println(nil, item)

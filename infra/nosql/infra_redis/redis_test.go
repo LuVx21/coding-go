@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/luvx21/coding-go/coding-common/os_x"
-	"github.com/luvx21/coding-go/coding-common/test"
+	"github.com/luvx21/coding-go/coding-common/tests"
 	"github.com/luvx21/coding-go/infra/nosql/infra_redis/frequencylimiter"
 	"github.com/redis/go-redis/v9"
 )
@@ -15,7 +15,7 @@ import (
 var db *redis.Client
 
 var before = func(name string) func() {
-	return test.BeforeTest(name, func() {
+	return tests.BeforeTest(name, func() {
 		if db == nil {
 			db = redis.NewClient(&redis.Options{
 				Addr:     os_x.Getenv("redis_host") + ":" + os_x.Getenv("redis_port"),
