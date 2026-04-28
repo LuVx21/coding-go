@@ -255,3 +255,29 @@ func Test_index_01(t *testing.T) {
 		Options: options.Index().SetUnique(true),
 	})
 }
+
+func Test_aggregate_00(t *testing.T) {
+	defer beforeAfter("Test_aggregate_00")()
+
+	// grop统计数量, 按数量从大到小, 找出源文档, 过滤
+	cursor, err := db.Collection("weibo_feed").Aggregate(t.Context(), mongo.Pipeline{
+		{bson.E{Key: "$match", Value: bson.M{"groupId": 4670120389774996, "invalid": 0, "retweeted_status": bson.M{"$exists": true}}}},
+		{bson.E{Key: "$group", Value: bson.M{"_id": "$retweeted_status", "count": bson.M{"$sum": 1}}}},
+		{bson.E{Key: "$sort", Value: bson.M{"count": -1}}},
+		{bson.E{Key: "$lookup", Value: bson.M{"from": "weibo_feed", "localField": "_id", "foreignField": "_id", "as": "doc"}}},
+		{bson.E{Key: "$unwind", Value: "$doc"}},
+		{bson.E{Key: "$replaceRoot", Value: bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{"$doc", bson.M{"frequency": "$count"}}}}}},
+		{bson.E{Key: "$match", Value: bson.M{"invalid": 0}}},
+		{bson.E{Key: "$limit", Value: 100}},
+	})
+	if err != nil {
+		t.Error("错误1", err)
+	}
+	rows, err := mongodb.Cursor(t.Context(), cursor)
+	if err != nil {
+		t.Error("错误2", err)
+	}
+	for _, row := range *rows {
+		fmt.Println(row["_id"], row["frequency"])
+	}
+}

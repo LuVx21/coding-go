@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"fmt"
+	"io"
 	"log/slog"
 	"math/rand"
 	"os"
@@ -96,11 +97,13 @@ func main() {
 		}
 
 		now := time.Now().Format("2006-01-02 15:04:05")
-		file.WriteString(fmt.Sprintf("\n---\n\n### %s(%s) %s\n", question, curModel.Id, now))
+		fmt.Fprintf(file, "\n---\n\n### %s(%s) %s\n", question, curModel.Id, now)
 
 		res, err := curModel.Request(stream, question)
 		if err != nil || res.StatusCode >= 300 {
-			fmt.Printf("请求接口失败,模型:%s, 服务商:%s, 响应:%v, err: %v\n", curModel.Id, curModel.Sp.BaseUrl, res, err)
+			bs, _ := io.ReadAll(res.Request.Body)
+			fmt.Printf("请求接口失败,模型:%s, 服务商:%s, URL:%s, 请求体: %v, 响应:%v, err: %v\n", curModel.Id, curModel.Sp.BaseUrl,
+				res.Request.RequestURI, string(bs), res, err)
 			continue
 		}
 		defer res.Body.Close()

@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/dgraph-io/ristretto/v2 v2.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260428141130-ed84d219443b
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.3
 	go.etcd.io/etcd/api/v3 v3.6.8
@@ -27,7 +27,7 @@ require (
 	github.com/google/btree v1.1.2 // indirect
 	github.com/google/flatbuffers v25.12.19+incompatible // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
-	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/robfig/cron/v3 v3.0.0 // indirect
 	github.com/rosedblabs/wal v1.3.8 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

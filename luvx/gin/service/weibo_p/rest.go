@@ -39,7 +39,7 @@ func requestWeibo(url string, queryMap map[string]any, headerMap map[string]stri
 		r, body, errs := gg.End()
 
 		if len(errs) > 0 || r.StatusCode/100 != 2 {
-			log.Errorln("weibo请求异常", url, errs, r.Status)
+			log.Warnln("weibo请求异常", url, errs, r.Status)
 			panic("fast-fail retry: weibo请求异常")
 		}
 

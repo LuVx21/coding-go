@@ -25,6 +25,11 @@ func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...opt
 		slog.Warn("mongo查询错误", "err", err.Error())
 		return nil, err
 	}
+
+	return Cursor(ctx, cur)
+}
+
+func Cursor(ctx context.Context, cur *mongo.Cursor) (*[]bson.M, error) {
 	defer func(cur *mongo.Cursor, ctx context.Context) {
 		err := cur.Close(ctx)
 		if err != nil {
@@ -33,7 +38,7 @@ func RowsMap(ctx context.Context, col *mongo.Collection, filter any, opts ...opt
 	}(cur, ctx)
 
 	var results []bson.M
-	err = cur.All(ctx, &results)
+	err := cur.All(ctx, &results)
 	if err != nil {
 		return nil, err
 	}

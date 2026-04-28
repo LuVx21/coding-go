@@ -31,6 +31,7 @@ import (
 	"github.com/icloudza/fxjson"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/common_x/a"
 	"github.com/luvx21/coding-go/coding-common/common_x/runs"
 	"github.com/luvx21/coding-go/coding-common/common_x/t"
 	"github.com/luvx21/coding-go/coding-common/iterators"
@@ -40,12 +41,14 @@ import (
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
+	"github.com/luvx21/coding-go/coding-common/validator"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	"github.com/luvx21/coding-go/luvx_service_sdk/proto_gen/proto_kv"
 	"github.com/samber/lo"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
@@ -161,14 +164,14 @@ func PullByUser(uid int64) {
 	iterator := iterators.NewCursorIteratorSimple(
 		cursor,
 		false,
-		func(_cursor int) []any {
+		func(_cursor int) []a.JsonObject {
 			return requestPageOfUser(uid, _cursor)
 		},
-		func(curId int, items []any) int {
+		func(curId int, items []a.JsonObject) int {
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
 			}
-			id := cast_x.ToInt64(items[len(items)-1].(map[string]any)["id"])
+			id := cast_x.ToInt64(items[len(items)-1]["id"])
 			if id <= latest["_id"].(int64) {
 				return -1
 			}
@@ -180,9 +183,9 @@ func PullByUser(uid int64) {
 			return i <= 0
 		},
 	)
-	arr := make([]any, 0)
-	iterator.ForEachRemaining(func(item any) {
-		feed := item.(map[string]any)
+	arr := make([]a.JsonObject, 0)
+	iterator.ForEachRemaining(func(feed a.JsonObject) {
+		// feed := item.(map[string]any)
 		id := cast_x.ToInt64(feed["id"])
 		if latest["_id"] != nil && id <= latest["_id"].(int64) {
 			return
@@ -217,31 +220,31 @@ func PullByGroup(groupId int64) {
 	var cursor int64 = 0
 	iterator := iterators.NewCursorIterator(
 		cursor, false,
-		func(_cursor int64) t.Pair[[]any, int64] {
+		func(_cursor int64) t.Pair[[]a.JsonObject, int64] {
 			return requestPageOfGroup(groupId, _cursor)
 		},
-		func(curId int64, p t.Pair[[]any, int64]) int64 {
+		func(curId int64, p t.Pair[[]a.JsonObject, int64]) int64 {
 			items := p.K
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
 			}
 			last := items[len(items)-1]
-			id := cast_x.ToInt64(last.(map[string]any)["id"])
+			id := cast_x.ToInt64(last["id"])
 			if id <= latest["_id"].(int64) {
 				return -1
 			}
 			return p.V
 		},
-		func(p t.Pair[[]any, int64]) []any {
+		func(p t.Pair[[]a.JsonObject, int64]) []a.JsonObject {
 			return p.K
 		},
 		func(i int64) bool {
 			return i <= 0
 		},
 	)
-	feeds := make([]any, 0)
-	iterator.ForEachRemaining(func(item any) {
-		feed := item.(map[string]any)
+	feeds := make([]a.JsonObject, 0)
+	iterator.ForEachRemaining(func(feed a.JsonObject) {
+		// feed := item.(map[string]any)
 		id := cast_x.ToInt64(feed["id"])
 		if latest["_id"] != nil && id <= latest["_id"].(int64) {
 			return
@@ -262,7 +265,7 @@ func PullByGroup(groupId int64) {
 		if rpc.KvRpcClient == nil || !slices.Contains(saveImageGroup, strconv.FormatInt(groupId, 10)) {
 			return
 		}
-		urls := slices_x.FlatMap(feeds, func(feed any) []string { return feed.(map[string]any)["pic_ids"].([]string) })
+		urls := slices_x.FlatMap(feeds, func(feed a.JsonObject) []string { return feed["pic_ids"].([]string) })
 		toSave := sets.NewSet(urls...)
 		for _url := range *toSave {
 			_, err := (*rpc.KvRpcClient).Get(context.TODO(), &proto_kv.Key{Key: _url})
@@ -282,7 +285,17 @@ func PullByGroup(groupId int64) {
 		}
 	})
 
-	_, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
+	rr := slices_x.GroupBy(feeds, func(jo a.JsonObject) string {
+		_, ok := jo["retweeted_status"]
+		return common_x.IfThen(ok, "ok", "nok")
+	}, func(jo a.JsonObject) a.JsonObject { return jo })
+	for _, k := range []string{"ok", "nok"} {
+		if len(rr[k]) == 0 {
+			continue
+		}
+		_, _ = collection.InsertMany(context.TODO(), rr[k], options.InsertMany().SetOrdered(false))
+	}
+	// _, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
 }
 
 func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
@@ -359,7 +372,7 @@ func requestLongText(mblogid string) string {
 	return gjson.Get(body, "data.longTextContent").String()
 }
 
-func requestPageOfUser(uid int64, cursor int) []any {
+func requestPageOfUser(uid int64, cursor int) []a.JsonObject {
 	m := map[string]any{
 		"uid":     uid,
 		"page":    cursor,
@@ -370,13 +383,12 @@ func requestPageOfUser(uid int64, cursor int) []any {
 	ff, _ := jsons.JsonStringToMap[string, any, map[string]any](body)
 	i := ff["data"]
 	if i == nil {
-		return make([]any, 0)
+		return make([]a.JsonObject, 0)
 	}
-	list := i.(map[string]any)["list"].([]any)
-	return list
+	return slices_x.Transfer(func(a any) a.JsonObject { return a.(map[string]any) }, i.(map[string]any)["list"].([]any)...)
 }
 
-func requestPageOfGroup(groupId int64, cursor int64) t.Pair[[]any, int64] {
+func requestPageOfGroup(groupId int64, cursor int64) t.Pair[[]a.JsonObject, int64] {
 	m := map[string]any{
 		"list_id":      groupId,
 		"max_id":       cursor,
@@ -384,18 +396,19 @@ func requestPageOfGroup(groupId int64, cursor int64) t.Pair[[]any, int64] {
 		"fast_refresh": 1,
 		"count":        25,
 	}
-	var list []any
+	var list []a.JsonObject
 	var maxId int64 = 0
 	for list == nil {
 		r, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 		if len(errors) > 0 {
-			return t.NewPair[[]any, int64](nil, math.MaxInt64)
+			return t.NewPair[[]a.JsonObject, int64](nil, math.MaxInt64)
 		}
-		ff, _ := jsons.JsonStringToMap[string, any, bson.M](body)
+		ff, _ := jsons.JsonStringToMap[string, any, a.JsonObject](body)
 		if ff["statuses"] == nil {
 			slog.Error("异常响应数据", "url", r.Request.URL.String(), "body", body)
 		} else {
-			list, maxId = ff["statuses"].([]any), cast_x.ToInt64(ff["max_id"])
+			maxId = cast_x.ToInt64(ff["max_id"])
+			list = slices_x.Transfer(func(a any) a.JsonObject { return a.(map[string]any) }, ff["statuses"].([]any)...)
 		}
 	}
 	return t.NewPair(list, maxId)
@@ -412,13 +425,34 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 	}
 
 	filter := bson.M{"invalid": 0}
-	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(cast_x.ToInt64(size))
-	if cast_x.ToBool(args["asc"]) {
-		opts = opts.SetSort(bson.M{"created_at": 1})
-	}
+	validator.IfThen(groupId > 0, func() { filter["groupId"] = groupId })
 
-	if groupId > 0 {
-		filter["groupId"] = groupId
+	opts := options.Find().SetSort(bson.M{"created_at": -1}).SetLimit(cast_x.ToInt64(size))
+	validator.IfThen(cast_x.ToBool(args["asc"]), func() { opts = opts.SetSort(bson.M{"created_at": 1}) })
+
+	if cast_x.ToBool(args["onlyRetweet"]) {
+		cursor, err := collection.Aggregate(context.Background(), mongo.Pipeline{
+			{{Key: "$match", Value: bson.M{"groupId": groupId, "invalid": 0, "retweeted_status": bson.M{"$exists": true}}}},
+			{{Key: "$group", Value: bson.M{"_id": "$retweeted_status", "count": bson.M{"$sum": 1}}}},
+			{{Key: "$sort", Value: bson.M{"count": -1}}},
+			{{Key: "$lookup", Value: bson.M{"from": mongo_dao.COL_NAME_weibo_feed, "localField": "_id", "foreignField": "_id", "as": "doc"}}},
+			{{Key: "$unwind", Value: "$doc"}},
+			{{Key: "$replaceRoot", Value: bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{"$doc", bson.M{"frequency": "$count"}}}}}},
+			{{Key: "$match", Value: bson.M{"read": 0, "frequency": bson.M{"$gt": 1}}}},
+			{{Key: "$sort", Value: bson.M{"frequency": -1, "created_at": 1}}},
+			{{Key: "$limit", Value: cast_x.ToInt64(size)}},
+		})
+		if err != nil {
+			slog.Error("Aggregate错误", "err", err)
+		}
+		var results []bson.M
+		err = cursor.All(context.Background(), &results)
+		if err != nil {
+			slog.Error("解析cursor错误", "err", err)
+		}
+		rIds := slices_x.Transfer(func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) }, results...)
+		filter["retweeted_status"] = bson.M{"$in": rIds}
+		return filter, opts
 	}
 	if len(word) > 0 {
 		w := cast_x.ToString(commonkvservice.GetMapFieldValue("common_map", word))
@@ -431,7 +465,6 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 	if day.Year() > 2000 {
 		day = day.Add(time.Hour * -8)
 		filter["created_at"] = bson.M{"$gte": day, "$lt": day.AddDate(0, 0, 1)}
-		DeleteLock()
 	} else {
 		if len(ignoreRssUids) == 0 {
 			_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
@@ -464,10 +497,8 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 	}
 	return filter, opts
 }
-func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day time.Time, uids ...int64) string {
-	k := strconv.FormatInt(uids[0], 10)
-	filter, opts := filter(args, groupId, word, day, uids...)
-
+func Rss(c *gin.Context, args map[string]any, day time.Time, uids ...int64) string {
+	groupId, word := cast_x.ToInt64(args["groupId"]), cast_x.ToString(args["word"])
 	if cast_x.ToBool(args["deleteBefore"]) {
 		DeleteLock()
 	}
@@ -475,6 +506,8 @@ func Rss(c *gin.Context, args map[string]any, groupId int64, word string, day ti
 		PullByGroupLock()
 	}
 
+	k := strconv.FormatInt(uids[0], 10)
+	filter, opts := filter(args, groupId, word, day, uids...)
 	p := common_x.RunWithTimeReturn(k+":weibo_rss_1", func() t.Pair[*[]bson.M, error] {
 		cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
 		return t.NewPair(cursor, err)

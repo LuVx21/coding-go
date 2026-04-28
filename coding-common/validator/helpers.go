@@ -25,3 +25,15 @@ func IsURL(value string) bool {
 
 	return u.Scheme != "" && u.Host != ""
 }
+
+func IfThen(expr bool, then func()) {
+	if expr {
+		then()
+	}
+}
+
+func IfThenI[T any](t T, _if func(T) bool, then func(T)) {
+	if _if(t) {
+		then(t)
+	}
+}

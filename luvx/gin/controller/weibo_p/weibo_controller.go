@@ -10,7 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
-	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 )
 
@@ -32,28 +32,27 @@ func PullByGroup(c *gin.Context) {
 
 func Rss(c *gin.Context) {
 	uidStr := c.Param("uid")
-	groupIdStr, word, dayStr := c.Query("groupId"), c.Query("word"), c.Query("day")
 
-	groupId := common_x.IfThen(len(groupIdStr) > 0, cast_x.ToInt64(groupIdStr), 0)
+	args := map[string]any{"groupId": 0}
+	maps_x.ForEach(c.Request.URL.Query(), func(k string, vs []string) {
+		if len(vs) >= 1 {
+			args[k] = vs[0]
+		}
+	})
+
+	groupIdStr, dayStr := c.Query("groupId"), c.Query("day")
+	if len(groupIdStr) > 0 {
+		args["groupId"] = cast_x.ToInt64(groupIdStr)
+	}
 	var day time.Time
 	if len(dayStr) > 0 {
 		day, _ = time.Parse(time.DateOnly, dayStr)
 	}
-
-	args := map[string]any{
-		"groupId": groupId,
-		"word":    word,
-		"day":     day,
-
-		"asc":          c.Query("asc"),
-		"size":         c.Query("size"),
-		"deleteBefore": c.Query("deleteBefore"),
-		"pullBefore":   c.Query("pullBefore"),
-	}
+	args["day"] = day
 
 	uids := slices_x.Transfer(func(i string) int64 { return cast_x.ToInt64(i) }, strings.Split(uidStr, ",")...)
 
-	rss := weibo_p.Rss(c, args, groupId, word, day, uids...)
+	rss := weibo_p.Rss(c, args, day, uids...)
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
 }

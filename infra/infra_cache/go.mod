@@ -5,7 +5,7 @@ go 1.26
 require (
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/dgraph-io/ristretto/v2 v2.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260428141130-ed84d219443b
 )
 
 require (

@@ -6,7 +6,6 @@ require (
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/jedib0t/go-pretty/v6 v6.7.8
 	github.com/logrusorgru/aurora v2.0.3+incompatible
-	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa

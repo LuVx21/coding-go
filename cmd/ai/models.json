@@ -8,7 +8,7 @@
         "enable": true
     },
     {
-        "baseUrl": "https://api.deepseek.com",
+        "baseUrl": "https://api.deepseek.com/",
         "apiKey": "DEEPSEEK_KEY",
         "modelIds": [
             "deepseek-v4-flash",
@@ -144,6 +144,24 @@
             "Qwen/Qwen3-235B-A22B-FP8",
             "deepseek-ai/DeepSeek-R1-0528",
             "deepseek-ai/DeepSeek-V3-0324"
+        ],
+        "enable": true
+    },
+    {
+        "baseUrl": "https://api.minimaxi.com",
+        "apiKey": "MINIMAX_KEY",
+        "modelIds": [
+            "MiniMax-M2.7",
+            "MiniMax-M2.5"
+        ],
+        "enable": true
+    },
+    {
+        "baseUrl": "https://api.moonshot.cn",
+        "apiKey": "KIMI_KEY",
+        "modelIds": [
+            "kimi-k2.6",
+            "kimi-k2.5"
         ],
         "enable": true
     }

@@ -3,13 +3,13 @@ module github.com/luvx21/coding-go/infra/nosql/mongodb
 go 1.26
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260423141831-d93b3216990e
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260428141130-ed84d219443b
 	github.com/tidwall/gjson v1.18.0
-	go.mongodb.org/mongo-driver/v2 v2.5.1
+	go.mongodb.org/mongo-driver/v2 v2.6.0
 )
 
 require (
-	github.com/klauspost/compress v1.18.5 // indirect
+	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
