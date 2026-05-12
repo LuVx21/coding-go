@@ -1,43 +1,46 @@
 package main
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"github.com/docker/docker/api/types/container"
-// 	"github.com/docker/docker/api/types/image"
-// 	"github.com/docker/docker/client"
-// 	"github.com/luvx21/coding-go/coding-common/common_x"
-// 	"strings"
-// 	"testing"
-// )
+import (
+	"context"
+	"fmt"
+	"testing"
+	"time"
 
-// var cli *client.Client
-// var ctx = context.Background()
+	"github.com/moby/moby/client"
+)
 
-// func beforeAfter(caseName string) func() {
-// 	if cli == nil {
-// 		cli, _ = client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-// 	}
+var (
+	cli *client.Client
+	ctx = context.Background()
+)
 
-// 	return func() {
-// 		fmt.Println(caseName, "用例结束...")
-// 	}
-// }
+func beforeAfter(caseName string) func() {
+	if cli == nil {
+		cli, _ = client.New(client.FromEnv, client.WithAPIVersionFromEnv())
+	}
 
-// func Test_docker_image_00(t *testing.T) {
-// 	defer beforeAfter("Test_docker_image_00")()
+	return func() {
+		defer func() {
+			if cli != nil {
+				cli.Close()
+			}
+		}()
+		fmt.Println(caseName, "用例结束...")
+	}
+}
 
-// 	images, _ := cli.ImageList(ctx, image.ListOptions{All: true})
-// 	for _, i := range images {
-// 		for _, repository := range i.RepoTags {
-// 			if strings.Contains(repository, "luvx") || strings.Contains(repository, "none") {
-// 				continue
-// 			}
-// 			fmt.Println("拉取/更新镜像:", repository)
-// 			_, _ = cli.ImagePull(ctx, repository, image.PullOptions{})
-// 		}
-// 	}
-// }
+func Test_docker_image_00(t *testing.T) {
+	defer beforeAfter("Test_docker_image_00")()
+
+	images, _ := cli.ImageList(ctx, client.ImageListOptions{All: true, Manifests: true})
+	for _, is := range images.Items {
+		iir, _ := cli.ImageInspect(ctx, is.ID)
+		fmt.Println(time.Unix(is.Created, 0).Format("2006-01-02 15:04:05"), is.Size/1024/1024, iir.Os+"/"+iir.Architecture, is.RepoTags, is.RepoDigests)
+		// ghcr.nju.edu.cn/szemeng76/lunatv:latest
+		// fullName := is.RepoTags[0]
+	}
+}
+
 // func Test_image_backup(t *testing.T) {
 // 	defer beforeAfter("Test_image_backup")()
 
@@ -72,4 +75,19 @@ package main
 // 	for _, c := range containers {
 // 		fmt.Println(c.Image, c.Ports, c.Names)
 // 	}
+
+// 容器
+// result, err := cli.ContainerList(context.Background(), client.ContainerListOptions{
+// 	All: true,
+// })
+// if err != nil {
+// 	panic(err)
+// }
+
+// // Print each container's ID, status and the image it was created from.
+// fmt.Printf("%s  %-22s  %s\n", "ID", "STATUS", "IMAGE")
+// for _, ctr := range result.Items {
+// 	fmt.Printf("%s  %-22s  %s\n", ctr.ID, ctr.Status, ctr.Image)
+// }
+
 // }

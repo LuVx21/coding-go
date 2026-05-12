@@ -104,9 +104,10 @@ func Test_00(t *testing.T) {
 
 func Test_distinct(t *testing.T) {
 	defer beforeAfter("Test_distinct")()
-	distinctValues := collection.Distinct(context.TODO(), "_class", bson.M{"age": 1})
-	arr, _ := distinctValues.Raw()
-	fmt.Println(string(arr))
+	distinctValues := collection.Distinct(context.TODO(), "_id", bson.M{"size": 2})
+	var r []int64
+	err := distinctValues.Decode(&r)
+	fmt.Println(err, r)
 }
 
 func Test_sort(t *testing.T) {

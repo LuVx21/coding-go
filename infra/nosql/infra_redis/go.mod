@@ -3,8 +3,8 @@ module github.com/luvx21/coding-go/infra/nosql/infra_redis
 go 1.26
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260428141130-ed84d219443b
-	github.com/redis/go-redis/v9 v9.19.0
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260512121208-2d7b9a81f399
+	github.com/redis/go-redis/v9 v9.20.0
 )
 
 require (
@@ -14,7 +14,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/exp v0.0.0-20260529124908-c761662dc8c9 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 )

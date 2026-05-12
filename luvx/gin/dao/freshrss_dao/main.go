@@ -5,17 +5,18 @@ import (
 )
 
 const (
-	Prefix = "freshrss.t_admin_"
+	mysql_prefix = "freshrss.t_admin_"
+	Prefix       = ""
 )
 
 var (
 	_sql = `
 select guid
-from entry
+from ` + Prefix + `entry
 where true
   and id_feed in (
     select id
-    from feed
+    from ` + Prefix + `feed
     where true
     and url like ?
 )

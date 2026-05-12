@@ -18,12 +18,15 @@ type Message struct {
 	Content string `json:"content"`
 }
 
+type Thinking struct {
+	Type string `json:"type"`
+}
 type ChatRequest struct {
-	Model       string    `json:"model"`
-	Messages    []Message `json:"messages"`
-	Stream      bool      `json:"stream"`
-	MaxTokens   int32     `json:"max_tokens"`
-	Temperature float64   `json:"temperature,omitempty"`
+	Model           string    `json:"model"`
+	Messages        []Message `json:"messages"`
+	Stream          bool      `json:"stream"`
+	Thinking        Thinking  `json:"thinking"`
+	ReasoningEffort string    `json:"reasoning_effort"`
 }
 
 type ChatResponse struct {

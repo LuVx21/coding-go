@@ -8,10 +8,13 @@ WORKDIR /build
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct CGO_ENABLED=0 GOOS=linux
 RUN go install -ldflags="-w -s" github.com/luvx21/coding-go/cmd/kv@latest && upx -9 /go/bin/kv
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod \
+    go mod download
 
 COPY . .
-RUN go build -ldflags="-w -s" -v -o app main.go && upx -9 app
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go build -ldflags="-w -s" -tags netgo,osusergo -v -o app main.go && upx -9 app
 
 # -------------------------------------------
 

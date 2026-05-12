@@ -53,9 +53,11 @@ type Model struct {
 func (m *Model) Request(stream bool, questions ...string) (*http.Response, error) {
 	messages := slices_x.Transfer(func(question string) Message { return Message{"user", question} }, questions...)
 	r := &ChatRequest{
-		Model:    m.Id,
-		Messages: messages,
-		Stream:   stream,
+		Model:           m.Id,
+		Messages:        messages,
+		Thinking:        Thinking{Type: "enabled"},
+		ReasoningEffort: "high",
+		Stream:          stream,
 	}
 	payload, _ := json.Marshal(r)
 

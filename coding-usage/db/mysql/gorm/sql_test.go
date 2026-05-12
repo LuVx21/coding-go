@@ -1,4 +1,4 @@
-package mysql
+package gorm
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/go-sql-driver/mysql"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/dbs"
 	"github.com/luvx21/coding-go/coding-common/os_x"
@@ -25,7 +24,7 @@ var (
 
 func beforeAfter(caseName string) func() {
 	if db == nil {
-		db, _ = sql.Open(dbs.DriverMysql, dbs.MySQLConnectWithDefaultArgs("", 53306, "root", "1121", "boot"))
+		db, _ = sql.Open(dbs.DriverMysql, dbs.MySQLConnectWithDefaultArgs("127.0.0.1", 53306, "root", "1121", "boot"))
 		// db = tidb()
 	}
 
@@ -110,16 +109,7 @@ func (Cookie) TableName() string {
 func Test_create_table(t *testing.T) {
 	defer beforeAfter("Test_create_table")()
 
-	gormDB, err := gorm.Open(
-		gorm_mysql.New(gorm_mysql.Config{Conn: db}),
-		&gorm.Config{SkipDefaultTransaction: true}, // 建议关闭默认事务
-	)
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	// 自动迁移（创建表）
-	err = gormDB.AutoMigrate(&Cookie{})
+	err := gormDB.AutoMigrate(&Cookie{})
 	if err != nil {
 		panic(fmt.Sprintf("AutoMigrate failed: %v", err))
 	}

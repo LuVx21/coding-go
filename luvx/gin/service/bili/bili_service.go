@@ -456,7 +456,6 @@ func getFollows(tagid int64) []string {
 		}),
 	)
 
-	fmt.Println("哈哈哈", array)
 	return array
 }
 
@@ -526,7 +525,7 @@ func timeFlow() {
 			if latest == nil || len(array) == 0 {
 				return math.MinInt
 			}
-			lastTime := array[len(array)-1].Get("modules.module_author.pub_ts").Num
+			lastTime := array[len(array)-1].Get("modules.module_author.pub_ts").String()
 			if cast_x.ToInt64(lastTime) <= until {
 				return math.MinInt
 			}
@@ -549,7 +548,7 @@ func timeFlow() {
 		author := g.Get("modules.module_author")
 		mid := author.Get("mid").String()
 		flag, ok := upIds[mid]
-		if !ok || !flag || cast_x.ToInt64(author.Get("pub_ts").Num) <= until {
+		if !ok || !flag || cast_x.ToInt64(author.Get("pub_ts").String()) <= until {
 			return
 		}
 		updatedUpIds.Add(mid)
@@ -558,7 +557,7 @@ func timeFlow() {
 		video := map[string]any{
 			"_id":     archive.Get("aid").Int(),
 			"title":   archive.Get("title").String(),
-			"pubtime": time.Unix(cast_x.ToInt64(author.Get("pub_ts").Num), 0),
+			"pubtime": time.Unix(cast_x.ToInt64(author.Get("pub_ts").String()), 0),
 			"bvid":    archive.Get("bvid").String(),
 			"upper": map[string]any{
 				"mid":  cast_x.ToInt64(author.Get("mid").Num),

@@ -18,6 +18,7 @@ import (
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/freshrss_dao"
 	"luvx/gin/dao/mongo_dao"
+	"luvx/gin/db"
 	"luvx/gin/model"
 	"luvx/gin/service"
 	commonkvservice "luvx/gin/service/common_kv"
@@ -228,8 +229,7 @@ func PullByGroup(groupId int64) {
 			if latest == nil || items == nil || len(items) == 0 {
 				return -1
 			}
-			last := items[len(items)-1]
-			id := cast_x.ToInt64(last["id"])
+			id := cast_x.ToInt64(items[len(items)-1]["id"])
 			if id <= latest["_id"].(int64) {
 				return -1
 			}
@@ -242,7 +242,7 @@ func PullByGroup(groupId int64) {
 			return i <= 0
 		},
 	)
-	feeds := make([]a.JsonObject, 0)
+	feeds, r_feedIds := make([]a.JsonObject, 0), make([]int64, 0)
 	iterator.ForEachRemaining(func(feed a.JsonObject) {
 		// feed := item.(map[string]any)
 		id := cast_x.ToInt64(feed["id"])
@@ -255,6 +255,7 @@ func PullByGroup(groupId int64) {
 			feed["retweeted_status"] = parseAndSaveFeed(f, true)
 			f["groupId"] = groupId
 			feeds = append(feeds, f)
+			r_feedIds = append(r_feedIds, cast_x.ToInt64(f["_id"]))
 		}
 		parseAndSaveFeed(feed, false)
 		feed["groupId"] = groupId
@@ -285,17 +286,26 @@ func PullByGroup(groupId int64) {
 		}
 	})
 
-	rr := slices_x.GroupBy(feeds, func(jo a.JsonObject) string {
-		_, ok := jo["retweeted_status"]
-		return common_x.IfThen(ok, "ok", "nok")
-	}, func(jo a.JsonObject) a.JsonObject { return jo })
-	for _, k := range []string{"ok", "nok"} {
-		if len(rr[k]) == 0 {
-			continue
-		}
-		_, _ = collection.InsertMany(context.TODO(), rr[k], options.InsertMany().SetOrdered(false))
+	_, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
+	if len(r_feedIds) > 0 {
+		collection.UpdateMany(context.TODO(), bson.M{"invalid": 0, "_id": bson.M{"$in": r_feedIds}}, bson.M{"$set": bson.M{"invalid": 1}})
+		db.FreshrssDb.Exec(`delete from `+freshrss_dao.Prefix+`entry where guid in ?`, slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, r_feedIds...))
 	}
-	// _, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
+
+	go func() {
+		distinctValues := collection.Distinct(context.TODO(), "_id", bson.M{"groupId": 4670120389774996, "invalid": 0, "text": bson.M{"$options": "i", "$regex": config.Viper.GetString("rss.weibo.excludeWords")}})
+		var r []int64
+		distinctValues.Decode(&r)
+		if len(r) == 0 {
+			return
+		}
+
+		collection.Aggregate(context.Background(), mongo.Pipeline{
+			{{Key: "$match", Value: bson.M{"_id": bson.M{"$in": r}}}},
+			{{Key: "$merge", Value: bson.M{"into": "target"}}},
+		})
+		collection.UpdateMany(context.TODO(), bson.M{"_id": bson.M{"$in": r}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
+	}()
 }
 
 func parseAndSaveFeed(feed map[string]any, retweeted bool) int64 {
@@ -397,15 +407,16 @@ func requestPageOfGroup(groupId int64, cursor int64) t.Pair[[]a.JsonObject, int6
 		"count":        25,
 	}
 	var list []a.JsonObject
-	var maxId int64 = 0
+	var maxId int64 = math.MaxInt64
 	for list == nil {
 		r, body, errors := requestWeibo("https://weibo.com/ajax/feed/groupstimeline", m, map[string]string{"Cookie": getCookie()})
 		if len(errors) > 0 {
-			return t.NewPair[[]a.JsonObject, int64](nil, math.MaxInt64)
+			return t.NewPair[[]a.JsonObject](nil, maxId)
 		}
 		ff, _ := jsons.JsonStringToMap[string, any, a.JsonObject](body)
 		if ff["statuses"] == nil {
 			slog.Error("异常响应数据", "url", r.Request.URL.String(), "body", body)
+			return t.NewPair[[]a.JsonObject](nil, maxId)
 		} else {
 			maxId = cast_x.ToInt64(ff["max_id"])
 			list = slices_x.Transfer(func(a any) a.JsonObject { return a.(map[string]any) }, ff["statuses"].([]any)...)
@@ -418,7 +429,7 @@ func getCookie() string {
 	m := cookie.GetCookieStrByHost(".weibo.com", "weibo.com")
 	return m[".weibo.com"] + "; " + m["weibo.com"]
 }
-func filter(args map[string]any, groupId int64, word string, day time.Time, uids ...int64) (bson.M, options.Lister[options.FindOptions]) {
+func filter(args map[string]any, groupId int64, word string, uids ...int64) (bson.M, options.Lister[options.FindOptions]) {
 	size, ok := args["size"]
 	if !ok {
 		size = 100
@@ -433,14 +444,14 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 	if cast_x.ToBool(args["onlyRetweet"]) {
 		cursor, err := collection.Aggregate(context.Background(), mongo.Pipeline{
 			{{Key: "$match", Value: bson.M{"groupId": groupId, "invalid": 0, "retweeted_status": bson.M{"$exists": true}}}},
-			{{Key: "$group", Value: bson.M{"_id": "$retweeted_status", "count": bson.M{"$sum": 1}}}},
-			{{Key: "$sort", Value: bson.M{"count": -1}}},
+			{{Key: "$group", Value: bson.M{"_id": "$retweeted_status", "frequency": bson.M{"$sum": 1}}}},
+			{{Key: "$sort", Value: bson.M{"frequency": -1}}},
 			{{Key: "$lookup", Value: bson.M{"from": mongo_dao.COL_NAME_weibo_feed, "localField": "_id", "foreignField": "_id", "as": "doc"}}},
 			{{Key: "$unwind", Value: "$doc"}},
-			{{Key: "$replaceRoot", Value: bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{"$doc", bson.M{"frequency": "$count"}}}}}},
-			{{Key: "$match", Value: bson.M{"read": 0, "frequency": bson.M{"$gt": 1}}}},
+			{{Key: "$replaceRoot", Value: bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{"$doc", bson.M{"frequency": "$frequency"}}}}}},
+			{{Key: "$match", Value: bson.M{"frequency": bson.M{"$gt": 1}}}},
 			{{Key: "$sort", Value: bson.M{"frequency": -1, "created_at": 1}}},
-			{{Key: "$limit", Value: cast_x.ToInt64(size)}},
+			{{Key: "$limit", Value: cast_x.ToInt64(size) / 3}},
 		})
 		if err != nil {
 			slog.Error("Aggregate错误", "err", err)
@@ -462,42 +473,49 @@ func filter(args map[string]any, groupId int64, word string, day time.Time, uids
 		}
 	}
 
-	if day.Year() > 2000 {
-		day = day.Add(time.Hour * -8)
-		filter["created_at"] = bson.M{"$gte": day, "$lt": day.AddDate(0, 0, 1)}
-	} else {
-		if len(ignoreRssUids) == 0 {
-			_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
-				m := commonkvservice.Get(common_kv_dao.BEAN, COMMON_KEY)
-				return m[COMMON_KEY], nil
-			})
-			kv := _kv.(*model.CommonKeyValue)
-
-			config := rssWeiboConfig{}
-			_ = jsons.JsonStringToObject(kv.CommonValue, &config)
-			ignoreRssUids = config.Ignore
+	fromStr := cast_x.ToString(args["from"])
+	if len(fromStr) > 0 {
+		from, _ := time.Parse(time.DateOnly, fromStr)
+		from = from.Add(time.Hour * -8)
+		filter["created_at"] = bson.M{"$gte": from, "$lt": from.AddDate(0, 0, 1)}
+		toStr := cast_x.ToString(args["to"])
+		if len(toStr) > 0 {
+			to, _ := time.Parse(time.DateOnly, toStr)
+			to = to.Add(time.Hour * -8)
+			filter["created_at"] = bson.M{"$gte": from, "$lt": to}
 		}
-		if len(uids) == 1 && uids[0] == 0 {
-			if len(ignoreRssUids) > 0 {
-				filter["user_id"] = bson.M{"$nin": ignoreRssUids}
+		return filter, opts
+	}
+
+	if len(ignoreRssUids) == 0 {
+		_kv, _, _ := consts.SfGroup.Do("dao_kv_rss_weibo_config", func() (any, error) {
+			m := commonkvservice.Get(common_kv_dao.BEAN, COMMON_KEY)
+			return m[COMMON_KEY], nil
+		})
+		kv := _kv.(*model.CommonKeyValue)
+
+		config := rssWeiboConfig{}
+		_ = jsons.JsonStringToObject(kv.CommonValue, &config)
+		ignoreRssUids = config.Ignore
+	}
+	if len(uids) == 1 && uids[0] == 0 {
+		validator.IfThen(len(ignoreRssUids) > 0, func() { filter["user_id"] = bson.M{"$nin": ignoreRssUids} })
+	} else {
+		filter["user_id"] = common_x.IfThen[any](len(uids) == 1, uids[0], bson.M{"$in": uids})
+		flag := false
+		for _, uid := range uids {
+			if !slices.Contains(ignoreRssUids, uid) {
+				common_kv_dao.JsonArrayAppend(common_kv_dao.BEAN, COMMON_KEY, "$.ignore", uid)
+				flag = true
 			}
-		} else {
-			filter["user_id"] = common_x.IfThen[any](len(uids) == 1, uids[0], bson.M{"$in": uids})
-			flag := false
-			for _, uid := range uids {
-				if !slices.Contains(ignoreRssUids, uid) {
-					common_kv_dao.JsonArrayAppend(common_kv_dao.BEAN, COMMON_KEY, "$.ignore", uid)
-					flag = true
-				}
-			}
-			if flag {
-				ignoreRssUids = ignoreRssUids[:0]
-			}
+		}
+		if flag {
+			ignoreRssUids = ignoreRssUids[:0]
 		}
 	}
 	return filter, opts
 }
-func Rss(c *gin.Context, args map[string]any, day time.Time, uids ...int64) string {
+func Rss(c *gin.Context, args map[string]any, uids ...int64) string {
 	groupId, word := cast_x.ToInt64(args["groupId"]), cast_x.ToString(args["word"])
 	if cast_x.ToBool(args["deleteBefore"]) {
 		DeleteLock()
@@ -507,7 +525,7 @@ func Rss(c *gin.Context, args map[string]any, day time.Time, uids ...int64) stri
 	}
 
 	k := strconv.FormatInt(uids[0], 10)
-	filter, opts := filter(args, groupId, word, day, uids...)
+	filter, opts := filter(args, groupId, word, uids...)
 	p := common_x.RunWithTimeReturn(k+":weibo_rss_1", func() t.Pair[*[]bson.M, error] {
 		cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
 		return t.NewPair(cursor, err)
@@ -709,4 +727,24 @@ func extractTagsManual(s string) []string {
 		}
 	}
 	return tags
+}
+
+func RssClear(id int64) {
+	if id <= 0 {
+		return
+	}
+	db.FreshrssDb.Exec(`
+delete
+from `+freshrss_dao.Prefix+`entry
+where true
+  and id_feed in (
+    select id
+    from `+freshrss_dao.Prefix+`feed
+    where true
+    and id in (?)
+    and url like '%/weibo/rss/%'
+)
+  and is_read = 0
+;
+	`, id)
 }

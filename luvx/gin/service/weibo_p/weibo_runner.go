@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"time"
 
+	"luvx/gin/dao/freshrss_dao"
 	"luvx/gin/dao/redis_dao"
 	"luvx/gin/db"
 	"luvx/gin/service"
@@ -35,16 +36,16 @@ func DeleteLock() {
 }
 func Delete() {
 	var feeds []map[string]any
-	db.FreshrssDb.Table("feed").
+	db.FreshrssDb.Table(freshrss_dao.Prefix+"feed").
 		Select("id").
 		Find(&feeds, "url like '%/weibo/rss/%'")
 
 	sql := `
  select guid
- from entry
+ from ` + freshrss_dao.Prefix + `entry
  where true
     and guid <= (select guid
-              from entry
+              from ` + freshrss_dao.Prefix + `entry
               where true
                 and id_feed = ?
               order by guid desc
@@ -83,7 +84,7 @@ func Delete() {
 		}
 	}
 
-	go db.FreshrssDb.Table("entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
+	go db.FreshrssDb.Table(freshrss_dao.Prefix+"entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
 
 	if len(guids) > 0 {
 		filter = bson.M{"_id": bson.M{"$in": guids}}
@@ -104,4 +105,22 @@ func Delete() {
 		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
 		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
 	}()
+	db.FreshrssDb.Exec(`
+delete
+from ` + freshrss_dao.Prefix + `entrytag
+where not exists (
+    select 1
+    from ` + freshrss_dao.Prefix + `entry
+    where id_entry=id
+);
+	`)
+	db.FreshrssDb.Exec(`
+delete
+from ` + freshrss_dao.Prefix + `tag
+where not exists (
+    select 1
+    from ` + freshrss_dao.Prefix + `entrytag
+    where id_tag=id
+);
+	`)
 }

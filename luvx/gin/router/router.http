@@ -55,6 +55,10 @@ GET http://{{host}}/rss/pullbykey
 GET http://{{host}}/rss/info/pulled
 Content-Type: application/json
 
+###
+GET http://{{host}}/weibo/rss/clear?id=0
+Content-Type: application/json
+
 ### useful
 POST http://{{host}}/useful/compare
 Content-Type: application/json

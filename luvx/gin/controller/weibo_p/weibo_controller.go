@@ -3,7 +3,6 @@ package weibo_p
 import (
 	"net/http"
 	"strings"
-	"time"
 
 	"luvx/gin/common/responsex"
 	"luvx/gin/service/weibo_p"
@@ -40,19 +39,18 @@ func Rss(c *gin.Context) {
 		}
 	})
 
-	groupIdStr, dayStr := c.Query("groupId"), c.Query("day")
+	groupIdStr := c.Query("groupId")
 	if len(groupIdStr) > 0 {
 		args["groupId"] = cast_x.ToInt64(groupIdStr)
 	}
-	var day time.Time
-	if len(dayStr) > 0 {
-		day, _ = time.Parse(time.DateOnly, dayStr)
-	}
-	args["day"] = day
 
 	uids := slices_x.Transfer(func(i string) int64 { return cast_x.ToInt64(i) }, strings.Split(uidStr, ",")...)
 
-	rss := weibo_p.Rss(c, args, day, uids...)
+	rss := weibo_p.Rss(c, args, uids...)
 	c.Header("Content-Type", "application/xml;charset=UTF-8")
 	c.String(http.StatusOK, rss)
+}
+func RssClear(c *gin.Context) {
+	weibo_p.RssClear(cast_x.ToInt64(c.Query("id")))
+	c.String(http.StatusOK, "ok")
 }

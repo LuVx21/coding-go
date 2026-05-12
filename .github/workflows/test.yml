@@ -33,7 +33,7 @@ jobs:
         run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
         shell: bash
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Fmt

@@ -9,7 +9,7 @@ import (
 	"luvx/gin/controller/ckv_c"
 	"luvx/gin/controller/rss_p"
 	"luvx/gin/controller/useful_c"
-	"luvx/gin/controller/weibo_p"
+	weibo_c "luvx/gin/controller/weibo_p"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -100,9 +100,10 @@ func RegisterBili(r *gin.Engine) {
 
 func RegisterWeibo(r *gin.Engine) {
 	weibo := r.Group("/weibo")
-	weibo.GET("/pull/group", weibo_p.PullByGroup)
-	weibo.GET("/pull/user", weibo_p.PullByUser)
-	weibo.GET("/rss/:uid", weibo_p.Rss)
+	weibo.GET("/pull/group", weibo_c.PullByGroup)
+	weibo.GET("/pull/user", weibo_c.PullByUser)
+	weibo.GET("/rss/clear", weibo_c.RssClear)
+	weibo.GET("/rss/:uid", weibo_c.Rss)
 
 	_rss := r.Group("/rss")
 	_rss.GET("/feed/:spiderKey", rss_p.Rss)

@@ -36,8 +36,9 @@ func buildCommands() []*cli.Command {
 			Action: func(ctx context.Context, c *cli.Command) error { return getCmd(ctx, c, true) },
 		},
 		{
-			Name:  "set",
-			Usage: "设置键值对,支持同时设置多对",
+			Name:            "set",
+			Usage:           "设置键值对,支持同时设置多对",
+			SkipFlagParsing: true,
 			Action: func(ctx context.Context, c *cli.Command) error {
 				if c.Args().Len() < 2 {
 					fmt_x.Warningln("You must give a key-value pair")

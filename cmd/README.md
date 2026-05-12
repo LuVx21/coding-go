@@ -53,3 +53,9 @@ kv list -k @1
 # 所有value
 kv list -v
 ```
+
+### docker
+
+模糊查询镜像的tag信息
+
+`go run docker/main.go -proxy http://127.0.0.1:7890 -image luvx/jupyter:latest`
