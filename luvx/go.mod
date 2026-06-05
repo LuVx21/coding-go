@@ -6,7 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/antchfx/xmlquery v1.5.1
-	github.com/bytedance/sonic v1.15.1
+	github.com/bytedance/sonic v1.15.2
 	github.com/eko/gocache/lib/v4 v4.2.3
 	github.com/eko/gocache/store/bigcache/v4 v4.2.4
 	github.com/gin-gonic/gin v1.12.0
@@ -14,12 +14,12 @@ require (
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260512121208-2d7b9a81f399
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260605034842-788fecdcf662
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.20.0
 	github.com/samber/lo v1.53.0
@@ -28,7 +28,7 @@ require (
 	github.com/tidwall/gjson v1.19.0
 	go.mongodb.org/mongo-driver/v2 v2.6.0
 	golang.org/x/crypto v0.52.0
-	golang.org/x/exp v0.0.0-20260529124908-c761662dc8c9
+	golang.org/x/exp v0.0.0-20260603202125-055de637280b
 	golang.org/x/sync v0.20.0
 	golang.org/x/time v0.15.0
 	google.golang.org/grpc v1.81.1
@@ -43,7 +43,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
-	github.com/andybalholm/cascadia v1.3.3 // indirect
+	github.com/andybalholm/cascadia v1.3.4 // indirect
 	github.com/antchfx/htmlquery v1.3.6 // indirect
 	github.com/antchfx/xpath v1.3.6 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -70,7 +70,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gopherjs/gopherjs v1.20.1 // indirect
-	github.com/jedib0t/go-pretty/v6 v6.7.10 // indirect
+	github.com/jedib0t/go-pretty/v6 v6.8.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.5.0 // indirect

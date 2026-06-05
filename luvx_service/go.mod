@@ -5,10 +5,10 @@ go 1.26
 require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/klauspost/compress v1.18.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260512121208-2d7b9a81f399
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260512121208-2d7b9a81f399
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260605034842-788fecdcf662
 	go.etcd.io/etcd/client/v3 v3.6.8
 	google.golang.org/grpc v1.81.1
 	google.golang.org/protobuf v1.36.11
@@ -56,7 +56,7 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
-	golang.org/x/exp v0.0.0-20260529124908-c761662dc8c9 // indirect
+	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/term v0.43.0 // indirect
