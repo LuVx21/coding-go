@@ -80,6 +80,11 @@ func buildCommands() []*cli.Command {
 				return nil
 			},
 		},
+		{
+			Name:   "backup",
+			Usage:  "备份为kv set的.sh文件, 存储同目录下的kv.sh",
+			Action: backup,
+		},
 	}
 }
 
@@ -96,7 +101,7 @@ func list(ctx context.Context, c *cli.Command) error {
 			bucket = parts[1]
 		}
 	}
-	pairs, err := getAll(bucket)
+	pairs, err := getAll(nil, bucket)
 	if err != nil {
 		// fmt_x.Errorln(err.Error())
 		return nil
@@ -122,7 +127,7 @@ func list(ctx context.Context, c *cli.Command) error {
 }
 
 func list_b(context.Context, *cli.Command, bool) error {
-	bs, err := listAllBuckets()
+	bs, err := listAllBuckets(nil)
 	if err != nil {
 		fmt_x.Errorln(err.Error())
 		return nil

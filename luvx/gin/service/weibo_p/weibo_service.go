@@ -289,13 +289,11 @@ func PullByGroup(groupId int64) {
 	_, _ = collection.InsertMany(context.TODO(), feeds, options.InsertMany().SetOrdered(false))
 	if len(r_feedIds) > 0 {
 		collection.UpdateMany(context.TODO(), bson.M{"invalid": 0, "_id": bson.M{"$in": r_feedIds}}, bson.M{"$set": bson.M{"invalid": 1}})
-		db.FreshrssDb.Exec(`delete from `+freshrss_dao.Prefix+`entry where guid in ?`, slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, r_feedIds...))
+		freshrss_dao.DeleteEntry(slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, r_feedIds...))
 	}
 
 	go func() {
-		distinctValues := collection.Distinct(context.TODO(), "_id", bson.M{"groupId": 4670120389774996, "invalid": 0, "text": bson.M{"$options": "i", "$regex": config.Viper.GetString("rss.weibo.excludeWords")}})
-		var r []int64
-		distinctValues.Decode(&r)
+		r := mongo_dao.Distinct[int64]("_id", bson.M{"groupId": 4670120389774996, "invalid": 0, "text": bson.M{"$options": "i", "$regex": config.Viper.GetString("rss.weibo.excludeWords")}})
 		if len(r) == 0 {
 			return
 		}

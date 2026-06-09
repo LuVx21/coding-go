@@ -23,6 +23,7 @@ services:
       passwordStr: ${passwordStr}
       IMG_REDIRECT_URL_PREFIX: "https://image.baidu.com/search/down"
 #    command: ["sleep", "infinity"]
+    restart: unless-stopped
 
   # nginx:
   #   image: nginx:1-alpine

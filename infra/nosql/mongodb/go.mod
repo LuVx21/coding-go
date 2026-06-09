@@ -3,9 +3,9 @@ module github.com/luvx21/coding-go/infra/nosql/mongodb
 go 1.26
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260605072733-9a7bbc829502
 	github.com/tidwall/gjson v1.19.0
-	go.mongodb.org/mongo-driver/v2 v2.6.0
+	go.mongodb.org/mongo-driver/v2 v2.6.1
 )
 
 require (
@@ -16,7 +16,7 @@ require (
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
+	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 )

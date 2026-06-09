@@ -120,7 +120,7 @@ order by id limit ?`, maxEntryID+1, "%/weibo/rss/%", 100).
 					"id_tag":   tagID,
 				})
 			if result.Error != nil {
-				slog.Error("绑定tag错误", "entryId", entry.ID, "tagName", tagName)
+				slog.Error("绑定tag错误", "entryId", entry.ID, "tagName", tagName, "error", result.Error)
 			}
 		}
 		maxEntryID = maths_x.Max(maxEntryID, cast_x.ToInt64(entry.ID))

@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"luvx/gin/dao/freshrss_dao"
+	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/dao/redis_dao"
 	"luvx/gin/db"
 	"luvx/gin/service"
 
 	"github.com/luvx21/coding-go/coding-common/cast_x"
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/infra/nosql/mongodb"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -35,10 +37,16 @@ func DeleteLock() {
 	service.RunnerLocker().LockRun("删除weibo已读", time.Minute*2, Delete)
 }
 func Delete() {
-	var feeds []map[string]any
-	db.FreshrssDb.Table(freshrss_dao.Prefix+"feed").
-		Select("id").
-		Find(&feeds, "url like '%/weibo/rss/%'")
+	go func() {
+		freshrss_dao.DeleteEntry(slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, mongo_dao.IgnoreRetweet()...))
+	}()
+	go freshrss_dao.DeleteUntag()
+	go func() {
+		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
+		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
+	}()
+
+	feedIds := freshrss_dao.FeedIds()
 
 	sql := `
  select guid
@@ -57,8 +65,8 @@ func Delete() {
  limit 100
 `
 	mysqlGuids, guids := make([]string, 0), make([]int64, 0)
-	for _, rss := range feeds {
-		rows, err := db.FreshrssDb.Raw(sql, rss["id"], rss["id"]).Rows()
+	for _, feedId := range feedIds {
+		rows, err := db.FreshrssDb.Raw(sql, feedId, feedId).Rows()
 		if err != nil {
 			slog.Error("查询freshrss db错误", "err", err.Error())
 			continue
@@ -84,7 +92,7 @@ func Delete() {
 		}
 	}
 
-	go db.FreshrssDb.Table(freshrss_dao.Prefix+"entry").Delete(nil, "guid in ? and is_favorite = 0", mysqlGuids)
+	go freshrss_dao.DeleteEntry(mysqlGuids)
 
 	if len(guids) > 0 {
 		filter = bson.M{"_id": bson.M{"$in": guids}}
@@ -100,27 +108,5 @@ func Delete() {
 		}
 		log.Infoln("mongodb删除数量:", dr.ModifiedCount)
 	}
-
-	go func() {
-		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
-		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
-	}()
-	db.FreshrssDb.Exec(`
-delete
-from ` + freshrss_dao.Prefix + `entrytag
-where not exists (
-    select 1
-    from ` + freshrss_dao.Prefix + `entry
-    where id_entry=id
-);
-	`)
-	db.FreshrssDb.Exec(`
-delete
-from ` + freshrss_dao.Prefix + `tag
-where not exists (
-    select 1
-    from ` + freshrss_dao.Prefix + `entrytag
-    where id_tag=id
-);
-	`)
+	go freshrss_dao.DeleteUntag()
 }

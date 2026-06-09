@@ -13,11 +13,11 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260605034842-788fecdcf662
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260605034842-788fecdcf662
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260605034842-788fecdcf662
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605034842-788fecdcf662
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260605034842-788fecdcf662
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260605072733-9a7bbc829502
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260605072733-9a7bbc829502
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260605072733-9a7bbc829502
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605072733-9a7bbc829502
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260605072733-9a7bbc829502
 	github.com/moby/moby/client v0.4.1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
@@ -112,7 +112,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
-	golang.org/x/exp v0.0.0-20260529124908-c761662dc8c9 // indirect
+	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
 	golang.org/x/net v0.55.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect

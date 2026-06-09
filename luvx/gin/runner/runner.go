@@ -32,6 +32,7 @@ var (
 func Start() {
 	result := redis_dao.GetSwitch("runner_all")
 	if !result {
+		log.Warnln("runner 未开启")
 		return
 	}
 	go exec()

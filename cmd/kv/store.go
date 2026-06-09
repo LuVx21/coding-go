@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
+	"github.com/luvx21/coding-go/coding-common/fmt_x"
 	infra_bolt "github.com/luvx21/coding-go/infra/infra_kv/bolt"
+	"github.com/urfave/cli/v3"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -21,16 +24,20 @@ func init() {
 	mustHaveBucket()
 }
 
-func listAllBuckets() ([]string, error) {
-	db := openDB()
-	defer db.Close()
+func listAllBuckets(db *bolt.DB) ([]string, error) {
+	if db == nil {
+		db = openDB()
+		defer db.Close()
+	}
 
 	return infra_bolt.ListBucket(db)
 }
 
-func getAll(bucket string) (map[string]string, error) {
-	db := openDB()
-	defer db.Close()
+func getAll(db *bolt.DB, bucket string) (map[string]string, error) {
+	if db == nil {
+		db = openDB()
+		defer db.Close()
+	}
 
 	m, err := infra_bolt.List(db, common_x.IfThen(len(bucket) != 0, bucket, BUCKET))
 	if err != nil {
@@ -67,6 +74,33 @@ func del(bucket, key string) error {
 	if err != nil {
 		return fmt.Errorf("删除键值对错误.key: %s", key)
 	}
+	return nil
+}
+func backup(ctx context.Context, c *cli.Command) error {
+	db := openDB()
+	defer db.Close()
+
+	home, _ := common_x.Dir()
+	bs, err := listAllBuckets(db)
+	if err != nil {
+		return err
+	}
+	fi, err := os.OpenFile(filepath.Join(home, DBDir, "kv.sh"), os.O_TRUNC|os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer fi.Close()
+	for _, b := range bs {
+		kvs, err := getAll(db, b)
+		if err != nil {
+			fmt_x.Errorf("获取bucket内容错误:%s\n", "err", err)
+			break
+		}
+		for k, v := range kvs {
+			fmt.Fprintf(fi, "kv set %s@%s %s\n", k, b, v)
+		}
+	}
+
 	return nil
 }
 
