@@ -522,13 +522,14 @@ func Rss(c *gin.Context, args map[string]any, uids ...int64) string {
 		PullByGroupLock()
 	}
 
-	k := strconv.FormatInt(uids[0], 10)
+	// k := strconv.FormatInt(uids[0], 10)
 	filter, opts := filter(args, groupId, word, uids...)
-	p := common_x.RunWithTimeReturn(k+":weibo_rss_1", func() t.Pair[*[]bson.M, error] {
-		cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
-		return t.NewPair(cursor, err)
-	})
-	cursor, err := p.Unpack()
+	// p := common_x.RunWithTimeReturn(k+":weibo_rss_1", func() t.Pair[*[]bson.M, error] {
+	// 	cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
+	// 	return t.NewPair(cursor, err)
+	// })
+	// cursor, err := p.Unpack()
+	cursor, err := mongodb.RowsMap(context.TODO(), collection, filter, opts)
 	if err != nil || len(*cursor) == 0 {
 		return rss.ToRssXml(nil, "网络傻事")
 	}
@@ -542,11 +543,12 @@ func Rss(c *gin.Context, args map[string]any, uids ...int64) string {
 	}
 	var rowsMap = map[int64]bson.M{}
 	if len(retweetedIds) > 0 {
-		p := common_x.RunWithTimeReturn(k+":weibo_rss_2", func() t.Pair[*[]bson.M, error] {
-			rows, err := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
-			return t.NewPair(rows, err)
-		})
-		rows, _ := p.Unpack()
+		// p := common_x.RunWithTimeReturn(k+":weibo_rss_2", func() t.Pair[*[]bson.M, error] {
+		// 	rows, err := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
+		// 	return t.NewPair(rows, err)
+		// })
+		// rows, _ := p.Unpack()
+		rows, _ := mongodb.RowsMap(context.TODO(), collection, bson.M{"_id": bson.M{"$in": retweetedIds}})
 		rowsMap = lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
 	}
 

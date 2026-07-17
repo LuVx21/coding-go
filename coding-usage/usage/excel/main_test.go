@@ -39,7 +39,7 @@ func Test_excel_01(t *testing.T) {
 			fmt.Println(err)
 		}
 	}()
-	for idx, row := range [][]interface{}{
+	for idx, row := range [][]any{
 		{nil, "Apple", "Orange", "Pear"}, {"Small", 2, 3, 3},
 		{"Normal", 5, 2, 4}, {"Large", 6, 7, 8},
 	} {

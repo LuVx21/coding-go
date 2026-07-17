@@ -72,7 +72,7 @@ func (w *SnowflakeIdWorker) NextId() int64 {
 	}
 
 	// 上次生成ID的时间戳
-	lastTimestamp = timestamp
+	w.lastTimestamp = timestamp
 
 	// 移位并通过或运算拼到一起组成64位的ID
 	return ((timestamp - twepoch) << timestampLeftShift) | (w.datacenterId << datacenterIdShift) | (w.workerId << workerIdShift) | sequence

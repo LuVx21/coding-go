@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly/v2"
-	"github.com/luvx21/coding-go/coding-usage/common"
+	"github.com/luvx21/coding-go/coding-usage/consts"
 	"github.com/luvx21/coding-go/infra/logs"
 )
 
@@ -23,7 +23,7 @@ func Test01(tt *testing.T) {
 	c.WithTransport(t)
 
 	c.OnRequest(func(r *colly.Request) {
-		r.Headers.Set("User-Agent", common.UserAgent)
+		r.Headers.Set("User-Agent", consts.UserAgent)
 		fmt.Println("Visiting", r.URL.String())
 	})
 

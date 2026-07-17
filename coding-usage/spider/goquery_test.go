@@ -12,7 +12,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/longbridgeapp/opencc"
-	"github.com/luvx21/coding-go/coding-usage/common"
+	"github.com/luvx21/coding-go/coding-usage/consts"
 	_ "github.com/luvx21/coding-go/infra/logs"
 )
 
@@ -23,7 +23,7 @@ var (
 func fetch(url string) *goquery.Document {
 	log.Print("发起请求:", url)
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", common.UserAgent)
+	req.Header.Set("User-Agent", consts.UserAgent)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal("Http get err:", err)

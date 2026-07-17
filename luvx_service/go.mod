@@ -3,14 +3,14 @@ module luvx_service
 go 1.26
 
 require (
-	github.com/dgraph-io/badger/v4 v4.9.2
-	github.com/klauspost/compress v1.18.6
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260605072733-9a7bbc829502
+	github.com/dgraph-io/badger/v4 v4.9.4
+	github.com/klauspost/compress v1.19.0
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260625090929-5487d5fe143c
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260625090929-5487d5fe143c
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260625090929-5487d5fe143c
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260625090929-5487d5fe143c
 	go.etcd.io/etcd/client/v3 v3.6.8
-	google.golang.org/grpc v1.81.1
+	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.11
 )
 
@@ -18,7 +18,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/dgraph-io/ristretto/v2 v2.4.0 // indirect
+	github.com/dgraph-io/ristretto/v2 v2.4.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
@@ -35,7 +35,7 @@ require (
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
-	github.com/pelletier/go-toml/v2 v2.4.0 // indirect
+	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
@@ -55,12 +55,12 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
-	golang.org/x/net v0.56.0 // indirect
-	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/term v0.44.0 // indirect
-	golang.org/x/text v0.38.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260226221140-a57be14db171 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260615183401-62b3387ff324 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260414002931-afd174a4e478 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260715232425-e75dac1f907d // indirect
 )
