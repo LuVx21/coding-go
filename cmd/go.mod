@@ -2,8 +2,6 @@ module github.com/luvx21/coding-go/cmd
 
 go 1.26
 
-replace github.com/luvx21/coding-go/coding-common => ../coding-common
-
 require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/c-bata/go-prompt v0.2.6
