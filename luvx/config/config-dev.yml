@@ -8,6 +8,13 @@ log:
   logFormat: text
 
 # ------------------------------------------------------------------------------------------------
+postgresql:
+  host: immich_postgres
+  port: 5432
+  username: postgres
+  password: postgres
+  dbname: boot
+
 mysql:
   host: luvx
   port: 3306
@@ -46,6 +53,8 @@ switch:
     updateUpId: false
   weibo:
     imgCdn: false
+  rss:
+    freshrssSqlite: true
 
 rss:
   weibo:

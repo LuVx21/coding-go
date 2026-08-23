@@ -3,9 +3,11 @@ package db
 import (
 	"database/sql"
 	"log/slog"
+	"sync"
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/config"
 
 	gorm_sqlite "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -22,7 +24,15 @@ const (
 var (
 	SqliteClient, CookieDb *sql.DB
 
-	FreshrssDb *gorm.DB
+	FreshrssDb = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), sync.OnceValue(func() *gorm.DB {
+		temp, err := GetDataSource(consts.Home + "/docker/freshrss/data/users/admin/db.sqlite")
+		go configureSQLite(temp)
+		db, err := gorm.Open(gorm_sqlite.New(gorm_sqlite.Config{Conn: temp}), &gorm.Config{})
+		if err != nil {
+			slog.Error("sqlite-freshrss", "err", err.Error())
+		}
+		return db
+	}), MySQLClient)()
 )
 
 func init() {
@@ -35,13 +45,6 @@ func init() {
 	CookieDb, err = GetDataSource(consts.Home + "/data/sqlite/Cookies")
 	if err != nil {
 		slog.Error("sqlite-cookie", "err", err.Error())
-	}
-
-	temp, err := GetDataSource(consts.Home + "/docker/freshrss/data/users/admin/db.sqlite")
-	go configureSQLite(temp)
-	FreshrssDb, err = gorm.Open(gorm_sqlite.New(gorm_sqlite.Config{Conn: temp}), &gorm.Config{})
-	if err != nil {
-		slog.Error("sqlite-freshrss", "err", err.Error())
 	}
 }
 

@@ -2,12 +2,18 @@ package freshrss_dao
 
 import (
 	"log/slog"
+	"luvx/gin/config"
 	"luvx/gin/db"
+
+	"github.com/luvx21/coding-go/coding-common/common_x"
 )
 
 const (
 	mysql_prefix = "freshrss.t_admin_"
-	Prefix       = ""
+)
+
+var (
+	Prefix = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), "", mysql_prefix)
 )
 
 var (
@@ -35,12 +41,11 @@ func ExistedGuids(path string, guids []string) []string {
 	return r
 }
 func DeleteEntry(guids []string) {
-	if len(guids) == 0 {
-		return
-	}
-	err := db.FreshrssDb.Table(Prefix+"entry").Delete(nil, "guid in ? and is_favorite = 0", guids).Error
-	if err != nil {
-		slog.Error("delete entry by guid", "err", err)
+	for _, guid := range guids {
+		err := db.FreshrssDb.Table(Prefix+"entry").Delete(nil, "guid = ? and is_favorite = 0", guid).Error
+		if err != nil {
+			slog.Error("delete entry by guid", "err", err)
+		}
 	}
 }
 

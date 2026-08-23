@@ -46,7 +46,7 @@ func (t MyLogFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		timestampFormat = time.RFC3339
 	}
 	timestamp := entry.Time.Format(timestampFormat)
-	if entry.HasCaller() {
+	if entry.Caller != nil {
 		fileVal := fmt.Sprintf("%s:%d", path.Base(entry.Caller.File), entry.Caller.Line)
 		funcVal := entry.Caller.Function
 		_, _ = fmt.Fprintf(b, "%s \033[%dm%s\033[0m %s %s %s\n", timestamp, levelColor, entry.Level, fileVal, funcVal, entry.Message)

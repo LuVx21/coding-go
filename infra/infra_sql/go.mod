@@ -1,12 +1,12 @@
 module github.com/luvx21/coding-go/infra/infra_sql
 
-go 1.26
+go 1.27
 
 require (
 	github.com/blockloop/scan v1.3.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260625090929-5487d5fe143c
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260814033808-168dd5256ee2
 	github.com/parnurzeal/gorequest v0.3.0
 	modernc.org/sqlite v1.46.1
 )

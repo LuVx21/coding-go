@@ -1,7 +1,7 @@
 package json
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"testing"
 
@@ -17,7 +17,7 @@ var users = [2]User{{1, "foo", 18}, {2, "bar", 19}}
 
 func Test_00(t *testing.T) {
 	// 序列化
-	jsonBlob, _ := json.MarshalIndent(users, "", "    ")
+	jsonBlob, _ := json.Marshal(users)
 	fmt.Println(string(jsonBlob))
 
 	// 反序列化

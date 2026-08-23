@@ -1,6 +1,6 @@
 module github.com/luvx21/coding-go/cmd
 
-go 1.26
+go 1.27
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -11,18 +11,18 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.1-0.20250404203927-76690c660834
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jedib0t/go-pretty/v6 v6.7.8
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260605072733-9a7bbc829502
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260605072733-9a7bbc829502
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/infra/infra_kv v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260814033808-168dd5256ee2
 	github.com/moby/moby/client v0.4.1
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.19.0
 	github.com/urfave/cli/v3 v3.7.0
 	go.etcd.io/bbolt v1.4.3
-	go.mongodb.org/mongo-driver/v2 v2.6.0
+	go.mongodb.org/mongo-driver/v2 v2.8.0
 	golang.org/x/time v0.14.0
 )
 
@@ -57,7 +57,7 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
-	github.com/klauspost/compress v1.18.6 // indirect
+	github.com/klauspost/compress v1.19.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
 	github.com/lestrrat-go/strftime v1.2.0 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
@@ -80,7 +80,7 @@ require (
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.2.0-beta.2 // indirect
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5 // indirect
@@ -109,11 +109,11 @@ require (
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
-	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
-	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/term v0.43.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/exp v0.0.0-20260709172345-9ea1abe57597 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 )

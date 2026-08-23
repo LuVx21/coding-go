@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strconv"
 
 	"github.com/luvx21/coding-go/coding-common/sets"
@@ -102,8 +103,7 @@ func FromTag(tag string) (*Version, string, bool) {
 // buildFormatString replaces matched positions with {}
 func buildFormatString(tag string, positions [][2]int) string {
 	// Sort positions in reverse order to replace from end to start
-	for i := len(positions) - 1; i >= 0; i-- {
-		pos := positions[i]
+	for _, pos := range slices.Backward(positions) {
 		tag = tag[:pos[0]] + "{}" + tag[pos[1]:]
 	}
 	return tag

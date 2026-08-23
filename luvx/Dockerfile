@@ -1,6 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-FROM ${REGISTRY}golang:1.26-alpine3.23 AS builder
+FROM ${REGISTRY}golang:1.27-alpine3.24 AS builder
 
 COPY --from=registry.cn-shanghai.aliyuncs.com/luvx/upx:latest --link /usr/bin/upx /usr/bin/
 WORKDIR /build
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 # -------------------------------------------
 
-FROM ${REGISTRY}alpine:3.23
+FROM ${REGISTRY}alpine:3.24
 
 RUN apk add --no-cache libgcc gcompat
 WORKDIR /app

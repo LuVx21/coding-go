@@ -3,12 +3,13 @@ package config
 import "github.com/luvx21/coding-go/infra/logs"
 
 type Config struct {
-	Server  ServerConfig
-	Log     logs.LogConfig
-	MySQL   MySQL
-	Redis   Redis
-	MongoDB MongoDB
-	Turso   Turso
+	Server     ServerConfig
+	Log        logs.LogConfig
+	MySQL      MySQL
+	PostgreSQL PostgreSQL
+	Redis      Redis
+	MongoDB    MongoDB
+	Turso      Turso
 }
 
 type ServerConfig struct {
@@ -16,6 +17,14 @@ type ServerConfig struct {
 	Debug bool
 }
 
+type PostgreSQL struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	Dbname   string
+	Args     map[string]string
+}
 type MySQL struct {
 	Host     string
 	Port     int

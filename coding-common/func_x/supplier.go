@@ -10,7 +10,7 @@ import (
 type CloseableSupplier[T any] struct {
 	delegate        func() T     // 值提供函数
 	resetAfterClose bool         // 关闭后是否重置
-	initialized     int32        // 原子标记，替代 volatile boolean, 0:未 1:已
+	initialized     atomic.Int32 // 原子标记，替代 volatile boolean, 0:未 1:已
 	value           *T           // 缓存的值
 	mu              sync.RWMutex // 读写锁，保证线程安全
 }
@@ -29,7 +29,7 @@ func LazyWith[T any](delegate func() T, resetAfterClose bool) *CloseableSupplier
 
 // Get 获取值，如果未初始化则懒加载
 func (cs *CloseableSupplier[T]) Get() T {
-	if atomic.LoadInt32(&cs.initialized) == 1 {
+	if cs.initialized.Load() == 1 {
 		cs.mu.RLock()
 		defer cs.mu.RUnlock()
 		return *cs.value
@@ -39,10 +39,10 @@ func (cs *CloseableSupplier[T]) Get() T {
 	defer cs.mu.Unlock()
 
 	// 双重检查锁
-	if atomic.LoadInt32(&cs.initialized) == 0 {
+	if cs.initialized.Load() == 0 {
 		val := cs.delegate()
 		cs.value = &val
-		atomic.StoreInt32(&cs.initialized, 1)
+		cs.initialized.Store(1)
 	}
 
 	return *cs.value
@@ -50,7 +50,7 @@ func (cs *CloseableSupplier[T]) Get() T {
 
 // IsInitialized 检查是否已初始化
 func (cs *CloseableSupplier[T]) IsInitialized() bool {
-	return atomic.LoadInt32(&cs.initialized) == 1
+	return cs.initialized.Load() == 1
 }
 
 // IfPresent 如果值存在则执行消费者函数
@@ -67,7 +67,7 @@ func (cs *CloseableSupplier[T]) Map(mapper func(T) any) (any, bool) {
 	cs.mu.RLock()
 	defer cs.mu.RUnlock()
 
-	if atomic.LoadInt32(&cs.initialized) == 1 && cs.value != nil {
+	if cs.initialized.Load() == 1 && cs.value != nil {
 		return mapper(*cs.value), true
 	}
 	return nil, false
@@ -83,14 +83,14 @@ func (cs *CloseableSupplier[T]) TryCloseWith(closer func(T) error) error {
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 
-	if atomic.LoadInt32(&cs.initialized) == 1 && cs.value != nil {
+	if cs.initialized.Load() == 1 && cs.value != nil {
 		if err := closer(*cs.value); err != nil {
 			return err
 		}
 
 		if cs.resetAfterClose {
 			cs.value = nil
-			atomic.StoreInt32(&cs.initialized, 0)
+			cs.initialized.Store(0)
 		}
 	}
 	return nil
@@ -98,7 +98,7 @@ func (cs *CloseableSupplier[T]) TryCloseWith(closer func(T) error) error {
 
 // String 字符串表示
 func (cs *CloseableSupplier[T]) String() string {
-	if atomic.LoadInt32(&cs.initialized) == 1 {
+	if cs.initialized.Load() == 1 {
 		cs.mu.RLock()
 		defer cs.mu.RUnlock()
 		if cs.value != nil {

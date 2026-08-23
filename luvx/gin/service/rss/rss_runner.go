@@ -55,7 +55,7 @@ and is_read = 0
 and tags IS NOT NULL
 and tags != ''
 and id_feed in (select id from `+freshrss_dao.Prefix+`feed where url like ? and category != 2 and category != 11)
-order by id limit ?`, maxEntryID+1, "%/weibo/rss/%", 100).
+order by id limit ?`, maxEntryID+1, "%/weibo/rss/%", 200).
 		Scan(&entries)
 	if len(entries) == 0 {
 		return

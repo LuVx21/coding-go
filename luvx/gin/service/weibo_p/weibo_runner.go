@@ -40,6 +40,18 @@ func Delete() {
 	go func() {
 		freshrss_dao.DeleteEntry(slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, mongo_dao.IgnoreRetweet()...))
 	}()
+	go func() {
+		db.FreshrssDb.Exec(`
+delete
+from ` + freshrss_dao.Prefix + `tag
+where exists (select id_tag,
+                     count(id_entry) as cnt
+              from ` + freshrss_dao.Prefix + `entrytag
+              where id_tag = id
+              group by id_tag
+              having cnt < 4);
+`)
+	}()
 	go freshrss_dao.DeleteUntag()
 	go func() {
 		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
@@ -108,5 +120,4 @@ func Delete() {
 		}
 		log.Infoln("mongodb删除数量:", dr.ModifiedCount)
 	}
-	go freshrss_dao.DeleteUntag()
 }

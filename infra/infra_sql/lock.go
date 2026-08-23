@@ -31,14 +31,18 @@ func NewLocker[T any](c *sql.DB) *DbLocker[T] {
 func NewLockerWithOwner[T any](c *sql.DB, ownerID string) *DbLocker[T] {
 	l := &DbLocker[T]{Client: c, ownerID: ownerID}
 
+	t := reflect.TypeOf(c.Driver())
+	for t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
 	// 可修改为外部传参
-	driverType := strings.ToLower(reflect.TypeOf(c.Driver()).String())
+	driverType := strings.ToLower(t.PkgPath())
 	if strings.Contains(driverType, "mysql") {
 		l.sqlHolder = &sql_mysql
 	} else if strings.Contains(driverType, "sqlite") {
 		a := sql_sqlite()
 		l.sqlHolder = &a
-	} else if strings.Contains(driverType, "pq") {
+	} else if strings.Contains(driverType, "pq") || strings.Contains(driverType, "pgx") {
 		a := sql_postgre()
 		l.sqlHolder = &a
 	} else {
@@ -66,6 +70,8 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	_, err := l.Client.ExecContext(ctx, l.sqlHolder.lock_insert, key, l.ownerID, time.Now().Add(exp).UnixMilli())
 	if err == nil {
 		return true
+	} else {
+		slog.Error("获取锁失败", "error", err)
 	}
 
 	var existingOwner string
@@ -98,10 +104,13 @@ func (l *DbLocker[T]) prepare() error {
 	if l.tableCreated {
 		return nil
 	}
-
-	if _, err := l.Client.Exec(l.sqlHolder.ddl); err != nil {
-		slog.Error("建表失败", "err", err)
-		return fmt.Errorf("建表失败:%s", l.sqlHolder.ddl)
+	var dummy int
+	err := l.Client.QueryRow(l.sqlHolder.exist_check).Scan(&dummy)
+	if errors.Is(err, sql.ErrNoRows) {
+		if _, err := l.Client.Exec(l.sqlHolder.ddl); err != nil {
+			slog.Error("建表失败", "err", err)
+			return fmt.Errorf("建表失败:%s", l.sqlHolder.ddl)
+		}
 	}
 	l.tableCreated = true
 	return nil
@@ -153,16 +162,18 @@ func (l *DbLocker[T]) StartCleanup(db *sql.DB, interval time.Duration) {
 }
 
 type sqlHolder struct {
-	ddl         string
-	selectLock  string
-	lock_insert string
-	lock_update string
-	unlock      string
-	renew       string
-	cleanLock   string
+	exist_check string
+	ddl         string // 建表语句
+	selectLock  string // 查询所
+	lock_insert string // 获取锁
+	lock_update string // 获取锁
+	unlock      string // 释放锁
+	renew       string // 重入
+	cleanLock   string // 清理锁
 }
 
 var sql_mysql = sqlHolder{
+	exist_check: `SELECT 1 AS cnt FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'common_lock' LIMIT 1`,
 	ddl: `
 		CREATE TABLE IF NOT EXISTS common_lock
 		(
@@ -188,6 +199,7 @@ var sql_mysql = sqlHolder{
 
 func sql_sqlite() sqlHolder {
 	sql_sqlite := sql_mysql
+	sql_sqlite.exist_check = `SELECT 1 AS cnt FROM sqlite_master WHERE type = 'table' AND name = 'common_lock' LIMIT 1;`
 	sql_sqlite.ddl = `
 		CREATE TABLE IF NOT EXISTS common_lock
 		(
@@ -207,6 +219,7 @@ func sql_sqlite() sqlHolder {
 
 func sql_postgre() sqlHolder {
 	sql_postgre := sql_mysql
+	sql_postgre.exist_check = `SELECT 1 AS cnt FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'common_lock' LIMIT 1;`
 	sql_postgre.ddl = `
 		CREATE TABLE IF NOT EXISTS common_lock (
 			id          BIGSERIAL    PRIMARY KEY,

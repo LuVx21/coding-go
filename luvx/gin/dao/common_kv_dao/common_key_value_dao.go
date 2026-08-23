@@ -8,13 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+func JsonSet(bizType CommonKVBizType, key string, path string, value any) {
+	UpdateJsonMap(bizType, key, "JSON_SET(common_value, ?, CAST(? AS JSON))", path, value)
+}
 func JsonArrayAppend(bizType CommonKVBizType, key string, path string, value any) {
-	_sql := `
-update common_key_value
-set common_value = json_array_append(common_value, ?, ?)
-where biz_type = ? and common_key = ?;
-`
-	db.MySQLClient().Exec(_sql, path, value, bizType, key)
+	UpdateJsonMap(bizType, key, "JSON_ARRAY_APPEND(common_value, ?, ?)", path, value)
 }
 
 // UpdateJsonMap 操作json字段
@@ -25,8 +23,7 @@ func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any
 	err := db.MySQLClient().
 		Debug().
 		Model(&model.CommonKeyValue{}).
-		Where("biz_type = ? and invalid = 0", bizType).
-		Where("common_key = ?", key).
+		Where("biz_type = ? and common_key = ?", bizType, key).
 		Update("common_value", gorm.Expr(expr, args...)).
 		Error
 	if err != nil {
