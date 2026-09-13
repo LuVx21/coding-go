@@ -76,11 +76,11 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260913063435-1fdc90fd08b6
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/moby/moby/client v0.4.1
@@ -123,8 +123,9 @@ require (
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/tucnak/telebot.v2 v2.5.0
 	gorm.io/driver/mysql v1.6.0
+	gorm.io/driver/postgres v1.6.2
 	gorm.io/driver/sqlite v1.6.0
-	gorm.io/gorm v1.31.1
+	gorm.io/gorm v1.31.2
 	resty.dev/v3 v3.0.0-beta.6
 	turso.tech/database/tursogo v0.5.3
 )
@@ -260,6 +261,7 @@ require (
 	github.com/influxdata/tdigest v0.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
 	github.com/jcmturner/gofork v1.7.6 // indirect

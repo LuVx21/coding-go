@@ -3,16 +3,29 @@ package common_kv_dao
 import (
 	"log/slog"
 	"luvx/gin/db"
+	"luvx/gin/db/postgre"
 	"luvx/gin/model"
 
+	"github.com/luvx21/coding-go/coding-common/jsons"
 	"gorm.io/gorm"
 )
 
-func JsonSet(bizType CommonKVBizType, key string, path string, value any) {
-	UpdateJsonMap(bizType, key, "JSON_SET(common_value, ?, CAST(? AS JSON))", path, value)
+func JsonSet(bizType CommonKVBizType, key string, path []string, value any) {
+	// MySQL
+	// UpdateJsonMap(bizType, key, "JSON_SET(common_value, ?, CAST(? AS JSON))", "$."+strings.Join(path, "."), value)
+
+	// PostgreSQL
+	jpath := postgre.ToPgJsonPath(path)
+	UpdateJsonMap(bizType, key, "jsonb_set(common_value, ?::text[], ?::jsonb)", jpath, jsons.ToJsonString(value))
 }
-func JsonArrayAppend(bizType CommonKVBizType, key string, path string, value any) {
-	UpdateJsonMap(bizType, key, "JSON_ARRAY_APPEND(common_value, ?, ?)", path, value)
+
+func JsonArrayAppend(bizType CommonKVBizType, key string, path []string, value any) {
+	// MySQL
+	// UpdateJsonMap(bizType, key, "JSON_ARRAY_APPEND(common_value, ?, ?)", "$."+strings.Join(path, "."), value)
+	// PostgreSQL
+	// TODO
+	jpath := postgre.ToPgJsonPath(path)
+	UpdateJsonMap(bizType, key, `jsonb_set(common_value, ?::text[], COALESCE(common_value #> ?::text[], '[]'::jsonb) || ?::jsonb)`, jpath, jpath, jsons.ToJsonString(value))
 }
 
 // UpdateJsonMap 操作json字段

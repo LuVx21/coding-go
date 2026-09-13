@@ -14,12 +14,12 @@ require (
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260814033808-168dd5256ee2
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260814033808-168dd5256ee2
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260913063435-1fdc90fd08b6
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/samber/lo v1.53.0
@@ -33,7 +33,7 @@ require (
 	golang.org/x/time v0.16.0
 	google.golang.org/grpc v1.83.2
 	gorm.io/driver/mysql v1.6.0
-	gorm.io/driver/postgres v1.5.0
+	gorm.io/driver/postgres v1.6.2
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.31.2
@@ -72,9 +72,9 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gopherjs/gopherjs v1.20.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
-	github.com/jackc/pgx/v5 v5.5.5 // indirect
-	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/pgx/v5 v5.11.0 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.8.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

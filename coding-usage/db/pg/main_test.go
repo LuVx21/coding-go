@@ -9,8 +9,9 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/luvx21/coding-go/coding-common/dbs"
-
-	_ "github.com/lib/pq"
+	"github.com/luvx21/coding-go/coding-common/jsons"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -19,17 +20,20 @@ const (
 	user     = ""
 	password = ""
 	dbname   = "postgres"
-	url1     = "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable"
-	url2     = "postgres://%s:%s@%s:%d/%s?sslmode=disable"
+
+	url = "postgres://%s:%s@%s:%d/%s?sslmode=disable&TimeZone=Asia/Shanghai"
 )
 
-var db *sql.DB
+var (
+	db  *sql.DB
+	gdb *gorm.DB
+)
 
 func beforeAfter(caseName string) func() {
 	if db == nil {
-		_url := fmt.Sprintf(url1, host, port, user, password, dbname)
-		//_url = fmt.Sprintf(url2, user, password, host, port, dbname)
-		db, _ = sql.Open("postgres", _url)
+		_url := fmt.Sprintf(url, user, password, host, port, dbname)
+		db, _ = sql.Open("pgx", _url)
+		gdb, _ = gorm.Open(postgres.Open(_url), &gorm.Config{})
 	}
 
 	return func() {
@@ -46,7 +50,7 @@ func Test_00(t *testing.T) {
 }
 
 func Test_01(t *testing.T) {
-	conn, err := pgx.Connect(context.Background(), fmt.Sprintf(url2, user, password, host, port, dbname))
+	conn, err := pgx.Connect(context.Background(), fmt.Sprintf(url, user, password, host, port, dbname))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

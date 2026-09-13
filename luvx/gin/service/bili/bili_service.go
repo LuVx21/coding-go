@@ -449,7 +449,7 @@ func getFollows(tagid int64) []string {
 	}
 
 	common_kv_dao.JsonSet(common_kv_dao.MAP, "bili_follow",
-		`$."`+tagidStr+`"`, jsons.ToJsonString(map[string]any{
+		[]string{tagidStr}, jsons.ToJsonString(map[string]any{
 			"expireAt": time.Now().Add(3 * times_x.Day).Unix(),
 			"ids":      array,
 		}),

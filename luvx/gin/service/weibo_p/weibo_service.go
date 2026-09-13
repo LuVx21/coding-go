@@ -503,7 +503,7 @@ func filter(args map[string]any, groupId int64, word string, uids ...int64) (bso
 		flag := false
 		for _, uid := range uids {
 			if !slices.Contains(ignoreRssUids, uid) {
-				common_kv_dao.JsonArrayAppend(common_kv_dao.BEAN, COMMON_KEY, "$.ignore", uid)
+				common_kv_dao.JsonArrayAppend(common_kv_dao.BEAN, COMMON_KEY, []string{"ignore"}, uid)
 				flag = true
 			}
 		}

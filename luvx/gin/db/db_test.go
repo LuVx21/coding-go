@@ -13,7 +13,7 @@ func Test_00(t *testing.T) {
 `
 
 	sql := MySQLClient().ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return MySQLClient().Exec(_sql)
+		return tx.Exec(_sql)
 	})
 	fmt.Println(sql)
 }

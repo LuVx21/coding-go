@@ -6,6 +6,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -31,7 +32,7 @@ func newCommonKeyValue(db *gorm.DB, opts ...gen.DOOption) commonKeyValue {
 	_commonKeyValue.BizType = field.NewInt32(tableName, "biz_type")
 	_commonKeyValue.CommonKey = field.NewString(tableName, "common_key")
 	_commonKeyValue.CommonValue = field.NewString(tableName, "common_value")
-	_commonKeyValue.Invalid = field.NewInt32(tableName, "invalid")
+	_commonKeyValue.Invalid = field.NewInt16(tableName, "invalid")
 	_commonKeyValue.CreateTime = field.NewInt64(tableName, "create_time")
 	_commonKeyValue.UpdateTime = field.NewInt64(tableName, "update_time")
 
@@ -40,7 +41,6 @@ func newCommonKeyValue(db *gorm.DB, opts ...gen.DOOption) commonKeyValue {
 	return _commonKeyValue
 }
 
-// commonKeyValue 通用kv结构
 type commonKeyValue struct {
 	commonKeyValueDo commonKeyValueDo
 
@@ -49,7 +49,7 @@ type commonKeyValue struct {
 	BizType     field.Int32  // 业务标识
 	CommonKey   field.String // 键
 	CommonValue field.String // 值
-	Invalid     field.Int32  // 失效
+	Invalid     field.Int16  // 失效
 	CreateTime  field.Int64  // 创建时间
 	UpdateTime  field.Int64  // 修改时间
 
@@ -72,7 +72,7 @@ func (c *commonKeyValue) updateTableName(table string) *commonKeyValue {
 	c.BizType = field.NewInt32(table, "biz_type")
 	c.CommonKey = field.NewString(table, "common_key")
 	c.CommonValue = field.NewString(table, "common_value")
-	c.Invalid = field.NewInt32(table, "invalid")
+	c.Invalid = field.NewInt16(table, "invalid")
 	c.CreateTime = field.NewInt64(table, "create_time")
 	c.UpdateTime = field.NewInt64(table, "update_time")
 
@@ -180,6 +180,8 @@ type ICommonKeyValueDo interface {
 	FirstOrCreate() (*model.CommonKeyValue, error)
 	FindByPage(offset int, limit int) (result []*model.CommonKeyValue, count int64, err error)
 	ScanByPage(result interface{}, offset int, limit int) (count int64, err error)
+	Rows() (*sql.Rows, error)
+	Row() *sql.Row
 	Scan(result interface{}) (err error)
 	Returning(value interface{}, columns ...string) ICommonKeyValueDo
 	UnderlyingDB() *gorm.DB

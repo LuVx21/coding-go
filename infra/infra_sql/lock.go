@@ -246,6 +246,11 @@ func sql_postgre() sqlHolder {
 		FOR EACH ROW
 		EXECUTE FUNCTION update_modified_column();
 	`
+	sql_postgre.selectLock = "select owner_id, expire_time from common_lock where lock_key = $1 limit 1 for update"
+	sql_postgre.lock_insert = "insert into common_lock (lock_key, owner_id, expire_time) values ($1, $2, $3)"
+	sql_postgre.lock_update = "update common_lock set owner_id = $1, expire_time = $2 where lock_key = $3"
+	sql_postgre.unlock = "delete from common_lock where lock_key = $1 and owner_id = $2"
+	sql_postgre.renew = "update common_lock set expire_time = $1 where lock_key = $2 and owner_id = $3"
 	sql_postgre.cleanLock = "delete from common_lock where expire_time < EXTRACT(EPOCH FROM now()) * 1000"
 	return sql_postgre
 }

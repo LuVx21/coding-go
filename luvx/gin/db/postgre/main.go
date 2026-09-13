@@ -1,5 +1,7 @@
 package postgre
 
+import "strings"
+
 // import (
 // 	"fmt"
 // 	"log/slog"
@@ -31,3 +33,14 @@ package postgre
 
 // 	return db
 // })
+
+func ToPgJsonPath(parts []string) string {
+	escaped := make([]string, len(parts))
+	for i, p := range parts {
+		// 双引号包裹，内部的双引号和反斜杠转义
+		p = strings.ReplaceAll(p, `\`, `\\`)
+		p = strings.ReplaceAll(p, `"`, `\"`)
+		escaped[i] = `"` + p + `"`
+	}
+	return "{" + strings.Join(escaped, ",") + "}"
+}
