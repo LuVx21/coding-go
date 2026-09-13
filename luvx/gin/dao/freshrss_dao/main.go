@@ -9,11 +9,12 @@ import (
 )
 
 const (
-	mysql_prefix = "freshrss.t_admin_"
+	mysql_prefix    = "freshrss.t_admin_"
+	postgres_prefix = "t_admin_"
 )
 
 var (
-	Prefix = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), "", mysql_prefix)
+	Prefix = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), "", postgres_prefix)
 )
 
 var (
@@ -59,21 +60,19 @@ func FeedIds() []int64 {
 }
 func DeleteUntag() {
 	db.FreshrssDb.Exec(`
-delete
-from ` + Prefix + `entrytag
+delete from ` + Prefix + `entrytag et
 where not exists (
     select 1
-    from ` + Prefix + `entry
-    where id_entry=id
+    from ` + Prefix + `entry e
+    where et.id_entry=e.id
 );
 	`)
 	db.FreshrssDb.Exec(`
-delete
-from ` + Prefix + `tag
+delete from ` + Prefix + `tag t
 where not exists (
     select 1
-    from ` + Prefix + `entrytag
-    where id_tag=id
+    from ` + Prefix + `entrytag et
+    where et.id_tag=t.id
 );
 	`)
 }

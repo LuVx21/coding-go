@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"path/filepath"
-	"sync"
 
 	"luvx/gin/common/consts"
 
@@ -17,7 +16,7 @@ import (
 )
 
 var (
-	Turso = sync.OnceValue(createTursoCli)
+	Turso = createTursoCli()
 )
 
 func createTursoCli() *sql.DB {

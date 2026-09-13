@@ -1,10 +1,9 @@
 package service
 
 import (
+	"luvx/gin/db/postgre"
 	"sync"
 	"time"
-
-	"luvx/gin/db"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/infra/infra_sql"
@@ -12,7 +11,7 @@ import (
 
 var (
 	RunnerLocker = sync.OnceValue(func() *infra_sql.DbLocker[string] {
-		db1, _ := db.MySQLClient().DB()
+		db1, _ := postgre.PostgreCli().DB()
 		return infra_sql.NewLocker[string](db1)
 	})
 )

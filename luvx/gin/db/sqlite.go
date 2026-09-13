@@ -8,6 +8,7 @@ import (
 
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
+	"luvx/gin/db/postgre"
 
 	gorm_sqlite "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -22,30 +23,27 @@ const (
 )
 
 var (
-	SqliteClient, CookieDb *sql.DB
+	SqliteClient = sync.OnceValue(func() *sql.DB { return configDataSource("/data/sqlite/main.db") })
+	CookieDb     = sync.OnceValue(func() *sql.DB { return configDataSource("/data/sqlite/Cookies") })
 
 	FreshrssDb = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), sync.OnceValue(func() *gorm.DB {
-		temp, err := GetDataSource(consts.Home + "/docker/freshrss/data/users/admin/db.sqlite")
-		go configureSQLite(temp)
+		temp := configDataSource("/docker/freshrss/data/users/admin/db.sqlite")
 		db, err := gorm.Open(gorm_sqlite.New(gorm_sqlite.Config{Conn: temp}), &gorm.Config{})
 		if err != nil {
 			slog.Error("sqlite-freshrss", "err", err.Error())
 		}
 		return db
-	}), MySQLClient)()
+	}), postgre.PostgreCliFreshRss)()
 )
 
-func init() {
-	var err error
-	SqliteClient, err = GetDataSource(consts.Home + "/data/sqlite/main.db")
+func configDataSource(path string) *sql.DB {
+	cli, err := GetDataSource(consts.Home + path)
 	if err != nil {
 		slog.Error("sqlite-SqliteClient", "err", err.Error())
+		return nil
 	}
-	go configureSQLite(SqliteClient)
-	CookieDb, err = GetDataSource(consts.Home + "/data/sqlite/Cookies")
-	if err != nil {
-		slog.Error("sqlite-cookie", "err", err.Error())
-	}
+	configureSQLite(cli)
+	return cli
 }
 
 func GetDataSource(dataSourceName string) (*sql.DB, error) {

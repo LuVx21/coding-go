@@ -3,7 +3,7 @@ module github.com/luvx21/coding-go/infra/nosql/infra_redis
 go 1.27
 
 require (
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260913103136-daa94252d19f
 	github.com/redis/go-redis/v9 v9.22.0
 )
 

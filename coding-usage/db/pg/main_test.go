@@ -9,7 +9,6 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/luvx21/coding-go/coding-common/dbs"
-	"github.com/luvx21/coding-go/coding-common/jsons"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

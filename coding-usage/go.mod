@@ -69,18 +69,17 @@ require (
 	github.com/klauspost/compress v1.20.0
 	github.com/labstack/echo/v4 v4.15.1
 	github.com/levigross/grequests v0.0.0-20250606031859-3f3c12e4e704
-	github.com/lib/pq v1.10.9
 	github.com/linvon/cuckoo-filter v0.4.0
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/lmittmann/tint v1.1.3
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260913063435-1fdc90fd08b6
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260913063435-1fdc90fd08b6
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260913063435-1fdc90fd08b6
-	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260913063435-1fdc90fd08b6
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260913063435-1fdc90fd08b6
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260913103136-daa94252d19f
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260913103136-daa94252d19f
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260913103136-daa94252d19f
+	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260913103136-daa94252d19f
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260913103136-daa94252d19f
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/moby/moby/client v0.4.1
@@ -280,6 +279,7 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
 	github.com/lestrrat-go/strftime v1.2.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20240327125255-dbf53b6cbf06 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect
 	github.com/liuzl/cedar-go v0.0.0-20170805034717-80a9c64b256d // indirect

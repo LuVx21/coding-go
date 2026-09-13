@@ -51,7 +51,7 @@ func HealthyCheck(c *gin.Context) {
 	}
 	sqlite := func() any {
 		return common_x.RunWithTimeReturn("sqlite", func() t.Pair[[]map[string]any, error] {
-			return t.NewPair(dbs.RowsMap(context.TODO(), db.SqliteClient, "select * from user where id = ?", args))
+			return t.NewPair(dbs.RowsMap(context.TODO(), db.SqliteClient(), "select * from user where id = ?", args))
 		}).K
 	}
 	cookie := func() any {
@@ -61,7 +61,7 @@ func HealthyCheck(c *gin.Context) {
 	}
 	turso := func() any {
 		return common_x.RunWithTimeReturn("turso", func() t.Pair[[]map[string]any, error] {
-			return t.NewPair(dbs.RowsMap(context.TODO(), db.Turso(), "select * from user where id = ?", args))
+			return t.NewPair(dbs.RowsMap(context.TODO(), db.Turso, "select * from user where id = ?", args))
 		}).K
 	}
 	fs := []func() any{mysql, mongo, redis, sqlite, cookie, turso}

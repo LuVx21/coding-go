@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,6 +16,7 @@ import (
 	"luvx/gin/middleware"
 	"luvx/gin/router"
 	"luvx/gin/runner"
+	"luvx/gin/service/rpc"
 
 	"github.com/gin-gonic/gin"
 	"github.com/luvx21/coding-go/coding-common/common_x"
@@ -25,11 +27,12 @@ import (
 func WebStart() {
 	slogs.InitFromConfig(config.Viper.Sub("log"))
 
-	log.Infoln("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
+	slog.Info("ʕ◔ϖ◔ʔ 启动... ʕ◔ϖ◔ʔ")
+
+	rpc.Start()
 	runner.Start()
 
 	r := gin.Default()
-
 	router.Register(r)
 	middleware.RegisterGlobalMiddlewares(r)
 

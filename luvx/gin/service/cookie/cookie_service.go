@@ -131,7 +131,7 @@ order by host_key, name
 	}
 	_sql = fmt.Sprintf(_sql, args.String())
 
-	rowsMap, err := infra_sql.RowsMap(context.TODO(), db.CookieDb, _sql)
+	rowsMap, err := infra_sql.RowsMap(context.TODO(), db.CookieDb(), _sql)
 	if err == nil {
 		key := masterKey()
 		for _, row := range rowsMap {

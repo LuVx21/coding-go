@@ -1,38 +1,36 @@
 package postgre
 
-import "strings"
+import (
+	"fmt"
+	"log/slog"
+	"luvx/gin/config"
+	"os"
+	"strings"
+	"sync"
 
-// import (
-// 	"fmt"
-// 	"log/slog"
-// 	"luvx/gin/config"
-// 	"os"
-// 	"sync"
+	"github.com/luvx21/coding-go/coding-common/common_x"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
-// 	"github.com/luvx21/coding-go/coding-common/common_x"
-// 	"github.com/luvx21/coding-go/coding-common/fmt_x"
-// 	"gorm.io/driver/postgres"
-// 	"gorm.io/gorm"
-// )
+var (
+	PostgreCli         = sync.OnceValue(func() *gorm.DB { return createPostgreSQLCli("") })
+	PostgreCliFreshRss = sync.OnceValue(func() *gorm.DB { return createPostgreSQLCli("freshrss") })
+)
 
-// var PostgreCli = sync.OnceValue(func() *gorm.DB {
-// 	defer common_x.TrackTime("初始化PostgreSQL连接...")()
+func createPostgreSQLCli(dbname string) *gorm.DB {
+	defer common_x.TrackTime("初始化PostgreSQL连接...")()
 
-// 	c := config.AppConfig.PostgreSQL
-// 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&TimeZone=Asia/Shanghai", c.Username, c.Password, c.Host, c.Port, c.Dbname)
+	c := config.AppConfig.PostgreSQL
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&TimeZone=Asia/Shanghai", c.Username, c.Password, c.Host, c.Port, common_x.IfThen(dbname == "", c.Dbname, dbname))
 
-// 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-// 	if err != nil {
-// 		slog.Error("连接数据库失败", "error", err)
-// 		os.Exit(1)
-// 	}
-
-// 	var version string
-// 	db.Raw("SELECT version()").Scan(&version)
-// 	fmt_x.Infoln("PostgreSQL 版本", version)
-
-// 	return db
-// })
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		slog.Error("连接数据库失败", "error", err)
+		os.Exit(1)
+	}
+	return db
+}
 
 func ToPgJsonPath(parts []string) string {
 	escaped := make([]string, len(parts))

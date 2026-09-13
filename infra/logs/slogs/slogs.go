@@ -40,6 +40,8 @@ func SetLogDir(path string) {
 	logDir = path
 }
 
+func init() { InitFromConfig(nil) }
+
 func initLogger() {
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		panic(err)
@@ -47,11 +49,11 @@ func initLogger() {
 
 	infoWriter, errWriter := logs.LogWriter(logDir, infoLogFile+"-slog"), logs.LogWriter(logDir, errorLogFile+"-slog")
 
-	consoleHandler := slogor.NewHandler(os.Stderr, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(defaultLevel), slogor.ShowSource())
+	consoleHandler := slogor.NewHandler(os.Stderr, slogor.SetTimeFormat(time.DateTime+".99"), slogor.SetLevel(defaultLevel), slogor.ShowSource())
 	RegisterHandler(consoleHandler)
 	if logFormat == "text" {
-		infoHandler := slogor.NewHandler(infoWriter, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(slog.LevelInfo), slogor.ShowSource(), slogor.DisableColor())
-		errorHandler := slogor.NewHandler(errWriter, slogor.SetTimeFormat(time.DateTime+".9999"), slogor.SetLevel(slog.LevelError), slogor.ShowSource(), slogor.DisableColor())
+		infoHandler := slogor.NewHandler(infoWriter, slogor.SetTimeFormat(time.DateTime+".99"), slogor.SetLevel(slog.LevelInfo), slogor.ShowSource(), slogor.DisableColor())
+		errorHandler := slogor.NewHandler(errWriter, slogor.SetTimeFormat(time.DateTime+".99"), slogor.SetLevel(slog.LevelError), slogor.ShowSource(), slogor.DisableColor())
 
 		RegisterHandler(infoHandler, errorHandler)
 	} else {

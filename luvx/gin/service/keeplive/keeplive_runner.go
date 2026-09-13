@@ -13,7 +13,7 @@ import (
 
 func RunnerRegister() []*service.Runner {
 	return []*service.Runner{
-		service.NewRunner("保活", "23 23 4/12 * * *", time.Minute*2, aaa),
+		service.NewRunner("保活", "43 43 4/12 * * *", time.Minute*2, aaa),
 	}
 }
 

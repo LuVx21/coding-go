@@ -27,9 +27,9 @@ func RunnerRegister() []*service.Runner {
 	}
 	return []*service.Runner{
 		// service.NewRunner("拉取微博热搜", "0 7/10 * * * *", time.Minute*7, PullHotBand),
-		{Name: "拉取分组微博-日", Crontab: "0 4/4 7-23 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
-		{Name: "拉取分组微博-夜", Crontab: "0 4/20 0-6 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
-		{Name: "删除weibo已读", Crontab: "0 1/2 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
+		{Name: "拉取分组微博-日", Crontab: "0 */4 7-23 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
+		{Name: "拉取分组微博-夜", Crontab: "0 */20 0-6 * * *", Fn: func() { common_x.RunCatching(PullByGroupLock) }},
+		{Name: "删除weibo已读", Crontab: "0 */2 * * * *", Fn: func() { common_x.RunCatching(DeleteLock) }},
 	}
 }
 
@@ -44,12 +44,13 @@ func Delete() {
 		db.FreshrssDb.Exec(`
 delete
 from ` + freshrss_dao.Prefix + `tag
-where exists (select id_tag,
-                     count(id_entry) as cnt
-              from ` + freshrss_dao.Prefix + `entrytag
-              where id_tag = id
-              group by id_tag
-              having cnt < 4);
+where exists (
+	select 1
+	from ` + freshrss_dao.Prefix + `entrytag
+	where id_tag = id
+	group by id_tag
+	having count(id_entry) < 4
+);
 `)
 	}()
 	go freshrss_dao.DeleteUntag()

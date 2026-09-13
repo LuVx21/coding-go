@@ -35,7 +35,7 @@ func SetLogDir(path string) {
 	logDir = path
 }
 
-func init() { initOnce.Do(initLogger) }
+func init() { GetLogger() }
 func initLogger() {
 	stdFormatter = &prefixed.TextFormatter{
 		PrefixPadding:   3,

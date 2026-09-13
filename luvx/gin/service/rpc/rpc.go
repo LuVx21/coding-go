@@ -16,7 +16,7 @@ var (
 	KvRpcClient *proto_kv.KVClient
 )
 
-func init() {
+func Start() {
 	RpcConn, err := grpc.NewClient("rpc_service:18888", grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(50*1024*1024),
