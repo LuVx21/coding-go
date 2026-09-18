@@ -36,9 +36,5 @@ func MySQLConnect(host string, port int, username, password, database string, ar
 	return sb.String()
 }
 
-func DuckdbConnect(dataSource string) (*sql.DB, error) {
-	return sql.Open(DriverDuckdb, dataSource)
-}
-func SqliteConnect(dataSource string) (*sql.DB, error) {
-	return sql.Open(DriverSqlite, dataSource)
-}
+func DuckdbConnect(dataSource string) (*sql.DB, error) { return sql.Open(DriverDuckdb, dataSource) }
+func SqliteConnect(dataSource string) (*sql.DB, error) { return sql.Open(DriverSqlite, dataSource) }

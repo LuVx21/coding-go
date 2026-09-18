@@ -8,7 +8,7 @@ import (
 
 	"luvx/gin/common/consts"
 	"luvx/gin/config"
-	"luvx/gin/db/postgre"
+	"luvx/gin/db/postgres"
 
 	gorm_sqlite "gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -33,7 +33,7 @@ var (
 			slog.Error("sqlite-freshrss", "err", err.Error())
 		}
 		return db
-	}), postgre.PostgreCliFreshRss)()
+	}), postgres.PostgreCliFreshRss)()
 )
 
 func configDataSource(path string) *sql.DB {

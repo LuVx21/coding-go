@@ -61,7 +61,7 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/hashicorp/go-version v1.2.1
 	github.com/icloudza/fxjson v1.2.4
-	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/jedib0t/go-pretty/v6 v6.7.10
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/jmoiron/sqlx v1.4.0
@@ -115,6 +115,7 @@ require (
 	go-micro.dev/v5 v5.16.0
 	go.etcd.io/etcd/client/v3 v3.5.21
 	go.mongodb.org/mongo-driver/v2 v2.9.1
+	go.uber.org/atomic v1.11.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.23.0
 	golang.org/x/time v0.14.0
@@ -392,7 +393,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.43.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.43.0 // indirect
 	go.opentelemetry.io/otel/trace v1.43.0 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect

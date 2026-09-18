@@ -37,6 +37,10 @@ func RowsMap(ctx context.Context, db *sql.DB, query string, args ...any) ([]map[
 	if err != nil {
 		return nil, err
 	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 
 	colNames, err := rows.Columns()

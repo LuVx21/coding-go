@@ -2,19 +2,19 @@ package dao
 
 import (
 	"fmt"
-	"luvx/gin/db/postgre"
+	"luvx/gin/db/postgres"
 	"luvx/gin/model"
 )
 
 func GetUserById(id int) *model.User {
 	var user model.User
-	postgre.PostgreCli().Where("id = ?", id).First(&user)
+	postgres.PostgreCli().Where("id = ?", id).First(&user)
 	return &user
 }
 
 func GetUserByUsername(username string) (*model.User, error) {
 	var user model.User
-	if err := postgre.PostgreCli().Where("user_name = ?", username).First(&user).Error; err != nil {
+	if err := postgres.PostgreCli().Where("user_name = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -23,7 +23,7 @@ func GetUserByUsername(username string) (*model.User, error) {
 //lint:ignore U1000 忽略
 func crud() {
 	// 插入记录
-	client := postgre.PostgreCli()
+	client := postgres.PostgreCli()
 	client.Create(&model.User{UserName: "xxx", Age: 18, Password: "xxx"})
 
 	var users []model.User

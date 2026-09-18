@@ -2,7 +2,7 @@ package common_kv_dao
 
 import (
 	"log/slog"
-	"luvx/gin/db/postgre"
+	"luvx/gin/db/postgres"
 	"luvx/gin/model"
 
 	"github.com/luvx21/coding-go/coding-common/jsons"
@@ -14,7 +14,7 @@ func JsonSet(bizType CommonKVBizType, key string, path []string, value any) {
 	// UpdateJsonMap(bizType, key, "JSON_SET(common_value, ?, CAST(? AS JSON))", "$."+strings.Join(path, "."), value)
 
 	// PostgreSQL
-	jpath := postgre.ToPgJsonPath(path)
+	jpath := postgres.ToPgJsonPath(path)
 	UpdateJsonMap(bizType, key, "jsonb_set(common_value, ?::text[], ?::jsonb)", jpath, jsons.ToJsonString(value))
 }
 
@@ -23,7 +23,7 @@ func JsonArrayAppend(bizType CommonKVBizType, key string, path []string, value a
 	// UpdateJsonMap(bizType, key, "JSON_ARRAY_APPEND(common_value, ?, ?)", "$."+strings.Join(path, "."), value)
 	// PostgreSQL
 	// TODO
-	jpath := postgre.ToPgJsonPath(path)
+	jpath := postgres.ToPgJsonPath(path)
 	UpdateJsonMap(bizType, key, `jsonb_set(common_value, ?::text[], COALESCE(common_value #> ?::text[], '[]'::jsonb) || ?::jsonb)`, jpath, jpath, jsons.ToJsonString(value))
 }
 
@@ -32,7 +32,7 @@ func JsonArrayAppend(bizType CommonKVBizType, key string, path []string, value a
 // JSON_INSERT 有则忽略, 无则添加
 // JSON_REPLACE 有则替换, 无则忽略
 func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any) {
-	err := postgre.PostgreCli().
+	err := postgres.PostgreCli().
 		Debug().
 		Model(&model.CommonKeyValue{}).
 		Where("biz_type = ? and common_key = ?", bizType, key).
@@ -44,7 +44,7 @@ func UpdateJsonMap(bizType CommonKVBizType, key string, expr string, args ...any
 }
 
 func Get(bizType CommonKVBizType, keys ...string) []*model.CommonKeyValue {
-	tx := postgre.PostgreCli()
+	tx := postgres.PostgreCli()
 	var kvs []*model.CommonKeyValue
 	// tx := client.Debug()
 	tx = tx.Where("biz_type = ? and invalid = 0", bizType)
@@ -65,7 +65,7 @@ func GetByCursor(cursorID int, limit int, bizType CommonKVBizType, keys ...strin
 		return nil, 0, nil
 	}
 
-	tx := postgre.PostgreCli()
+	tx := postgres.PostgreCli()
 	// tx := client.Debug()
 	if cursorID > 0 {
 		tx = tx.Where("id < ?", cursorID)
@@ -95,13 +95,13 @@ func GetByCursor(cursorID int, limit int, bizType CommonKVBizType, keys ...strin
 }
 
 func Create(kv *model.CommonKeyValue) error {
-	return postgre.PostgreCli().Create(kv).Error
+	return postgres.PostgreCli().Create(kv).Error
 }
 
 func Delete(ids []int) error {
-	return postgre.PostgreCli().Where("id in ?", ids).Delete(&model.CommonKeyValue{}).Error
+	return postgres.PostgreCli().Where("id in ?", ids).Delete(&model.CommonKeyValue{}).Error
 }
 
 func Update(kv *model.CommonKeyValue) error {
-	return postgre.PostgreCli().Save(kv).Error
+	return postgres.PostgreCli().Save(kv).Error
 }
