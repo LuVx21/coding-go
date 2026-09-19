@@ -18,22 +18,22 @@ var (
 )
 
 func init() {
-	var env = *flag.String("env", "dev", "go run main.go -env dev")
+	var env = *flag.String("env", "", "go run main.go -env dev")
 
 	// if !flag.Parsed() {
-	//  测试时候会出现问题: flag provided but not defined
-	//    flag.Parse()
+	// 	// 测试时候会出现问题: flag provided but not defined
+	// 	flag.Parse()
 	// }
 
 	configName := ""
 	switch env {
-	case "test", "prd":
+	case "test", "dev", "prd":
 		configName = "config-" + env
+		log.Infoln("加载配置文件...", configName)
+		Viper, _ = configs_x.LoadConfig(configName)
 	default:
-		configName = "config-dev"
+		Viper = configs_x.GetDefaultConfig()
 	}
 
-	log.Infoln("加载配置文件...", configName)
-	Viper = configs_x.LoadConfig(configName)
 	Viper.Unmarshal(&AppConfig)
 }

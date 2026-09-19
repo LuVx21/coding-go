@@ -54,7 +54,10 @@ switch:
   weibo:
     imgCdn: false
   rss:
-    freshrssSqlite: true
+    freshrssSqlite: false
+    freshrssPostgres: true
+  runner:
+    all: true
 
 rss:
   weibo:

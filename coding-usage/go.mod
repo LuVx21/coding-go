@@ -75,11 +75,11 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260913103136-daa94252d19f
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260913103136-daa94252d19f
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260913103136-daa94252d19f
-	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260913103136-daa94252d19f
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260913103136-daa94252d19f
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260919123330-9b2e81ba54fc
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260919123330-9b2e81ba54fc
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260919123330-9b2e81ba54fc
+	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260919123330-9b2e81ba54fc
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260919123330-9b2e81ba54fc
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/moby/moby/client v0.4.1
@@ -208,6 +208,7 @@ require (
 	github.com/eapache/go-resiliency v1.7.0 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.9.0 // indirect
+	github.com/elliotchance/sshtunnel v1.6.2
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect

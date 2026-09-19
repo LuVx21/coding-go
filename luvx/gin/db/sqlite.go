@@ -26,7 +26,7 @@ var (
 	SqliteClient = sync.OnceValue(func() *sql.DB { return configDataSource("/data/sqlite/main.db") })
 	CookieDb     = sync.OnceValue(func() *sql.DB { return configDataSource("/data/sqlite/Cookies") })
 
-	FreshrssDb = common_x.IfThen(config.GetSwitch("rss.freshrssSqlite"), sync.OnceValue(func() *gorm.DB {
+	FreshrssDb = common_x.IfThen(config.GetSwitch([]string{"rss", "freshrssSqlite"}), sync.OnceValue(func() *gorm.DB {
 		temp := configDataSource("/docker/freshrss/data/users/admin/db.sqlite")
 		db, err := gorm.Open(gorm_sqlite.New(gorm_sqlite.Config{Conn: temp}), &gorm.Config{})
 		if err != nil {

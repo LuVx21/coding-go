@@ -1,8 +1,10 @@
 package runner
 
 import (
+	"log/slog"
 	"time"
 
+	"luvx/gin/config"
 	"luvx/gin/dao/redis_dao"
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
@@ -30,9 +32,9 @@ var (
 )
 
 func Start() {
-	result := redis_dao.GetSwitch("runner_all")
+	result := config.GetSwitch([]string{"runner", "all"}) || redis_dao.GetSwitch("runner_all")
 	if !result {
-		log.Warnln("runner 未开启")
+		slog.Warn("runner 未开启")
 		return
 	}
 	go exec()

@@ -18,7 +18,6 @@ import (
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/freshrss_dao"
 	"luvx/gin/dao/mongo_dao"
-	"luvx/gin/db"
 	"luvx/gin/model"
 	"luvx/gin/service"
 	commonkvservice "luvx/gin/service/common_kv"
@@ -597,15 +596,15 @@ func rssItem(jo, retweet bson.M) *rss.RssItem {
 	deleteUrl := addDelete(_id)
 	_contentHtml = fmt.Sprintf("%s<br/><br/>%s", _contentHtml, deleteUrl)
 	createdAt := time.UnixMilli(cast_x.ToInt64(jo["created_at"])).Format(time.RFC3339)
-	screenName := mongodb.DM(jo["user"].(bson.D))["name"]
+	screenName := mongodb.DM(jo["user"].(bson.D))["name"].(string)
 	url := fmt.Sprintf("https://weibo.com/%v/%v", cast_x.ToInt64(jo["user_id"]), jo["mblogid"])
 	rssItem := rss.RssItem{
-		Title:       "title",
+		Title:       screenName,
 		Description: _contentHtml,
 		PubDate:     createdAt,
 		Link:        url,
 		Guid:        cast_x.ToString(_id),
-		Author:      screenName.(string),
+		Author:      screenName,
 		Categories:  slices_x.Transfer(func(a any) string { return cast_x.ToString(a) }, categories...),
 	}
 	return &rssItem
@@ -650,7 +649,7 @@ func aa(text string) string {
 
 // 各种图片CDN
 func roundImgCdn(_url string) string {
-	if !config.GetSwitch("weibo.imgCdn") {
+	if !config.GetSwitch([]string{"weibo", "imgCdn"}) {
 		return _url
 	}
 	i := rand.Intn(4)
@@ -729,22 +728,4 @@ func extractTagsManual(s string) []string {
 	return tags
 }
 
-func RssClear(id int64) {
-	if id <= 0 {
-		return
-	}
-	db.FreshrssDb.Exec(`
-delete
-from `+freshrss_dao.Prefix+`entry
-where true
-  and id_feed in (
-    select id
-    from `+freshrss_dao.Prefix+`feed
-    where true
-    and id in (?)
-    and url like '%/weibo/rss/%'
-)
-  and is_read = 0
-;
-	`, id)
-}
+func RssClear(id int64) { freshrss_dao.DeleteEntryByFeed(id) }

@@ -107,7 +107,7 @@ func GetLogger() *logrus.Logger {
 
 func InitFromConfig(c *viper.Viper) {
 	if c == nil {
-		c = configs_x.GetConfigByKey("log")
+		c = configs_x.GetDefaultConfigByKey(c, "log")
 	}
 	var lc LogConfig
 	if c != nil && c.Unmarshal(&lc) == nil {

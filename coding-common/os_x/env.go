@@ -41,3 +41,12 @@ func Command(name string, arg ...string) (string, bool) {
 	}
 	return "", false
 }
+
+// Exists
+func Exists(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	}
+	return true
+}

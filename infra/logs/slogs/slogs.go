@@ -76,7 +76,7 @@ func GetLogger() *slog.Logger {
 
 func InitFromConfig(c *viper.Viper) {
 	if c == nil {
-		c = configs_x.GetConfigByKey("log")
+		c = configs_x.GetDefaultConfigByKey(c, "log")
 	}
 	var lc logs.LogConfig
 	if c != nil && c.Unmarshal(&lc) == nil {

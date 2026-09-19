@@ -1,6 +1,7 @@
 package configs_x
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -9,44 +10,47 @@ import (
 	"sync"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/luvx21/coding-go/coding-common/os_x"
 	viper_p "github.com/spf13/viper"
 )
 
 var (
-	app_name = "go_app"
+	defaultAppName = "go_app"
+	defaultViper   *viper_p.Viper
+
 	initOnce sync.Once
-	viper    *viper_p.Viper
 )
 
-func RegisterAppName(n string) {
-	app_name = n
+func init() {
+	const defaultConfigName = "config"
+
+	slog.Info("初始化默认配置", "appName", defaultAppName, "配置文件名", defaultConfigName)
+	initOnce.Do(func() {
+		defaultViper, _ = LoadConfig(defaultConfigName)
+	})
 }
 
-func GetConfig() *viper_p.Viper {
-	return viper
-}
-func GetConfigByKey(key string) *viper_p.Viper {
+func RegisterAppName(n string)         { defaultAppName = n }
+func GetDefaultConfig() *viper_p.Viper { return defaultViper }
+func GetDefaultConfigByKey(viper *viper_p.Viper, key string) *viper_p.Viper {
 	if viper == nil {
 		return nil
 	}
 	return viper.Sub(key)
 }
 
-func LoadConfig(configName string, paths ...string) *viper_p.Viper {
-	initOnce.Do(func() { load(configName, paths...) })
-	return viper
-}
-func load(configName string, paths ...string) *viper_p.Viper {
-	viper = viper_p.New()
+// LoadConfig 也可执行RegisterAppName和RegisterConfigName后, 再执行
+func LoadConfig(configName string, paths ...string) (*viper_p.Viper, error) {
+	viper := viper_p.New()
 	viper.SetConfigName(configName)
 	viper.SetConfigType("yml")
-	for _, path := range configPath(paths...) {
+	for _, path := range configDefaultPath(paths...) {
 		viper.AddConfigPath(path)
 	}
 	err := viper.ReadInConfig()
 	if err != nil {
-		slog.Error("加载配置文件异常", "Error", err)
-		return nil
+		slog.Info("加载配置文件异常", "Error", err)
+		return nil, errors.New("加载配置文件异常")
 	}
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
@@ -54,18 +58,11 @@ func load(configName string, paths ...string) *viper_p.Viper {
 	})
 	viper.WatchConfig()
 
-	return viper
+	return viper, nil
 }
 
-func Exists(path string) bool {
-	_, err := os.Stat(path)
-	if err != nil {
-		return os.IsExist(err)
-	}
-	return true
-}
-
-func configPath(paths ...string) []string {
+// configDefaultPath 默认查找配置所在的目录
+func configDefaultPath(paths ...string) []string {
 	// 当前目录
 	r := []string{".", "./config"}
 	dir, err := os.Executable()
@@ -75,10 +72,10 @@ func configPath(paths ...string) []string {
 		r = append(r, dir, filepath.Join(dir, "config"))
 	}
 	// 用户主目录下
-	r = append(r, "$HOME/.config/"+app_name, "$GOPATH/config")
+	r = append(r, "$HOME/.config/"+defaultAppName, "$GOPATH/config")
 	// 自定义目录下
 	for _, path := range paths {
-		if !Exists(os.ExpandEnv(path)) {
+		if !os_x.Exists(os.ExpandEnv(path)) {
 			continue
 		}
 		r = append(r, path)
