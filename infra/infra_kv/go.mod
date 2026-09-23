@@ -5,7 +5,7 @@ go 1.27
 require (
 	github.com/dgraph-io/badger/v4 v4.9.6
 	github.com/dgraph-io/ristretto/v2 v2.4.2
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260919123330-9b2e81ba54fc
 	github.com/rosedblabs/rosedb/v2 v2.4.0
 	go.etcd.io/bbolt v1.4.3
 	go.etcd.io/etcd/api/v3 v3.6.8

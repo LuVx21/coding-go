@@ -72,7 +72,7 @@ func configDefaultPath(paths ...string) []string {
 		r = append(r, dir, filepath.Join(dir, "config"))
 	}
 	// 用户主目录下
-	r = append(r, "$HOME/.config/"+defaultAppName, "$GOPATH/config")
+	r = append(r, "$HOME/.config/"+defaultAppName)
 	// 自定义目录下
 	for _, path := range paths {
 		if !os_x.Exists(os.ExpandEnv(path)) {

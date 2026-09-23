@@ -2,6 +2,8 @@ package config
 
 import (
 	"flag"
+	"log/slog"
+	"os"
 
 	"github.com/luvx21/coding-go/coding-common/configs_x"
 	log "github.com/sirupsen/logrus"
@@ -35,5 +37,9 @@ func init() {
 		Viper = configs_x.GetDefaultConfig()
 	}
 
+	if Viper == nil {
+		slog.Error("配置文件异常")
+		os.Exit(1)
+	}
 	Viper.Unmarshal(&AppConfig)
 }

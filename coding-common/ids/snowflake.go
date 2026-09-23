@@ -49,8 +49,7 @@ func (w *SnowflakeIdWorker) NextId() int64 {
 	defer w.mu.Unlock()
 
 	timestamp := timeGen()
-	lastTimestamp := w.lastTimestamp
-	sequence := w.sequence
+	lastTimestamp, sequence := w.lastTimestamp, w.sequence
 	// 如果当前时间小于上一次ID生成的时间戳, 说明系统时钟回退过这个时候应当抛出异常
 	if timestamp < lastTimestamp {
 		panic(
@@ -72,7 +71,7 @@ func (w *SnowflakeIdWorker) NextId() int64 {
 	}
 
 	// 上次生成ID的时间戳
-	w.lastTimestamp = timestamp
+	w.lastTimestamp, w.sequence = timestamp, sequence
 
 	// 移位并通过或运算拼到一起组成64位的ID
 	return ((timestamp - twepoch) << timestampLeftShift) | (w.datacenterId << datacenterIdShift) | (w.workerId << workerIdShift) | sequence

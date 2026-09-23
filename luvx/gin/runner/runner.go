@@ -9,6 +9,7 @@ import (
 	"luvx/gin/service"
 	"luvx/gin/service/bili"
 	"luvx/gin/service/keeplive"
+	"luvx/gin/service/life"
 	"luvx/gin/service/rss"
 	"luvx/gin/service/weibo_p"
 
@@ -45,6 +46,7 @@ func exec() {
 	// defer func() { _ = s.Shutdown() }()
 
 	callRunnerRegister(s)
+	callJobRegister()
 
 	s.Start()
 
@@ -64,7 +66,7 @@ func callRunnerRegister(s gocron.Scheduler) {
 	// runners = append(runners, xxx.RunnerRegister()...)
 	for _, r := range runners {
 		log.Debugf("定时任务已配置 %-20s %s", r.Crontab, r.Name)
-		RunnerMap[r.Name] = r.Fn
+		RunnerMap[r.Name] = addRunnerCheck(r).Fn
 		_, _ = s.NewJob(
 			gocron.CronJob(r.Crontab, true),
 			gocron.NewTask(r.Fn),
@@ -72,4 +74,20 @@ func callRunnerRegister(s gocron.Scheduler) {
 			gocron.WithEventListeners(beforeListener, afterListener),
 		)
 	}
+}
+
+func callJobRegister() {
+	var jobs []*service.Runner
+	jobs = append(jobs, life.RunnerRegister()...)
+	for _, r := range jobs {
+		RunnerMap[r.Name] = addRunnerCheck(r).Fn
+	}
+}
+
+func addRunnerCheck(r *service.Runner) *service.Runner {
+	_, ok := RunnerMap[r.Name]
+	if ok {
+		slog.Warn("存在同名任务", "name", r.Name)
+	}
+	return r
 }

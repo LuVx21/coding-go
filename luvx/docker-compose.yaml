@@ -15,7 +15,7 @@ services:
       - $HOME/data:/root/data
       - $HOME/.kv:/root/.kv
       - $HOME/.orbstack/run/docker.sock:/var/run/docker.sock
-      - ./config/config-dev.yml:/app/config/config-dev.yml
+      - ./config/config.yml:/app/config/config.yml
     environment:
       TZ: Asia/Shanghai
       APP_PORT: ":8090"

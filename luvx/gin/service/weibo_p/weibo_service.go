@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
+	"luvx/gin/common/probability"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/freshrss_dao"
@@ -551,8 +552,8 @@ func Rss(c *gin.Context, args map[string]any, uids ...int64) string {
 		rowsMap = lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
 	}
 
-	aa := common_x.IfThenGet(rand.New(rand.NewSource(time.Now().UnixNano())).Intn(100) < 60,
-		func() []string { return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path+"%", ids) },
+	aa := common_x.IfThenGet(probability.Percent(5),
+		func() []string { return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path, ids) },
 		func() []string { return []string{} },
 	)
 	existedGuids := sets.NewSet(aa...)

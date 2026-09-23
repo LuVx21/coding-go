@@ -46,10 +46,6 @@ func DeleteLock() {
 }
 func delete() {
 	go func() {
-		freshrss_dao.DeleteEntry(slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, mongo_dao.IgnoreRetweet()...))
-	}()
-
-	go func() {
 		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 0, "pic_ids": bson.M{"$size": 0}}, bson.M{"$set": bson.M{"invalid": 1, "read": 1}})
 		collection.UpdateMany(context.TODO(), bson.M{"groupId": 3639801313908027, "invalid": 1, "read": 0}, bson.M{"$set": bson.M{"invalid": 0}})
 	}()
@@ -77,6 +73,7 @@ func delete() {
 		}
 	}
 
+	mysqlGuids = append(mysqlGuids, slices_x.Transfer(func(i int64) string { return cast_x.ToString(i) }, mongo_dao.IgnoreRetweet()...)...)
 	go freshrss_dao.DeleteEntry(mysqlGuids)
 
 	if len(guids) > 0 {
@@ -177,7 +174,7 @@ order by id limit ?`, maxEntryID+1, "%/weibo/rss/%", 200).
 			var sb strings.Builder
 			sb.WriteString(prefix)
 			for i, p := range tagIds {
-				fmt.Fprintf(&sb, `<a href="http://localhost:50080/i/?a=normal&get=t_%d">#%s<a/>`+common_x.IfThen(i < len(tagIds)-1, strings.Repeat(consts.Nbsp, 4), ""), p.K, p.V)
+				fmt.Fprintf(&sb, `<a href="http://localhost:50080/i/?a=normal&get=t_%d" target="_self">#%s<a/>`+common_x.IfThen(i < len(tagIds)-1, strings.Repeat(consts.Nbsp, 4), ""), p.K, p.V)
 			}
 			sb.WriteString("<br/>")
 			db.FreshrssDb.Exec(`update `+freshrss_dao.Prefix+`entry set content = concat(?::text, content) where id = ? and content not like ?`, sb.String(), entry.ID, prefix+"%")

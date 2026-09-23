@@ -2,11 +2,13 @@ package freshrss_dao
 
 import (
 	"log/slog"
+	"luvx/gin/common/probability"
 	"luvx/gin/config"
 	"luvx/gin/db"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/a"
+	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/spf13/cast"
 	"gorm.io/gorm/clause"
 )
@@ -18,6 +20,8 @@ const (
 
 var (
 	Prefix = common_x.IfThen(config.GetSwitch([]string{"rss", "freshrssPostgres"}), postgres_prefix, "")
+
+	feedIds []int64
 )
 
 func ExistedGuids(path string, guids []string) []string {
@@ -28,11 +32,12 @@ func ExistedGuids(path string, guids []string) []string {
 select guid
 from ` + Prefix + `entry
 where true
-  and id_feed in (
+  and id_feed = (
     select id
     from ` + Prefix + `feed
     where true
     and url like ?
+    limit 1
 )
 and guid in ?
 limit 200
@@ -44,22 +49,15 @@ limit 200
 func SelectGuid(feedId int64) []string {
 	var guids []string
 	sql := `
- select guid
- from ` + Prefix + `entry
- where true
-    and guid <= (select guid
-              from ` + Prefix + `entry
-              where true
-                and id_feed = ?
-              order by guid desc
-              limit 1)
-   and id_feed = ?
-   and is_read = 1
-   and is_favorite = 0
--- order by guid
- limit 100
+select guid
+from ` + Prefix + `entry
+where true
+  and id_feed = ?
+  and is_read = 1
+  and is_favorite = 0
+limit 100
 `
-	db.FreshrssDb.Raw(sql, feedId, feedId).Scan(&guids)
+	db.FreshrssDb.Raw(sql, feedId).Scan(&guids)
 	return guids
 }
 func DeleteEntryByFeed(feedId int64) {
@@ -73,8 +71,8 @@ where id_feed = ? and is_read = 0 and is_favorite = 0
 `, feedId)
 }
 func DeleteEntry(guids []string) {
-	for _, guid := range guids {
-		err := db.FreshrssDb.Table(Prefix+"entry").Delete(nil, "guid = ? and is_favorite = 0", guid).Error
+	for _, ids := range slices_x.Partition(guids, 66) {
+		err := db.FreshrssDb.Table(Prefix+"entry").Delete(nil, "guid in ? and is_favorite = 0", ids).Error
 		if err != nil {
 			slog.Error("delete entry by guid", "err", err)
 		}
@@ -82,12 +80,13 @@ func DeleteEntry(guids []string) {
 }
 
 func FeedIds() []int64 {
-	// var feeds []map[string]any
-	var feeds []int64
-	db.FreshrssDb.Table(Prefix+"feed").
-		Select("id").
-		Find(&feeds, "url like '%/weibo/rss/%'")
-	return feeds
+	if len(feedIds) == 0 || probability.Percent(10) {
+		feedIds = feedIds[:0]
+		db.FreshrssDb.Table(Prefix+"feed").
+			Where("url like ?", "%/weibo/rss/%").
+			Pluck("id", &feedIds)
+	}
+	return feedIds
 }
 
 // 删除空悬的tag和绑定

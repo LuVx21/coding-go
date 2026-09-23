@@ -40,7 +40,7 @@ func initLogger() {
 	stdFormatter = &prefixed.TextFormatter{
 		PrefixPadding:   3,
 		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05.000000",
+		TimestampFormat: "2006-01-02 15:04:05.00",
 		ForceFormatting: true,
 		ForceColors:     true,
 		DisableColors:   false,
@@ -59,7 +59,7 @@ func initLogger() {
 
 	fileFormatter = &prefixed.TextFormatter{
 		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05.000000",
+		TimestampFormat: "2006-01-02 15:04:05.00",
 		ForceFormatting: true,
 		ForceColors:     false,
 		DisableColors:   true,
