@@ -14,16 +14,17 @@ require (
 	github.com/gocolly/colly/v2 v2.3.0
 	github.com/google/uuid v1.6.0
 	github.com/icloudza/fxjson v1.2.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260919123330-9b2e81ba54fc
-	github.com/luvx21/coding-go/infra/ai v0.0.0-20260919123330-9b2e81ba54fc
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260919123330-9b2e81ba54fc
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260919123330-9b2e81ba54fc
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260919123330-9b2e81ba54fc
-	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260919123330-9b2e81ba54fc
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/infra/ai v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260923052100-a70ae7982809
+	github.com/luvx21/coding-go/luvx_service_sdk v0.0.0-20260923052100-a70ae7982809
 	github.com/parnurzeal/gorequest v0.3.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/samber/lo v1.53.0
 	github.com/sirupsen/logrus v1.10.2
+	github.com/spf13/cast v1.10.0
 	github.com/spf13/viper v1.21.0
 	github.com/tidwall/gjson v1.19.0
 	go.mongodb.org/mongo-driver/v2 v2.9.1
@@ -116,7 +117,6 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
-	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
