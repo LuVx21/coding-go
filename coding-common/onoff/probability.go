@@ -1,4 +1,4 @@
-package probability
+package onoff
 
 import (
 	"math/rand/v2"

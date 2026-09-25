@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"luvx/gin/common/consts"
-	"luvx/gin/db"
+	db_mongo "luvx/gin/db/mongo"
 	"luvx/gin/service"
 	"time"
 
@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	reportJsonCli = db.MongoMainCon().Database("life").Collection("report_json")
-	reportCli     = db.MongoMainCon().Database("life").Collection("report")
+	reportJsonCli = db_mongo.MongoMainCon().Database("life").Collection("report_json")
+	reportCli     = db_mongo.MongoMainCon().Database("life").Collection("report")
 
 	fields = sets.NewSet("LabRepItemName", "ResultType", "ResultText1", "ReferenceText", "LabRepItemUnit", "DangerFlag", "ChangeFlag", "LabFlow", "LabTime")
 )

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"luvx/gin/config"
+	"luvx/gin/db/gorms"
 	"os"
 	"strings"
 	"sync"
@@ -24,7 +25,7 @@ func createPostgreSQLCli(dbname string) *gorm.DB {
 	c := config.AppConfig.PostgreSQL
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable&TimeZone=Asia/Shanghai", c.Username, c.Password, c.Host, c.Port, common_x.IfThen(dbname == "", c.Dbname, dbname))
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: gorms.GormLogger})
 	if err != nil {
 		slog.Error("连接数据库失败", "error", err)
 		os.Exit(1)

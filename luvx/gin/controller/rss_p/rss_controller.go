@@ -5,6 +5,7 @@ import (
 	"luvx/gin/common/responsex"
 	"luvx/gin/dao/mongo_dao"
 	"luvx/gin/db"
+	db_mongo "luvx/gin/db/mongo"
 	"luvx/gin/service/rss"
 	"net/http"
 	"strings"
@@ -28,7 +29,7 @@ func DeleteById(c *gin.Context) {
 		responsex.R(c, "不存在的source")
 	}
 
-	cli := db.GetCollectionByName(source)
+	cli := db_mongo.GetCollectionByName(source)
 	if cast_x.ToBool(realDel) {
 		n := mongo_dao.DeleteById(cli, id)
 		responsex.R(c, map[string]any{"delete": n})

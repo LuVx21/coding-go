@@ -1,6 +1,6 @@
 package mongo_dao
 
-import "luvx/gin/db"
+import db_mongo "luvx/gin/db/mongo"
 
 const (
 	COL_NAME_rss_feed   = "rss_feed"
@@ -9,12 +9,12 @@ const (
 )
 
 var (
-	ConfigCol    = db.GetMainCollection("config")
-	CookieCol    = db.GetMainCollection("cookie")
-	UserCol      = db.GetMainCollection("user")
-	WeiboFeedCol = db.GetMainCollection(COL_NAME_weibo_feed)
-	WeiboHotCol  = db.GetMainCollection("weibo_hot_band")
+	ConfigCol    = db_mongo.GetMainCollection("config")
+	CookieCol    = db_mongo.GetMainCollection("cookie")
+	UserCol      = db_mongo.GetMainCollection("user")
+	WeiboFeedCol = db_mongo.GetMainCollection(COL_NAME_weibo_feed)
+	WeiboHotCol  = db_mongo.GetMainCollection("weibo_hot_band")
 
-	BiliVideoCol = db.GetSlaveCollection(COL_NAME_bili_video)
-	RssFeedCol   = db.GetSlaveCollection(COL_NAME_rss_feed)
+	BiliVideoCol = db_mongo.GetSlaveCollection(COL_NAME_bili_video)
+	RssFeedCol   = db_mongo.GetSlaveCollection(COL_NAME_rss_feed)
 )

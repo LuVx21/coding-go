@@ -1,4 +1,4 @@
-package db
+package db_mongo
 
 import (
 	"log/slog"
