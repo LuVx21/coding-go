@@ -28,19 +28,10 @@ var (
 )
 
 // RegisterHandler 添加自定义Handler
-func RegisterHandler(h ...slog.Handler) {
-	hs = append(hs, h...)
-}
-
-func SetConsoleLevel(level slog.Level) {
-	defaultLevel = level
-}
-
-func SetLogDir(path string) {
-	logDir = path
-}
-
-func init() { InitFromConfig(nil) }
+func RegisterHandler(h ...slog.Handler) { hs = append(hs, h...) }
+func SetConsoleLevel(level slog.Level)  { defaultLevel = level }
+func SetLogDir(path string)             { logDir = path }
+func init()                             { InitFromConfig(nil) }
 
 func initLogger() {
 	if err := os.MkdirAll(logDir, 0755); err != nil {
@@ -76,7 +67,7 @@ func GetLogger() *slog.Logger {
 
 func InitFromConfig(c *viper.Viper) {
 	if c == nil {
-		c = configs_x.GetDefaultConfigByKey(c, "log")
+		c = configs_x.GetDefaultConfigByKey(configs_x.GetDefaultConfig(), "log")
 	}
 	var lc logs.LogConfig
 	if c != nil && c.Unmarshal(&lc) == nil {

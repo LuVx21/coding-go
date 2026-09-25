@@ -20,22 +20,17 @@ var (
 	logDir                    = os_x.Getenv("HOME") + "/data/logs"
 	infoLogFile, errorLogFile = "main", "error"
 	initOnce                  sync.Once
-	// Log logger
+	// defaultLogger logger
 	// Deprecated: 直接使用logrus
-	Log = logrus.New()
+	defaultLogger = logrus.New()
 
 	stdFormatter, fileFormatter *prefixed.TextFormatter // 命令行,文件输出格式
 )
 
-func SetConsoleLevel(level logrus.Level) {
-	defaultLevel = level
-}
+func SetConsoleLevel(level logrus.Level) { defaultLevel = level }
+func SetLogDir(path string)              { logDir = path }
+func init()                              { InitFromConfig(nil) }
 
-func SetLogDir(path string) {
-	logDir = path
-}
-
-func init() { GetLogger() }
 func initLogger() {
 	stdFormatter = &prefixed.TextFormatter{
 		PrefixPadding:   3,
@@ -84,33 +79,59 @@ func initLogger() {
 		logrus.PanicLevel: writer1,
 	}, fileFormatter)
 
-	Log.AddHook(lfHook)
-	Log.SetReportCaller(true)
-	Log.SetFormatter(stdFormatter)
-	Log.SetOutput(os.Stdout)
-	Log.SetLevel(logrus.InfoLevel)
-
 	logrus.AddHook(lfHook)
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(stdFormatter)
 	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetLevel(defaultLevel)
 
-	Log.Infoln("日志文件位置:", logPath)
+	defaultLogger = logrus.StandardLogger()
+
+	defaultLogger.Infoln("日志文件位置:", logPath)
 }
 
 // GetLogger returns the default logger
 func GetLogger() *logrus.Logger {
 	initOnce.Do(initLogger)
-	return Log
+	return defaultLogger
 }
 
 func InitFromConfig(c *viper.Viper) {
 	if c == nil {
-		c = configs_x.GetDefaultConfigByKey(c, "log")
+		c = configs_x.GetDefaultConfigByKey(configs_x.GetDefaultConfig(), "log")
 	}
 	var lc LogConfig
 	if c != nil && c.Unmarshal(&lc) == nil {
+		if len(lc.Level) > 0 {
+			l := logrus.InfoLevel
+			switch strings.ToUpper(lc.Level) {
+			case "DEBUG":
+				l = logrus.DebugLevel
+			case "WARN":
+				l = logrus.WarnLevel
+			case "ERROR":
+				l = logrus.ErrorLevel
+			}
+			if l != logrus.InfoLevel {
+				SetConsoleLevel(l)
+			}
+		}
+		if len(lc.LogDir) > 0 {
+			if strings.HasPrefix(lc.LogDir, "/") || strings.HasPrefix(lc.LogDir, "$") {
+				SetLogDir(os.ExpandEnv(lc.LogDir))
+			} else {
+				if exePath, err := os.Executable(); err == nil {
+					SetLogDir(filepath.Join(filepath.Dir(exePath), lc.LogDir))
+				}
+			}
+		}
+		if len(lc.MainLog) > 0 {
+			infoLogFile = lc.MainLog
+		}
+		if len(lc.ErrorLog) > 0 {
+			errorLogFile = lc.ErrorLog
+		}
 	}
+
 	GetLogger()
 }
