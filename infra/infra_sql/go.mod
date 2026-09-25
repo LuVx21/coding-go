@@ -7,7 +7,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260924014341-bfa9a5207857
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260925065823-095cf8b1f79a
 	github.com/parnurzeal/gorequest v0.3.0
 	modernc.org/sqlite v1.46.1
 )

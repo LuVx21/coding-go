@@ -77,11 +77,11 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/longbridgeapp/opencc v0.3.13
 	github.com/loov/hrtime v1.0.4
-	github.com/luvx21/coding-go/coding-common v0.0.0-20260924014341-bfa9a5207857
-	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260924014341-bfa9a5207857
-	github.com/luvx21/coding-go/infra/logs v0.0.0-20260924014341-bfa9a5207857
-	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260924014341-bfa9a5207857
-	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260924014341-bfa9a5207857
+	github.com/luvx21/coding-go/coding-common v0.0.0-20260925065823-095cf8b1f79a
+	github.com/luvx21/coding-go/infra/infra_sql v0.0.0-20260925065823-095cf8b1f79a
+	github.com/luvx21/coding-go/infra/logs v0.0.0-20260925065823-095cf8b1f79a
+	github.com/luvx21/coding-go/infra/nosql/infra_redis v0.0.0-20260925065823-095cf8b1f79a
+	github.com/luvx21/coding-go/infra/nosql/mongodb v0.0.0-20260925065823-095cf8b1f79a
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/moby/moby/client v0.4.1

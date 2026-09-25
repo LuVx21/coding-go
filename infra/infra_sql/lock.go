@@ -64,7 +64,7 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 		return false
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	_, err := l.Client.ExecContext(ctx, l.sqlHolder.lock_insert, key, l.ownerID, time.Now().Add(exp).UnixMilli())
@@ -93,13 +93,9 @@ func (l *DbLocker[T]) TryLock(key T, exp time.Duration) bool {
 	}
 
 	// 锁已过期，尝试获取
-
+	// 重入
+	// return l.Renew(key, exp)
 	return l.Unlock(key) && l.TryLock(key, exp)
-	// _, err = l.Client.ExecContext(ctx, l.sqlHolder.lock_update, l.ownerID, time.Now().Add(exp).UnixMilli(), key)
-	// if err != nil {
-	// 	slog.Error("加锁sql执行失败", "key", key, "sql", l.sqlHolder.lock_update, "error", err)
-	// }
-	// return err == nil
 }
 
 func (l *DbLocker[T]) prepare(key T) error {
@@ -124,10 +120,10 @@ func (l *DbLocker[T]) Unlock(key T) bool {
 	// }
 	// defer l.mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := l.Client.ExecContext(ctx, l.sqlHolder.unlock, key, l.ownerID)
+	result, err := l.Client.ExecContext(ctx, l.sqlHolder.unlock, key)
 	if err != nil {
 		slog.Error("释放锁错误", "key", key, "err", err)
 		return false
@@ -145,9 +141,10 @@ func (l *DbLocker[T]) LockRun(key T, exp time.Duration, fn func()) {
 	}
 }
 
-func (l *DbLocker[T]) Renew(key string, exp time.Duration) bool {
-	result, err := l.Client.Exec(l.sqlHolder.renew, time.Now().Add(exp).UnixMilli(), key, l.ownerID)
+func (l *DbLocker[T]) Renew(key T, exp time.Duration) bool {
+	result, err := l.Client.Exec(l.sqlHolder.renew, time.Now().Add(exp).UnixMilli(), l.ownerID, key)
 	if err != nil {
+		slog.Error("加锁sql执行失败", "key", key, "sql", l.sqlHolder.renew, "error", err)
 		return false
 	}
 	rows, _ := result.RowsAffected()
@@ -168,7 +165,6 @@ type sqlHolder struct {
 	ddl         string // 建表语句
 	selectLock  string // 查询所
 	lock_insert string // 获取锁
-	lock_update string // 获取锁 待删除, 无用
 	unlock      string // 释放锁
 	renew       string // 重入
 	cleanLock   string // 清理锁
@@ -193,9 +189,8 @@ var sql_mysql = sqlHolder{
 		`,
 	selectLock:  "select owner_id, expire_time from common_lock where lock_key = ? limit 1 for update",
 	lock_insert: "insert into common_lock (lock_key, owner_id, expire_time) values (?, ?, ?)",
-	lock_update: "update common_lock set owner_id = ?, expire_time = ? where lock_key = ?",
-	unlock:      "delete from common_lock where lock_key = ? and owner_id = ?",
-	renew:       "update common_lock set expire_time = ? where lock_key = ? and owner_id = ?",
+	unlock:      "delete from common_lock where lock_key = ?",
+	renew:       "update common_lock set expire_time = ?, owner_id = ? where lock_key = ?",
 	cleanLock:   "delete from common_lock where expire_time < unix_timestamp() * 1000",
 }
 
@@ -250,9 +245,8 @@ func sql_postgres() sqlHolder {
 	`
 	sql_postgres.selectLock = "select owner_id, expire_time from common_lock where lock_key = $1 limit 1 for update"
 	sql_postgres.lock_insert = "insert into common_lock (lock_key, owner_id, expire_time) values ($1, $2, $3)"
-	sql_postgres.lock_update = "update common_lock set owner_id = $1, expire_time = $2 where lock_key = $3"
-	sql_postgres.unlock = "delete from common_lock where lock_key = $1 and owner_id = $2"
-	sql_postgres.renew = "update common_lock set expire_time = $1 where lock_key = $2 and owner_id = $3"
+	sql_postgres.unlock = "delete from common_lock where lock_key = $1"
+	sql_postgres.renew = "update common_lock set expire_time = $1, owner_id = $2 where lock_key = $3"
 	sql_postgres.cleanLock = "delete from common_lock where expire_time < EXTRACT(EPOCH FROM now()) * 1000"
 	return sql_postgres
 }

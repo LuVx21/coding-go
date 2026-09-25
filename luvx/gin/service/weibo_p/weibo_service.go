@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"luvx/gin/common/consts"
-	"luvx/gin/common/probability"
 	"luvx/gin/config"
 	"luvx/gin/dao/common_kv_dao"
 	"luvx/gin/dao/freshrss_dao"
@@ -39,6 +38,7 @@ import (
 	"github.com/luvx21/coding-go/coding-common/jsons"
 	"github.com/luvx21/coding-go/coding-common/maps_x"
 	"github.com/luvx21/coding-go/coding-common/nets_x"
+	"github.com/luvx21/coding-go/coding-common/onoff"
 	"github.com/luvx21/coding-go/coding-common/sets"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/luvx21/coding-go/coding-common/times_x"
@@ -552,7 +552,7 @@ func Rss(c *gin.Context, args map[string]any, uids ...int64) string {
 		rowsMap = lo.KeyBy(*rows, func(m bson.M) int64 { return cast_x.ToInt64(m["_id"]) })
 	}
 
-	aa := common_x.IfThenGet(probability.Percent(5),
+	aa := common_x.IfThenGet(onoff.Percent(5),
 		func() []string { return freshrss_dao.ExistedGuids("%"+c.Request.URL.Path, ids) },
 		func() []string { return []string{} },
 	)

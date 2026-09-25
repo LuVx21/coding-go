@@ -2,12 +2,12 @@ package freshrss_dao
 
 import (
 	"log/slog"
-	"luvx/gin/common/probability"
 	"luvx/gin/config"
 	"luvx/gin/db"
 
 	"github.com/luvx21/coding-go/coding-common/common_x"
 	"github.com/luvx21/coding-go/coding-common/common_x/a"
+	"github.com/luvx21/coding-go/coding-common/onoff"
 	"github.com/luvx21/coding-go/coding-common/slices_x"
 	"github.com/spf13/cast"
 	"gorm.io/gorm/clause"
@@ -80,7 +80,7 @@ func DeleteEntry(guids []string) {
 }
 
 func FeedIds() []int64 {
-	if len(feedIds) == 0 || probability.Percent(10) {
+	if len(feedIds) == 0 || onoff.Percent(10) {
 		feedIds = feedIds[:0]
 		db.FreshrssDb.Table(Prefix+"feed").
 			Where("url like ?", "%/weibo/rss/%").
